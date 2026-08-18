@@ -308,21 +308,25 @@ zero-slop gate --tier error
 
 ## 6. Research Foundation: Reference Collection & Coverage Gaps
 
-The framework is grounded in 25 full clones under `reference/` (gitignored, filtered by ≥300⭐ plus sole-player niche exceptions). Collectively they encode ~200 named slop tells.
+The framework is grounded in 84 clones under `reference/` (gitignored; ≥300⭐ default with sole-player niche exceptions; giant engine repos (llama.cpp, vLLM, transformers, LanguageTool, Lighthouse, PR-Agent, super-linter, gitleaks, guardrails, promptfoo, semantic-release, raid, fast-detect-gpt) are shallow `--depth 1` clones since their value is current source, not history). Collectively they encode ~340 named slop tells plus the enforcement/measurement layers.
 
 ### 6.1 Collective coverage by domain
 
 | Domain | Reference repos | Depth |
 |---|---|---|
-| Writing/copy | no-ai-slop, no_ai_slop_writing_rules, anti-ai-slop-writing, hallmark, anti-slop, write-good, vale, no-slop | Deep: banned words, 15+ pattern families, punctuation caps, structural rules |
-| Design/UI | hallmark, claude-design-system-prompt, kill-ai-slop, anti-slop | Deepest: 58 gates, 35 tells, 38 rules, 21 macrostructures |
-| Voice/tone | no_ai_slop_writing_rules (corpus), anti-ai-slop-writing (calibration), hallmark (samples) | Medium: 1 data-driven voice; others questionnaire-based |
-| Accessibility | claude-design-system-prompt (rules), anti-slop (contrast-check.py), pa11y, pa11y-ci | Medium: rules + 2 tools, no unified gate |
-| Chat output | talk-normal | Only one, but measured (72-73% reduction) |
-| Code quality | claude-code-best-practice, slop-scan, code-humanizer | Shallow: patterns + a scanner; no depth on logic/architecture |
-| CI/workflow | peakoss-anti-slop, commitlint, commitlint-github-action | Metadata proxies only; no content analysis |
-| Detection research | ai-text-detector, detect-gpt, AIGC_text_detector, ai-detector-benchmark, SemEval2024-task8 | Strong research, no packaged product |
-| Honesty/accuracy | anti-slop R-17, hallmark gate 46, no_ai_slop_writing_rules R-19 | Rules exist; zero verification tooling |
+| Writing/copy | no-ai-slop, no_ai_slop_writing_rules, anti-ai-slop-writing, hallmark, anti-slop, write-good, vale, no-slop, proselint, textlint, languagetool, im-not-ai, ZeroSlop (manavmishra), SlopZero, zero-ai-slop, humanize (kimhons), slop-score-skill | Deep: banned words, 15+ pattern families, punctuation caps, structural rules, 4 prose-linter engines, before/after scorers |
+| Design/UI | hallmark, claude-design-system-prompt, kill-ai-slop, anti-slop, taste-skill, auteur, shadscan, ux-skill, superdesign-skill, ux-ui-agent-skills, svvarm, skills-slides, zero-slop (Eid0lon), omakaseagent | Deepest: 58 gates, 35 tells, 152-rule deterministic design linters, taste packs, design-director agents |
+| Voice/tone | no_ai_slop_writing_rules (corpus), anti-ai-slop-writing (calibration), hallmark (samples), im-not-ai (translationese/mechanical parallelism) | Medium: 1 data-driven voice + translationese evaluator |
+| Accessibility | claude-design-system-prompt (rules), anti-slop (contrast-check.py), pa11y, pa11y-ci, axe-core, lighthouse, equal-access, eslint-plugin-jsx-a11y, SAPC-APCA, accessibility-agents | Deep: the de-facto rules engines (axe/WCAG 2.2), APCA next-gen contrast, CI runners |
+| Chat output | talk-normal, guardrails, anti-slop-writing (adenaufal), promptfoo | Medium: shape rules + output validators + evals |
+| Code quality | claude-code-best-practice, slop-scan, code-humanizer, anti-slop-dmmulroy, KarpeSlop, vibecheck, pr-agent, reviewdog | Deep: 2 dedicated AI-slop lint engines, AI PR review, diff-gated review tooling |
+| Commit | commitlint, commitlint-github-action, semantic-release, cz-cli, gitmoji, conventional-changelog, action-semantic-pull-request | Deep: full conventional-commit toolchain (lint, compose, parse, release, CI title gate) |
+| CI/workflow | peakoss-anti-slop, gitleaks, zizmor, harden-runner, super-linter, action-semantic-pull-request | Deep: secret-scan gates, workflow static analysis, runner hardening, 50-linter aggregation |
+| Detection research | ai-text-detector, detect-gpt, AIGC_text_detector, ai-detector-benchmark, SemEval2024-task8, GPTZero, lm-watermarking, fast-detect-gpt, raid | Strong: perplexity/burstiness, watermarking, curvature detectors, 10M-doc adversarial benchmark |
+| Honesty/accuracy | anti-slop R-17, hallmark gate 46, no_ai_slop_writing_rules R-19, factool, selfcheckgpt | Medium: rules + claim-level factuality + hallucination consistency |
+| Inference/sampling | llama.cpp, vllm, transformers, outlines | Pillar-5 sources: repeat/presence/frequency penalties, DRY sampler, constrained decoding |
+| Measurement | slop-score, raid, promptfoo, im-not-ai | New: eqbench Slop Score metric, detector benchmark, eval harness |
+| Distribution | vercel-labs/skills, anthropics/skills, superpowers, wshobson/agents | New: skills.sh registry, SKILL.md spec, multi-harness packaging model |
 
 ### 6.2 Provenance of key rules: Evidence base
 
@@ -341,17 +345,17 @@ The framework is grounded in 25 full clones under `reference/` (gitignored, filt
 
 ### 6.3 Gaps the framework must close itself
 
-No reference repo provides these: they are our build scope:
+No reference repo provides these: they are our build scope. (Status updated 2026-08-18 after corpus expansion to 84 repos.)
 
-1. **Code-quality slop checks**: dead code, speculative abstractions, broad excepts, comment bloat, backend/architecture smells. (slop-scan/code-humanizer are seeds, not a framework.)
-2. **Executable enforcement layer**: most rules are prompt text enforced by model self-discipline; we need a real CLI + CI gate.
-3. **Prose detection inside diffs/PRs**: peakoss counts emojis; nobody reads prose in PRs.
-4. **Unified tiered, tunable rules engine**: all references are flat hard bans; no severity/context config.
-5. **Content verification**: "no invented stats" is a rule everywhere, nowhere validated.
-6. **Slop regression measurement**: no project tracks slop over time; no baseline/score exists.
-7. **A11y automation in CI**: pa11y exists but is not wired into the anti-slop gate.
-8. **Multilingual**: EN + 中文 (talk-normal) + 1 Russian example; nothing else.
-9. **Arbitrary voice profiling**: Rossmann is one person; questionnaire is manual.
+1. **Code-quality slop checks, unified**: KarpeSlop/vibecheck/anti-slop-dmmulroy give dedicated engines but each is narrow; our 51-rule code domain is the consolidated gate. Remaining gap: AST depth (speculative abstractions, dead code); tree-sitter deferred to M3.
+2. **Executable enforcement layer**: still ours: all references are skills or single-purpose linters; no CLI + CI gate with tiered exits. This is zero-slop's product.
+3. **Prose detection inside diffs/PRs**: still ours: no reference reads prose in PRs (reviewdog posts lint findings but has no prose rules).
+4. **Unified tiered, tunable rules engine**: still ours: references are flat hard bans; severity/context config is our design.
+5. **Content verification**: seeds now exist (factool claim-level retrieval, selfcheckgpt consistency) but no packaged, deterministic "invented stats" check; integrity domain stays our build.
+6. **Slop regression measurement**: eqbench Slop Score (slop-score) and raid give the metric + benchmark; wiring a baseline/regression gate into CI is still ours.
+7. **A11y automation in CI**: axe-core/lighthouse/equal-access provide the engines; our a11y domain + CI gate is the anti-slop wiring (pa11y was never connected to a slop gate).
+8. **Multilingual**: EN + 中文 (talk-normal) + Korean (im-not-ai) + 1 Russian example; still thin beyond that.
+9. **Arbitrary voice profiling**: Rossmann is one person; questionnaire is manual. New: im-not-ai evaluates translationese; partial coverage, not a profiling system.
 
 ---
 
@@ -360,7 +364,7 @@ No reference repo provides these: they are our build scope:
 ### 7.1 Architecture: the 4-layer model
 
 ```
-Layer 0  Knowledge    → consolidated tells database (JSON, source-attributed)   [HAVE: 25 repos]
+Layer 0  Knowledge    → consolidated tells database (JSON, source-attributed)   [HAVE: 84 repos]
 Layer 1  Generation   → agent skills/prompts that prevent slop at write time    [HAVE: references]
 Layer 2  Enforcement  → `zero-slop` CLI: prose + UI + code AST checks + CI gate [BUILD]
 Layer 3  Measurement  → slop score, baselines, regression tracking              [BUILD]
@@ -371,7 +375,7 @@ Layer 3  Measurement  → slop score, baselines, regression tracking            
 **M0: Consolidation (knowledge layer)**
 - Merge ~200 tells into one canonical `rules/` database: banned words w/ thresholds, pattern families, UI-tell regexes, punctuation caps, statistical thresholds, AST patterns.
 - Every rule carries: id, tier (error/warning/info), domain, source repo + rule number, test cases.
-- Deliverable: `rules/*.json` + a rule-coverage matrix against all 25 repos.
+- Deliverable: `rules/*.json` + a rule-coverage matrix against all 84 repos.
 
 **M1: `zero-slop` CLI (enforcement layer)**
 - `zero-slop scan <path>`: runs all enabled check engines:
@@ -436,7 +440,7 @@ Rationale: the enforcement product is npm-native: every deterministic engine we 
 - **Language**: TypeScript, Node ≥22.
 - **Agent backbone**: Mastra 1.x (workflows own the deterministic scan sequence; agents do triage/fix reasoning; built-in evals measure detector precision/recall; MCP server exposes the audit as tools to every harness). Lighter alternative if needed: Vercel AI SDK v7 alone.
 - **Exposure**: CLI (`zero-slop scan|check|gate|report|baseline`) + MCP server + GitHub Action + Agent Skills, wrapped as one Agent Plugin for one-command install.
-- **Measurement**: golden slop corpus from `reference/` (25 repos already cloned) → Mastra evals; optionally DSPy-style rubric calibration later.
+- **Measurement**: golden slop corpus from `reference/` (84 repos already cloned) → Mastra evals; optionally DSPy-style rubric calibration later.
 - **Explicitly rejected**: LangGraph/Pydantic AI (Python split), AutoGen (maintenance), OpenAI Agents SDK (OpenAI-centric), Claude Agent SDK as backbone (lock-in), AG-1 (dead).
 
 ### 8.3 Revised milestones: Framework mapped
