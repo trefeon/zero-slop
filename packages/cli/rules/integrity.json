@@ -1,0 +1,1060 @@
+[
+  {
+    "id": "ZS-INTEGRITY-001",
+    "domain": "integrity",
+    "title": "No invented multiplier claims (\"10x faster\")",
+    "summary": "Quantified performance claims the model fabricated to fill a stat-led layout, comparison row, or proof bar. Hallmark gate 46 hard-fails invented metrics and antislop R-17/R-36 ban numbers without a real source; a made-up figure is worse than no figure.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b\\d+(?:\\.\\d+)?\\s*x\\s*(?:faster|quicker|more|less|better|higher|stronger)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 46: Invented metric ('10× faster')",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-17 Data & Numbers / R-36 No Fabricated Claims ('300% faster')",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented multiplier fails",
+        "input": "Our platform is 10x faster than the competition.",
+        "expect": "fail"
+      },
+      {
+        "label": "measured claim passes",
+        "input": "Median API latency dropped from 214ms to 89ms after the 2.4 release.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A real, sourced figure with a named benchmark is not slop; the tell is the round fabricated multiplier. Fix per gate 46: replace with '—' and a labelled grey block, ask the user for the metric, or rebuild the section without the proof slot."
+  },
+  {
+    "id": "ZS-INTEGRITY-002",
+    "domain": "integrity",
+    "title": "No unsourced percentage statistics",
+    "summary": "Round percentage claims ('+47% conversion', '99.9% uptime') with no source. Hallmark gate 46 lists them as invented metrics; antislop R-17 bans numbers without a real source; No-AI-Slop rule 2 and anti-ai-slop-writing say fake numbers kill trust faster than vagueness.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\+?\\d+(?:\\.\\d+)?%",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 46: Invented metric ('+47% conversion')",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-17 Data & Numbers",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 2: No unsourced statistics",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "jalaalrd/anti-ai-slop-writing",
+        "rule": "Never invent data, studies, or statistics",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "round conversion stat fails",
+        "input": "Teams that switch see a +47% conversion lift.",
+        "expect": "fail"
+      },
+      {
+        "label": "sourced number passes",
+        "input": "Load tests from March 2026 measured peak concurrency at 3,400 requests per second, with the report linked on this page.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Numbers with a named, checkable source (report + date) pass; bare percentages in proof bars fail."
+  },
+  {
+    "id": "ZS-INTEGRITY-003",
+    "domain": "integrity",
+    "title": "No fabricated 'trusted by N+' claims",
+    "summary": "Trust-bar phrasing ('trusted by 50,000+ teams') is the canonical invented-metric pattern from Hallmark gate 46 and antislop's Fake Statistics list (10K+ Users); it is social proof the model cannot verify.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "trusted\\s+by\\s+\\d[\\d,]*(?:\\.\\d+)?k?\\+?\\s*(?:teams|users|companies|customers|developers|startups)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 46: Invented metric ('trusted by 50,000+ teams')",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-17 (Fake Statistics: 10K+ Users) / R-05 ('Trusted By' logo bar)",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "trust count fails",
+        "input": "Trusted by 50,000+ teams worldwide.",
+        "expect": "fail"
+      },
+      {
+        "label": "verifiable customer reference passes",
+        "input": "Featured in the customer story with Northwind Logistics (2026 case study, PDF).",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Applies to proof bars, hero sublines, and footer trust strips. A link to a real, verifiable customer reference is not a violation."
+  },
+  {
+    "id": "ZS-INTEGRITY-004",
+    "domain": "integrity",
+    "title": "No unsourced user/scale counts",
+    "summary": "Bare round counts ('10K+ users', '500M requests', '120+ countries') without a source appear in antislop's Fake Statistics list and violate R-17 and No-AI-Slop rule 2.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b\\d[\\d,]*(?:\\.\\d+)?\\s*(?:k|m|bn|million|billion)?\\+?\\s*(?:users|customers|requests|countries|downloads|repositories)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-17 (Fake Statistics: 10K+ Users, 500M Requests, 120+ Countries)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 2: No unsourced statistics",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare count fails",
+        "input": "Serving 500M requests and 120+ countries.",
+        "expect": "fail"
+      },
+      {
+        "label": "counted source passes",
+        "input": "Per our 2025 transparency report: 1.2M monthly requests.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-INTEGRITY-005",
+    "domain": "integrity",
+    "title": "No fabricated testimonials or social proof",
+    "summary": "Fictional reviews, invented names and job titles, AI avatars, and generic 'Trusted By' logo bars are hard-banned by antislop R-18 and R-38 (real content or honest placeholder) and the Evidence Over Claims standard (C-5).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-18 Testimonials / R-38 Real Content or Honest Placeholder / C-5 Evidence Over Claims",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented review fails",
+        "input": "\"This product changed my life.\" — Sarah K., Marketing Director",
+        "expect": "fail"
+      },
+      {
+        "label": "real testimonial passes",
+        "input": "\"Migration took four hours, not four weeks.\" — verified quote from the Northwind Logistics case study, linked on this page.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If there are no real testimonials, do not create a testimonials section at all (R-18). A testimonial is real only when it traces to a verifiable source."
+  },
+  {
+    "id": "ZS-INTEGRITY-006",
+    "domain": "integrity",
+    "title": "No fabricated compliance/security claims",
+    "summary": "Certification and security claims ('SOC 2 compliant', 'ISO 27001', 'enterprise-grade security') are forbidden without real evidence (antislop R-36; also R-17 and C-5).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:SOC\\s*2|ISO\\s*27001|HIPAA|PCI\\s*DSS|GDPR)\\s+(?:compliant|certified|ready)\\b|\\benterprise-grade\\s+security\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-36 No Fabricated Claims ('SOC 2 compliant', 'ISO 27001', '300% faster')",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 46 (security claims must be user-supplied)",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unsupported cert fails",
+        "input": "SOC 2 compliant with enterprise-grade security.",
+        "expect": "fail"
+      },
+      {
+        "label": "evidence-linked cert passes",
+        "input": "SOC 2 Type II report (2025) available for download in the trust center.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A claim backed by a link to the actual report is not fabrication; the bare badge is."
+  },
+  {
+    "id": "ZS-INTEGRITY-007",
+    "domain": "integrity",
+    "title": "No fabricated attributions or quotes",
+    "summary": "Never claim a person, organization, or company said something unless it is real and verifiable; quoting someone without a real source is fabrication and a defamation risk (No-AI-Slop rule 19). Anti-ai-slop-writing likewise bans fabricating quotes, and rule 23 requires quotes to match the source exactly.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 19: No fabricated attributions / Rule 23: Quote sources accurately",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "jalaalrd/anti-ai-slop-writing",
+        "rule": "Never fabricate quotes; paraphrase with attribution or skip it",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented attribution fails",
+        "input": "Industry analyst Gartner argues that legacy systems are the main cost driver.",
+        "expect": "fail"
+      },
+      {
+        "label": "sourced attribution passes",
+        "input": "In its March 2026 report, Gartner writes: \"Legacy systems account for the largest share of IT cost.\"",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Every attributed quote or position must trace to a real document, transcript, public statement, or report. Altered quotes need square brackets; otherwise paraphrase without quotation marks."
+  },
+  {
+    "id": "ZS-INTEGRITY-008",
+    "domain": "integrity",
+    "title": "Placeholders must be explicitly labeled",
+    "summary": "Real content or an honest placeholder: filler text (Lorem ipsum, TBD) shipped as final violates antislop R-38, and placeholder statistics must be marked [REAL DATA] per R-23.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:lorem ipsum|TBD|TBA|XXX)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-38 Real Content or Honest Placeholder / R-23 (statistics marked [REAL DATA])",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unlabeled filler fails",
+        "input": "Hero stat: Lorem ipsum dolor sit amet (10K+ users).",
+        "expect": "fail"
+      },
+      {
+        "label": "labeled placeholder passes",
+        "input": "Statistic: [REAL DATA] — pending measurement.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "An explicitly labeled placeholder ([REAL DATA], 'Coming soon') is honest and allowed; the same content disguised as final is fabrication (R-38)."
+  },
+  {
+    "id": "ZS-INTEGRITY-009",
+    "domain": "integrity",
+    "title": "No placeholder names or startup clichés",
+    "summary": "Hallmark gate 19 flags placeholder names ('Jane Doe / John Smith') and startup clichés (Acme, Nexus, Seamless, Unleash); antislop R-18 and R-23 ban invented names and identities in testimonials and assets.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "john doe",
+        "jane doe",
+        "acme",
+        "nexus corp",
+        "seamless",
+        "unleash",
+        "123 main street"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 19: placeholder name 'Jane Doe / John Smith' or startup cliché",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-18 Testimonials / R-23 Clarification & Visual Assets",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "placeholder name fails",
+        "input": "\"Acme's platform saved us weeks\" — Jane Doe, VP Engineering",
+        "expect": "fail"
+      },
+      {
+        "label": "real identity passes",
+        "input": "In the customer story: Mariam Diallo, platform lead at Northwind Logistics.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier: these names are legitimate in docs/examples with an explicit 'example' marker; they are slop in final product copy. Real, named customers replace the placeholders."
+  },
+  {
+    "id": "ZS-INTEGRITY-010",
+    "domain": "integrity",
+    "title": "No fabricated case studies or invented anecdotes",
+    "summary": "Narrative scenarios presented as real events — invented outcomes, actions, or stories — are forbidden by No-AI-Slop rule 17; anti-ai-slop-writing says fabricated specificity is worse than honest vagueness (use 'imagine'/'suppose' for hypotheticals).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 17: No fabricated case studies or scenarios",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "jalaalrd/anti-ai-slop-writing",
+        "rule": "Never invent anecdotes or present hypotheticals as real",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented scenario fails",
+        "input": "When Acme's data team adopted the platform, their query time fell 80% in a week.",
+        "expect": "fail"
+      },
+      {
+        "label": "explicit hypothetical passes",
+        "input": "Suppose a data team moves 4TB of parquet nightly; the platform pipelines it in about nine minutes.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-INTEGRITY-011",
+    "domain": "integrity",
+    "title": "No fabricated history, dates, or milestones",
+    "summary": "Inventing dates for events, launches, founding, or milestones is forbidden by No-AI-Slop rule 18; every date and event must be real.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 18: No fabricated history or milestones",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented milestone fails",
+        "input": "Founded in 2019, the company has shipped 40 releases every quarter since.",
+        "expect": "fail"
+      },
+      {
+        "label": "documented date passes",
+        "input": "First public release: 2023-11-14 (CHANGELOG.md).",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-INTEGRITY-012",
+    "domain": "integrity",
+    "title": "No vague citations ('research shows')",
+    "summary": "Unverifiable citation hedges — 'research shows', 'studies indicate', 'according to experts' — stand in for real sources. Anti-ai-slop-writing requires real verifiable names ('a Databricks report from March 2026' beats 'research shows'), and No-AI-Slop rule 2 bans unsourced statistics.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:research|studies|data|experts|analysts)\\s+(?:shows?|indicates?|suggests?|proves?|say)\\b|according\\s+to\\s+(?:research|studies|experts)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jalaalrd/anti-ai-slop-writing",
+        "rule": "Use real verifiable names, companies, dates ('research shows' banned)",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 2: No unsourced statistics",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vague citation fails",
+        "input": "Research shows that most teams struggle with data quality.",
+        "expect": "fail"
+      },
+      {
+        "label": "named source passes",
+        "input": "A Databricks report from March 2026 found that 61% of teams cite data quality as their top blocker.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier: the hedge is the tell. Replace it with a named, dated, checkable source or cut the claim."
+  },
+  {
+    "id": "ZS-INTEGRITY-013",
+    "domain": "integrity",
+    "title": "No decorative stats in stat-led layouts",
+    "summary": "A stat-led proof bar is slop the moment its stats become decorative (Hallmark gate 46); antislop R-05 bans 'Hero + fake stats' layouts where the numbers exist only to fill the template.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 46: stat-led macrostructures are slop the moment stats become decorative",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-05 (Hero + fake stats forbidden)",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "decorative stat grid fails",
+        "input": "Hero proof bar: 99.9% uptime · 10x faster · +47% conversion — no sources anywhere on the page.",
+        "expect": "fail"
+      },
+      {
+        "label": "content-driven section passes",
+        "input": "Section with one measured number and a link to the report that produced it.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Judge the layout, not just individual claims: three unsourced numbers in a row are the pattern."
+  },
+  {
+    "id": "ZS-INTEGRITY-014",
+    "domain": "integrity",
+    "title": "A stat is never the hero's sole headline",
+    "summary": "Hallmark gate 46: a lead figure carries the hero only alongside a worded headline; a giant number with no words as the dominant hero text is a slop tell even before the number's provenance is questioned.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 46: a stat is also never the hero's sole headline",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare stat hero fails",
+        "input": "Hero = giant \"99.9%\" with a one-line sub and no worded headline.",
+        "expect": "fail"
+      },
+      {
+        "label": "worded hero passes",
+        "input": "Hero headline: \"Reliable builds, measured\" with a supporting stat below.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-INTEGRITY-015",
+    "domain": "integrity",
+    "title": "No assumed logos, avatars, or photos",
+    "summary": "Creating app logos, avatars, profile photos, or people imagery without explicit instructions is banned by antislop R-23: ask first, or use clear placeholders that are not disguised as final.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-23 Clarification & Visual Assets (Assumed Logo & Profile Photos)",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented avatar fails",
+        "input": "Generated a photorealistic team page with five invented faces and names.",
+        "expect": "fail"
+      },
+      {
+        "label": "placeholder passes",
+        "input": "Team avatars are initial-based placeholders labeled as placeholders until the user supplies photos.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-INTEGRITY-016",
+    "domain": "integrity",
+    "title": "No chat-tool citation or footnote artifacts",
+    "summary": "Internal citation tokens that leak through when text is copy-pasted from chat UIs — citeturn0search1, turn0image0, oai_citation, [attached_file:1], [web:1], and the ↩ footnote character — are fingerprints, not patterns: their presence is essentially proof the text came from a specific chat tool and was pasted without cleanup (avoid-ai-writing 'Chatbot citation markup leaks'; ai-writing-detection Markup Red Flags).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "citeturn\\d+(?:search|image|news|file)?\\d*|turn0(?:search|image|news|file)\\d+|oai_citation|\\[(?:attached_file|web):\\d+\\]|↩",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Chatbot citation markup leaks",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "ai-writing-detection",
+        "rule": "Markup Red Flags (definitive) — turn0search/turn0image, oai_citation, footnote markers",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "ai-writing-detection",
+        "rule": "ChatGPT-specific artifacts: citeturn0searchN, turn0imageN, oai_citation",
+        "ref": "reference/markup-artifacts.md"
+      },
+      {
+        "repo": "ai-writing-detection",
+        "rule": "Footnote markers (↩ / ↩2) at the end of citations",
+        "ref": "reference/citation-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "leaked citation token fails",
+        "input": "The school is also a center for the US College Board examinations citeturn0search1.",
+        "expect": "fail"
+      },
+      {
+        "label": "clean citation passes",
+        "input": "The school also hosts the US College Board examinations; details are on the official website.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The core tokens oaicite / contentReference / grok_card / attributableIndex are enforced by the prose-domain 'Hallucinated markup artifacts' rule; this rule catches the numeric variants (citeturn0search1, turn0image0, turn0news0) and the Grok/Perplexity/footnote artifacts that rule misses. The ↩ marker is U+21A9."
+  },
+  {
+    "id": "ZS-INTEGRITY-017",
+    "domain": "integrity",
+    "title": "No AI-tool tracking parameters in URLs",
+    "summary": "utm_source=chatgpt.com (pre-August 2025), utm_source=openai (current), and utm_source=copilot.com are tracking parameters chat tools auto-append to cited URLs; their presence definitively proves tool involvement (ai-writing-detection utm_source Tracking; avoid-ai-writing 'AI-tool URL parameters').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "utm_source\\s*=\\s*(?:chatgpt\\.com|openai|copilot\\.com)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ai-writing-detection",
+        "rule": "utm_source Tracking (utm_source=chatgpt.com / utm_source=openai)",
+        "ref": "reference/markup-artifacts.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "AI-tool URL parameters",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "chatgpt tracking param fails",
+        "input": "See the full report at https://www.theguardian.com/tech/article?utm_source=chatgpt.com.",
+        "expect": "fail"
+      },
+      {
+        "label": "clean URL passes",
+        "input": "See the full report at https://www.theguardian.com/tech/article.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The parameter proves the tool was used to find the citation, not necessarily that it wrote the prose. Fix: strip the tracking parameter and keep the URL if the link matters."
+  },
+  {
+    "id": "ZS-INTEGRITY-018",
+    "domain": "integrity",
+    "title": "No zero-width characters in prose",
+    "summary": "Zero-width characters (ZWSP U+200B, ZWNJ U+200C, ZWJ U+200D, BOM U+FEFF, word joiner U+2060) are inserted by AI-humanizer bypass tools to defeat exact-match detection; humans do not type them (avoid-ai-writing 'normalization-flag': 'Text contains invisible/lookalike chars typical of AI-humanizer bypass tools').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\\u200b-\\u200d\\ufeff\\u2060]",
+      "params": {
+        "caseSensitive": false,
+        "minCount": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "normalization-flag — Zero-width / homoglyph humanizer-bypass detection",
+        "ref": "detector/CATEGORIES.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "v2: zero-width chars trigger normalization-flag",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "zero-width spacer fails",
+        "input": "Our team shipped a fix on Monday​ afternoon and the deploy is green.",
+        "expect": "fail"
+      },
+      {
+        "label": "clean text passes",
+        "input": "Our team shipped a fix on Monday afternoon and the deploy is green.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A single occurrence can be copy-paste residue from Word/Notion; two or more are near-dispositive (the detector's strong-corroborator threshold is ≥2). Fix: re-type from your own keyboard."
+  },
+  {
+    "id": "ZS-INTEGRITY-019",
+    "domain": "integrity",
+    "title": "No homoglyph lookalikes in Latin text",
+    "summary": "Cyrillic/Greek letters visually identical to Latin (Cyrillic е о р с у х а) are swapped into words to defeat exact-match AI detectors; the detector normalizes them and flags the swap (avoid-ai-writing homoglyph normalization: 'dеlve' with Cyrillic 'е' would not equal 'delve' before normalization).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\\u0430\\u0435\\u043e\\u0440\\u0441\\u0443\\u0445]",
+      "params": {
+        "caseSensitive": false,
+        "minCount": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Cyrillic homoglyph swap restores Tier 1 hit; ≥2 homoglyphs trigger normalization-flag",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "normalization-flag — Zero-width / homoglyph humanizer-bypass detection",
+        "ref": "detector/CATEGORIES.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "cyrillic e swaps fail",
+        "input": "Dеlvе into the details of the report before you ship.",
+        "expect": "fail"
+      },
+      {
+        "label": "latin text passes",
+        "input": "Delve into the details of the report before you ship.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "High false-positive risk in Russian, Ukrainian, and other Cyrillic-script text — apply only to Latin-dominant prose and require ≥2 swaps before flagging (single occurrences are legitimate in mixed-script content)."
+  },
+  {
+    "id": "ZS-INTEGRITY-020",
+    "domain": "integrity",
+    "title": "No unfilled bracketed slot-fillers",
+    "summary": "Bracketed slot-fillers meant to be replaced before publishing — [Your Name], [INSERT SOURCE URL], [Describe the specific section], date stubs like 2025-XX-XX, and HTML comments with placeholder verbs — are near-definitive evidence that AI-generated boilerplate was pasted without editing (avoid-ai-writing 'Unfilled placeholders'; ai-writing-detection Placeholder Text Artifacts).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\[(?:Your|Insert|Add|Enter|Describe|Specify|Choose|FILL\\s+IN|TODO|PLACEHOLDER|RECIPIENT|TOPIC)[^\\]\\n]{0,80}\\]|\\b(?:19|20)\\d{2}-XX-XX\\b|\\bXX\\/XX\\/(?:19|20)\\d{2}\\b|<!--\\s*(?:add|fill\\s+in|insert|todo|placeholder)[^>]{0,120}-->",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Unfilled placeholders",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "ai-placeholder detector (slot-fill brackets, date stubs, HTML comment placeholders)",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "ai-writing-detection",
+        "rule": "Placeholder Text Artifacts: [Describe the specific section...], access-date=2025-XX-XX",
+        "ref": "reference/markup-artifacts.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "slot-filler and date stub fail",
+        "input": "Dear [Recipient], I am writing regarding [Topic of Discussion]. Last updated 2025-XX-XX.",
+        "expect": "fail"
+      },
+      {
+        "label": "real bracketed content passes",
+        "input": "The release notes for [v1.2.3] cover the [auth.refresh] path and reference [@example/user].",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Extends ZS-INTEGRITY-008 (filler words: lorem ipsum / TBD) to bracket slot-fillers and date stubs. The regex is gated on placeholder verbs (Your/Insert/Add/...) so real bracketed content like [v1.2.3] or [@user] never matches. Treat any visible placeholder as a publishing bug: fill it with real content or delete the sentence."
+  },
+  {
+    "id": "ZS-INTEGRITY-021",
+    "domain": "integrity",
+    "title": "No vague third-party validation",
+    "summary": "AI manufactures credibility by pointing at an unnamed external authority with a generic superlative — 'independent testing confirms', 'third-party benchmarks show we lead', 'analysts agree', 'studies consistently show' — the authority is faceless and the claim unfalsifiable (avoid-ai-writing 'Vague third-party validation': name the source, the test, and the result or cut the claim).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:independent|third-party)\\s+(?:testing|benchmarks?|reviews?|studies?|evaluations?|validation|verification|audits?|research)\\s+(?:confirms?|shows?|demonstrates?|proves?|agrees?|validates?|indicates?)\\b|\\banalysts?\\s+agree\\b|\\b(?:studies|tests|benchmarks)\\s+consistently\\s+(?:show|confirm)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Vague third-party validation",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unnamed authority fails",
+        "input": "Independent testing confirms our platform leads the market, and analysts agree.",
+        "expect": "fail"
+      },
+      {
+        "label": "named checkable source passes",
+        "input": "On Stanford's HELM leaderboard (April 2026 run), we ranked first on reasoning latency.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Extends ZS-INTEGRITY-012 (research shows / experts say) to the manufactured-authority family. Specifically attributed, checkable validation stays unflagged — a named benchmark, a linked report, a dated audit. The tell is the vagueness, not the act of citing outside proof."
+  },
+  {
+    "id": "ZS-INTEGRITY-022",
+    "domain": "integrity",
+    "title": "No injected voice moves (never-inject list)",
+    "summary": "Putting voice back on purpose has a predictable failure mode: the model installs a stock personality the author never had. Manufactured stakes ('in a world where', 'now more than ever'), forced contrarianism, performed candor ('real talk', 'let's be honest'), and fake first person ('in my experience', 'I've seen this a hundred times') are out of bounds — the source had no I, so the rewrite has no I (avoid-ai-writing 'Never inject these').",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "in a world where",
+        "now more than ever",
+        "the stakes have never been higher",
+        "the conventional wisdom is backwards",
+        "real talk",
+        "let's be honest",
+        "in my experience",
+        "i've seen this a hundred times",
+        "i'll admit"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Never inject these — fake first person, manufactured stakes, forced contrarianism, performed candor, invented specifics",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "manufactured stakes fails",
+        "input": "In a world where data teams struggle daily, the stakes have never been higher for analytics tools.",
+        "expect": "fail"
+      },
+      {
+        "label": "grounded claim passes",
+        "input": "Data teams spend roughly a quarter of their week moving data between systems.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "These phrases are banned as ADDITIONS during a rewrite; the governing test is provenance — did the information come from the source? In detection, a hit is a warning, not proof: the phrase alone is legitimate in human prose with real author presence. 'Here's the thing' and 'I'll be honest' are enforced by the prose throat-clearing rule. 'Invented specifics' (a number, name, date, or tool the source never contained) is semantic and deferred to M3."
+  },
+  {
+    "id": "ZS-INTEGRITY-023",
+    "domain": "integrity",
+    "title": "No model-generated Unsplash image URLs",
+    "summary": "Direct-embed Unsplash URLs (images.unsplash.com/photo-<id>) generated by models frequently 404 — the model interpolates a plausible photo ID that does not resolve. Taste-design and stitch-design-taste ban broken Unsplash links and require picsum.photos or SVG avatars instead.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "https?://(?:images\\.unsplash\\.com/photo-\\d+|source\\.unsplash\\.com)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "taste-design",
+        "rule": "No broken Unsplash links — use picsum.photos or SVG avatars",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "stitch-design-taste",
+        "rule": "No broken Unsplash links — use picsum.photos or SVG avatars",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "photo-id embed fails",
+        "input": "<img src=\"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800\" alt=\"team\">",
+        "expect": "fail"
+      },
+      {
+        "label": "picsum placeholder passes",
+        "input": "<img src=\"https://picsum.photos/seed/team/600/400\" alt=\"team\">",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Targets the direct-embed photo-<id> pattern that models interpolate; a real, verified Unsplash page link (unsplash.com/photos/…) is not a violation."
+  },
+  {
+    "id": "ZS-INTEGRITY-024",
+    "domain": "integrity",
+    "title": "TTR floor 0.40 on 200+ word prose",
+    "summary": "Type-token ratio (distinct word types ÷ total tokens) on general English prose over ~200 words usually lands around 0.50–0.65; AI text trends flatter, sometimes drifting under 0.40 when the model locks onto a small vocabulary loop (avoid-ai-writing TTR: 'a TTR below 0.40 is worth a second look').",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "typeTokenRatio",
+      "params": {
+        "threshold": 0.4,
+        "minWords": 200,
+        "window": "document"
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "TTR / low vocabulary diversity (low-ttr)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "low-ttr category — Low vocabulary diversity",
+        "ref": "detector/CATEGORIES.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "locked vocabulary fails",
+        "input": "The platform helps teams move faster. The platform helps teams collaborate better. The platform helps teams deploy quicker. The platform helps teams monitor everything. The platform helps teams scale smoothly. The platform helps teams ship weekly. The platform helps teams learn faster. The platform helps teams build quicker. The platform helps teams grow steadily. The platform helps teams win more. The platform helps teams move faster. The platform helps teams collaborate better. The platform helps teams deploy quicker. The platform helps teams monitor everything. The platform helps teams scale smoothly. The platform helps teams ship weekly. The platform helps teams learn faster. The platform helps teams build quicker. The platform helps teams grow steadily. The platform helps teams win more. The platform helps teams move faster. The platform helps teams collaborate better. The platform helps teams deploy quicker. The platform helps teams monitor everything. The platform helps teams scale smoothly. The platform helps teams ship weekly. The platform helps teams learn faster. The platform helps teams build quicker. The platform helps teams grow steadily. The platform helps teams win more. The platform helps teams move faster. The platform helps teams collaborate better. The platform helps teams deploy quicker. The platform helps teams monitor everything. The platform helps teams scale smoothly. The platform helps teams ship weekly. The platform helps teams learn faster. The platform helps teams build quicker. The platform helps teams grow steadily. The platform helps teams win more.",
+        "expect": "fail"
+      },
+      {
+        "label": "varied prose passes",
+        "input": "The first deployment I ever shipped took eleven hours and a fire extinguisher. The monitoring dashboard showed the queue backing up in real time, and nobody knew why until someone spotted the connection-pool leak in the log. We rolled back, fixed the default, and redeployed in four minutes. That is the difference the current pipeline makes: a feedback loop measured in minutes instead of days. The design principles came from the incident log, not from a template. Every environment gets its own database, its own credentials, and its own alert thresholds, because shared infrastructure turned out to be shared blame. The weekly on-call rotation keeps ownership honest, and the postmortem habit means the same failure rarely appears twice. Metrics are named after the business outcome they protect, so a spike in checkout latency reads as lost revenue, not as a graph nobody understands. The runbook is short on purpose: if a step needs explaining, the explanation belongs in the code. Nobody memorizes the recovery procedure; they read it aloud during the incident, which is how the inaccuracies get found. Small teams ship this way without ceremony, and the tools we built are boring by design — no magic, just fast feedback and honest numbers.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Not proof by itself — narrow topics, technical reference material, and second-language writing legitimately compress vocabulary. The fix is rarely to thesaurus the text; it is to name specific things and replace a re-used abstract noun with the concrete instance behind it."
+  },
+  {
+    "id": "ZS-INTEGRITY-025",
+    "domain": "integrity",
+    "title": "No high-confidence AI verdicts under 200 words",
+    "summary": "Detection reliability scales with length: under 50 words is unreliable, 100–200 is low confidence, and high-confidence claims on texts under 200 words are never warranted (ai-writing-detection false-positive prevention: 'Never make high-confidence claims on texts under 200 words').",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "wordCount",
+      "params": {
+        "threshold": 200,
+        "direction": "atLeast",
+        "window": "text",
+        "purpose": "confidence gate for AI-detection verdicts"
+      }
+    },
+    "source": [
+      {
+        "repo": "ai-writing-detection",
+        "rule": "Minimum requirements — <50 unreliable, 50–100 very low, 100–200 low, 200–500 moderate, 500+ higher",
+        "ref": "reference/false-positive-prevention.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "short verdict fails",
+        "input": "This text is AI-generated, I am sure of it.",
+        "expect": "fail"
+      },
+      {
+        "label": "short prose no verdict passes",
+        "input": "The parser reads the file and returns a tree.",
+        "expect": "pass"
+      },
+      {
+        "label": "long verdict passes",
+        "input": "Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. Migration took four hours, not four weeks, and the audit trail shows exactly which tables were rewritten. This text is AI-generated.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A detection verdict (or a slop-scan claim) on a short text must be downgraded to 'inconclusive' — the gate protects ESL, neurodivergent, and technical writers from single-short-text false accusations (61.3% false-positive rate on non-native English speakers per Stanford HAI)."
+  },
+  {
+    "id": "ZS-INTEGRITY-026",
+    "domain": "integrity",
+    "title": "Detection verdicts need corroborating signals",
+    "summary": "Never flag on a single indicator: 'This says delve so it's AI' is the canonical false positive. Minimum 2–3 corroborating signals from different categories (vocabulary AND structure AND/OR statistical features) before any flag, and 4+ across categories plus no strong mitigating factors for a 'likely AI' assessment (ai-writing-detection false-positive prevention).",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "corroboratingSignals",
+      "params": {
+        "threshold": 2,
+        "window": "verdict"
+      }
+    },
+    "source": [
+      {
+        "repo": "ai-writing-detection",
+        "rule": "Signal requirements — no single indicator ever sufficient; 2–3 corroborating signals minimum",
+        "ref": "reference/false-positive-prevention.md"
+      },
+      {
+        "repo": "ai-writing-detection",
+        "rule": "Key principles — multiple signals required; single indicators prove nothing",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "single indicator verdict fails",
+        "input": "This text contains the word 'delve', so it is AI-generated.",
+        "expect": "fail"
+      },
+      {
+        "label": "multi-signal verdict passes",
+        "input": "The passage shows three independent signals — a leaked citation artifact, uniform sentence lengths, and a TTR under 0.40 — across 500+ words.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Single-indicator verdicts are the top false-positive source. Weight vocabulary signals lower for ESL contexts, apply domain-adjusted thresholds, and always check mitigating factors (personal anecdotes, idiomatic language, minor errors) before reporting."
+  },
+  {
+    "id": "ZS-INTEGRITY-027",
+    "domain": "integrity",
+    "title": "No literal parameter placeholders in citations",
+    "summary": "Citation templates with the parameter name repeated as its own value — url=URL, website=Website — are fill-in-the-blank stubs the model generated and the author never completed; ai-writing-detection rates the literal 'URL' placeholder 'Very High' confidence.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:url|website)\\s*=\\s*(?:URL|Website)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ai-writing-detection",
+        "rule": "URL placeholder patterns — literal 'URL' placeholder (|url=URL)",
+        "ref": "reference/citation-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "url=URL stub fails",
+        "input": "<ref>{{cite web |title=Canadian Screen Music Awards |url=URL |access-date=2025-XX-XX}}</ref>",
+        "expect": "fail"
+      },
+      {
+        "label": "real citation passes",
+        "input": "<ref>{{cite web |title=Canadian Screen Music Awards |url=https://csma.ca/awards |access-date=2026-03-01}}</ref>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Pairs with ZS-INTEGRITY-020 for the date-stub half of the same template pattern. Full citation verification — broken external links, DOI/ISBN checksum failures, declared-but-unused references — is semantic/network-dependent and deferred to M3."
+  }
+]

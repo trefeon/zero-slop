@@ -1,0 +1,890 @@
+[
+  {
+    "id": "ZS-COMMIT-001",
+    "domain": "commit",
+    "title": "Conventional commit type must be in the enum",
+    "summary": "The commit type must be one of build, chore, ci, docs, feat, fix, perf, refactor, revert, style, test; anything else (e.g. 'foo: some message') is not a conventional commit.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\\([^)]+\\))?!?:\\s.+",
+      "params": {
+        "caseSensitive": false,
+        "headerOnly": true,
+        "negate": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "type-enum (error, always)",
+        "ref": "@commitlint/config-conventional/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "non-enum type fails",
+        "input": "foo: some message",
+        "expect": "fail"
+      },
+      {
+        "label": "enum type passes",
+        "input": "fix: some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "type-enum restricts to the Angular-derived list while the specification allows any type; match on the header only, with optional scope and optional '!'."
+  },
+  {
+    "id": "ZS-COMMIT-002",
+    "domain": "commit",
+    "title": "Commit type must be lower-case",
+    "summary": "Types like 'FIX: some message' break conventional-commit parsing and tooling; the type must be lower-case.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[A-Z][A-Za-z]*(\\([^)]+\\))?!?:",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "type-case (error, always, lower-case)",
+        "ref": "@commitlint/config-conventional/src/index.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "upper-case type fails",
+        "input": "FIX: some message",
+        "expect": "fail"
+      },
+      {
+        "label": "lower-case type passes",
+        "input": "fix: some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also covers type-empty ('': some message fails); the type must be present and lower-case."
+  },
+  {
+    "id": "ZS-COMMIT-003",
+    "domain": "commit",
+    "title": "Subject is required",
+    "summary": "A commit like 'fix:' with no subject after the colon carries no information; the subject must be non-empty.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[a-z]+(\\([^)]+\\))?!?:\\s*$",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "subject-empty (error, never)",
+        "ref": "@commitlint/config-conventional/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "missing subject fails",
+        "input": "fix:",
+        "expect": "fail"
+      },
+      {
+        "label": "subject present passes",
+        "input": "fix: some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Subject length is bounded separately by header-max-length (ZS-COMMIT-005)."
+  },
+  {
+    "id": "ZS-COMMIT-004",
+    "domain": "commit",
+    "title": "Subject must not be sentence/start/pascal/upper-case",
+    "summary": "Subjects like 'Some Message' or 'SomeMessage' are a stylistic tell; use a plain lower-case subject ('some message').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[a-z]+(\\([^)]+\\))?!?:\\s+([A-Z][a-z]+\\s|\\S*[A-Z]\\S*)",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "subject-case (error, never, [sentence-case, start-case, pascal-case, upper-case])",
+        "ref": "@commitlint/config-conventional/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "sentence-case subject fails",
+        "input": "fix(scope): Some message",
+        "expect": "fail"
+      },
+      {
+        "label": "lower-case subject passes",
+        "input": "fix(scope): some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Lower-case subject is preferred; the case restriction applies to the first word of the subject."
+  },
+  {
+    "id": "ZS-COMMIT-005",
+    "domain": "commit",
+    "title": "Header max length (100)",
+    "summary": "Headers over 100 characters break readability in git tooling; the whole header (type + scope + subject) must stay within one line of 100 chars.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^.{101,}$",
+      "params": {
+        "maxLength": 100,
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "header-max-length (error, always, 100)",
+        "ref": "@commitlint/config-conventional/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "overlong header fails",
+        "input": "fix: some message that is way too long and breaks the line max-length by several characters while still being a realistic commit header",
+        "expect": "fail"
+      },
+      {
+        "label": "short header passes",
+        "input": "fix: some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also implies header-trim: no leading/trailing whitespace on the header line."
+  },
+  {
+    "id": "ZS-COMMIT-006",
+    "domain": "commit",
+    "title": "Blank line before body and footer",
+    "summary": "The body and footer must be separated from the header by a blank line, or git tooling cannot distinguish them from the subject.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[^\\n]+\\n(BREAKING CHANGE:|body)",
+      "params": {
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "body-leading-blank (warning, always)",
+        "ref": "@commitlint/config-conventional/README.md"
+      },
+      {
+        "repo": "commitlint",
+        "rule": "footer-leading-blank (warning, always)",
+        "ref": "@commitlint/config-conventional/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "body glued to header fails",
+        "input": "fix: some message\nbody",
+        "expect": "fail"
+      },
+      {
+        "label": "blank line present passes",
+        "input": "fix: some message\n\nbody",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier in commitlint (non-blocking by default) and mapped to warning here to stay faithful to the source."
+  },
+  {
+    "id": "ZS-COMMIT-007",
+    "domain": "commit",
+    "title": "Body/footer lines max 100 chars",
+    "summary": "Each body and footer line over 100 characters breaks readability in git tooling; URL-containing lines are exempt.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?![\\s\\S]*https?:\\/\\/)[^\\n]{101,}$",
+      "params": {
+        "maxLineLength": 100,
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "body-max-line-length (error, always, 100)",
+        "ref": "@commitlint/config-conventional/README.md"
+      },
+      {
+        "repo": "commitlint",
+        "rule": "footer-max-line-length (error, always, 100)",
+        "ref": "@commitlint/config-conventional/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "long body line fails",
+        "input": "fix: some message\n\nbody with multiple lines\nhas a message that is way too long and will break the line rule 'line-max-length' by several characters",
+        "expect": "fail"
+      },
+      {
+        "label": "short body lines pass",
+        "input": "fix: some message\n\nbody with multiple lines\nbut still no line is too long",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Lines containing URLs are exempt per commitlint."
+  },
+  {
+    "id": "ZS-COMMIT-008",
+    "domain": "commit",
+    "title": "All PR commits must be conventional",
+    "summary": "Every commit in a PR must match the Conventional Commits format (`type: description`, `type(scope): description`, `type(scope)!: description`), not just the PR title.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?!\\w+(?:\\([^)]+\\))?!?:\\s.+).+$",
+      "params": {
+        "perCommit": true
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "require-conventional-commits (default false)",
+        "ref": "action.yaml"
+      },
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "CONVENTIONAL_PATTERN /^\\w+(?:\\([^)]+\\))?!?:\\s.+/",
+        "ref": "src/checks/commit-checks.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "non-conventional commit fails",
+        "input": "update things",
+        "expect": "fail"
+      },
+      {
+        "label": "conventional commit passes",
+        "input": "feat(auth): add refresh token rotation",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The implementation accepts any `\\w+` type; PR titles with a trailing '(#123)' are tolerated."
+  },
+  {
+    "id": "ZS-COMMIT-009",
+    "domain": "commit",
+    "title": "Commit message max length (500)",
+    "summary": "Individual commit messages over 500 characters are flagged; overly long messages are a sign of unreviewed, unscoped changes.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^.{501,}$",
+      "params": {
+        "maxLength": 500,
+        "perCommit": true
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "max-commit-message-length (default 500)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "501-char commit fails",
+        "input": "fix: correct the timezone offset handling in the scheduler and rotate refresh tokens for every user session and backfill the migration for existing tokens and update the integration tests and add missing validation for daylight saving transitions and handle the edge case where the server clock drifts by more than five minutes and ensure the retry logic covers expired tokens and network timeouts and document the new behavior across the changelog and migration guide and update the api reference and fix the schema validation for the legacy token format",
+        "expect": "fail"
+      },
+      {
+        "label": "normal commit passes",
+        "input": "fix: some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "0 disables the check. Applies per individual commit message in the PR."
+  },
+  {
+    "id": "ZS-COMMIT-010",
+    "domain": "commit",
+    "title": "Commit author must match PR author",
+    "summary": "Every commit in the PR must be authored by the same GitHub user who opened the PR; mismatched authors indicate squashed or hijacked contributions.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "require-commit-author-match (default true)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "foreign-authored commit fails",
+        "input": "PR opened by userA; commit 'feat: x' authored by userB",
+        "expect": "fail"
+      },
+      {
+        "label": "same author passes",
+        "input": "PR opened by userA; all 3 commits authored by userA",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Inherited commits from the default branch are excluded before the check."
+  },
+  {
+    "id": "ZS-COMMIT-011",
+    "domain": "commit",
+    "title": "Blocked commit authors",
+    "summary": "Commits authored by blocked usernames (e.g. known spam/AI-slop accounts) fail the PR; the blocklist is repository-configured.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "blocked-commit-authors (default empty)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "blocked author commit fails",
+        "input": "PR contains commit authored by 'spam-bot-44' which is on the blocked list",
+        "expect": "fail"
+      },
+      {
+        "label": "clean authors pass",
+        "input": "PR contains commits only from allowed maintainers",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Comma-separated list of blocked GitHub usernames; empty disables."
+  },
+  {
+    "id": "ZS-COMMIT-012",
+    "domain": "commit",
+    "title": "PR description is required",
+    "summary": "A PR with an empty description gives reviewers no context; AI-slop PRs frequently ship with no description at all.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^\\s*$",
+      "params": {
+        "field": "prDescription"
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "require-description (default true)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty description fails",
+        "input": "",
+        "expect": "fail"
+      },
+      {
+        "label": "described PR passes",
+        "input": "Adds refresh-token rotation to the auth service.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The matcher targets the PR description field; a blank description fails."
+  },
+  {
+    "id": "ZS-COMMIT-013",
+    "domain": "commit",
+    "title": "PR description max length (2500)",
+    "summary": "Descriptions over 2500 characters are flagged; padded AI-generated descriptions are a slop signal.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^.{2501,}$",
+      "params": {
+        "maxLength": 2500,
+        "field": "prDescription"
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "max-description-length (default 2500)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "2501-char description fails",
+        "input": "This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. This change reworks the authentication module: refresh token rotation, session invalidation, multi-tenant isolation, retry and backoff for expired credentials, legacy token migration, schema validation, integration tests for every branch, and documentation across the changelog, migration guide, and API reference. ",
+        "expect": "fail"
+      },
+      {
+        "label": "concise description passes",
+        "input": "Fixes the redirect loop when the session expires.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "0 disables the check."
+  },
+  {
+    "id": "ZS-COMMIT-014",
+    "domain": "commit",
+    "title": "Emoji cap in PR title and description (2)",
+    "summary": "More than 2 emojis in the PR title and description combined is a slop signal; emoji decorate rather than communicate.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\\p{Extended_Pictographic}\\u200d]",
+      "params": {
+        "maxPerPR": 2,
+        "fields": [
+          "prTitle",
+          "prDescription"
+        ],
+        "flags": "u"
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "max-emoji-count (default 2)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "3 emojis fails",
+        "input": "feat: add export 🚀✨🔥 (title + description combined)",
+        "expect": "fail"
+      },
+      {
+        "label": "one emoji passes",
+        "input": "fix: correct the timezone offset 🕐",
+        "expect": "pass"
+      }
+    ],
+    "notes": "0 disables the check. Counts emojis across PR title and description."
+  },
+  {
+    "id": "ZS-COMMIT-015",
+    "domain": "commit",
+    "title": "Linked issue required in PR description",
+    "summary": "PRs must reference at least one issue; unreferenced PRs cannot be traced to the work they fix.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(fixes?|closes?|resolves?|refs?|re)\\s+#\\d+",
+      "params": {
+        "caseSensitive": false,
+        "field": "prDescription",
+        "negate": true
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "require-linked-issue (default false)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "no issue reference fails",
+        "input": "Adds export button to the dashboard.",
+        "expect": "fail"
+      },
+      {
+        "label": "issue reference passes",
+        "input": "Closes #123: adds export button to the dashboard.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Requires the PR to reference at least one issue in the description; default is opt-in."
+  },
+  {
+    "id": "ZS-COMMIT-016",
+    "domain": "commit",
+    "title": "PR template required",
+    "summary": "When enabled, the PR description must follow the repository's PR template structure (strict sections with all checkboxes present and checked); template-less AI-slop PRs are caught.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "require-pr-template (default false)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "template sections missing fails",
+        "input": "PR description lacks the repo template's 'What changed?' and 'Testing' sections",
+        "expect": "fail"
+      },
+      {
+        "label": "template followed passes",
+        "input": "PR description contains all template sections with checkboxes checked",
+        "expect": "pass"
+      }
+    ],
+    "notes": "strict-pr-template-sections must be present and checked; optional-pr-template-sections may be removed; extra sections beyond max-additional-pr-template-sections fail."
+  },
+  {
+    "id": "ZS-COMMIT-017",
+    "domain": "commit",
+    "title": "Doc-only spam paths blocked (README/LICENSE/SECURITY/CODE_OF_CONDUCT)",
+    "summary": "PRs that only touch README.md, SECURITY.md, LICENSE, or CODE_OF_CONDUCT.md are the classic slop-spam pattern (fake contributions with no real code); those paths are blocked by default.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "README.md",
+        "SECURITY.md",
+        "LICENSE",
+        "CODE_OF_CONDUCT.md"
+      ],
+      "params": {
+        "caseSensitive": true,
+        "field": "changedFiles",
+        "blocked": true
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "blocked-paths (default README.md, SECURITY.md, LICENSE, CODE_OF_CONDUCT.md)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "README-only PR fails",
+        "input": "PR changes: README.md (adds 'Sponsor' link)",
+        "expect": "fail"
+      },
+      {
+        "label": "code PR passes",
+        "input": "PR changes: src/auth/refresh.ts + its test",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Blocked paths are repository-configurable; entries ending in '/' match folders. Genuine doc updates should accompany code or be routed through the maintainers' process."
+  },
+  {
+    "id": "ZS-COMMIT-018",
+    "domain": "commit",
+    "title": "Changed files must end with a newline",
+    "summary": "Every changed file must end with a newline character; missing final newlines are a mechanical hygiene failure and a sign of un-reviewed generation.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<!\\n)$",
+      "params": {
+        "field": "changedFiles",
+        "perFile": true,
+        "multiLine": false
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "require-final-newline (default true)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "file without final newline fails",
+        "input": "const x = 1; // no trailing newline at EOF",
+        "expect": "fail"
+      },
+      {
+        "label": "file with final newline passes",
+        "input": "const x = 1;\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Applies to all changed files in the PR; classic POSIX text-file convention."
+  },
+  {
+    "id": "ZS-COMMIT-019",
+    "domain": "commit",
+    "title": "Max changed files in a PR (50)",
+    "summary": "PRs touching more than 50 files are unreviewable and typical of sweep-style AI slop PRs; split the work.",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "changedFileCount",
+      "params": {
+        "maxPerPR": 50
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "max-changed-files (default 50)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "51 changed files fails",
+        "input": "PR changes 51 files (additions+deletions across the repo)",
+        "expect": "fail"
+      },
+      {
+        "label": "12 changed files passes",
+        "input": "PR changes 12 files",
+        "expect": "pass"
+      }
+    ],
+    "notes": "0 disables the check. Complementary max-changed-lines (10000) guards mega-diffs in few files."
+  },
+  {
+    "id": "ZS-COMMIT-020",
+    "domain": "commit",
+    "title": "One logical change per commit",
+    "summary": "Do not bundle multiple unrelated file changes into a single commit; each commit carries one descriptive message so history stays clean, revertable, and cherry-pickable.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "claude-code-best-practice",
+        "rule": "Git Commit Rules: create separate commits per file with descriptive messages",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bundled commit fails",
+        "input": "commit 'update stuff' touches README.md, src/service.ts, and a skill file together",
+        "expect": "fail"
+      },
+      {
+        "label": "focused commit passes",
+        "input": "commit 'docs: explain subagent frontmatter' touches only the subagent doc file",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Consistency/hygiene lock: separate commits make git history cleaner, easier to review, revert, or cherry-pick individual changes."
+  },
+  {
+    "id": "ZS-COMMIT-021",
+    "domain": "commit",
+    "title": "Vague or informational commit subject",
+    "summary": "Subjects like 'wip', 'minor fix', 'fix bug', 'phase 1', 'stuff', or 'misc changes' carry no information a future reader (or git bisect) can act on; a subject must say what actually changed.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "wip",
+        "minor fix",
+        "small fix",
+        "fix bug",
+        "fix build",
+        "add patch",
+        "phase 1",
+        "phase 2",
+        "phase 3",
+        "moving code",
+        "add convenience",
+        "stuff",
+        "misc",
+        "cleanup",
+        "tweak",
+        "fixes",
+        "changes",
+        "various",
+        "etc",
+        "misc fixes",
+        "small changes",
+        "minor changes",
+        "update stuff"
+      ],
+      "params": {
+        "caseSensitive": false,
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-review-and-quality",
+        "rule": "Change Descriptions: anti-patterns ('Fix bug,' 'Fix build,' 'Add patch,' 'Moving code from A to B,' 'Phase 1,' 'Add convenience functions.')",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vague subject fails",
+        "input": "wip\nfix: minor fix\nchore: misc changes",
+        "expect": "fail"
+      },
+      {
+        "label": "informative subject passes",
+        "input": "fix: guard against null order total\nfeat(api): add refresh-token rotation",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Triage: conventional types like `refactor:` are fine; the term match targets the subject's filler wording, not the type prefix. A subject that names the changed thing passes even when short."
+  },
+  {
+    "id": "ZS-COMMIT-022",
+    "domain": "commit",
+    "title": "Gerund (non-imperative) commit subject",
+    "summary": "A subject that starts with a gerund ('fix: updating the rpc client') describes what happened instead of commanding the change; the first line must be short, imperative, and standalone ('fix: update the rpc client').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[a-z]+(?:\\([^)]+\\))?!?:\\s+(?:adding|updating|fixing|removing|changing|refactoring|implementing|improving|cleaning|moving|renaming|deleting|creating|making|using|working|handling|adjusting|simplifying|replacing|reverting|upgrading|extracting|introducing)\\b",
+      "params": {
+        "caseSensitive": false,
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-review-and-quality",
+        "rule": "First line: Short, imperative, standalone. 'Delete the FizzBuzz RPC' not 'Deleting the FizzBuzz RPC.'",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "gerund subject fails",
+        "input": "fix: updating the rpc client\ndocs: adding migration notes",
+        "expect": "fail"
+      },
+      {
+        "label": "imperative subject passes",
+        "input": "fix: update the rpc client\ndocs: add migration notes",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only gerunds in the common AI/LLM subject set are matched to avoid adjective false positives ('pending', 'existing', 'streaming')."
+  },
+  {
+    "id": "ZS-COMMIT-023",
+    "domain": "commit",
+    "title": "Change size cap (1000 added lines)",
+    "summary": "A PR adding ~1000 lines is too large to review in one sitting; split it into focused changes (~100 lines is good, ~300 acceptable for a single logical change).",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "addedLineCount",
+      "params": {
+        "maxPerPR": 1000
+      }
+    },
+    "source": [
+      {
+        "repo": "code-review-and-quality",
+        "rule": "Change Sizing: ~100 lines good, ~300 acceptable, ~1000 too large — split it",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1200 added lines fails",
+        "input": "PR diff adds 1200 lines across 8 files",
+        "expect": "fail"
+      },
+      {
+        "label": "260 added lines passes",
+        "input": "PR diff adds 260 lines across 3 files",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Complementary to ZS-COMMIT-019 (changed-file count) and ZS-CODE-045 (single-file size). File deletions and mechanical refactors may exceed the cap with justification."
+  },
+  {
+    "id": "ZS-COMMIT-024",
+    "domain": "commit",
+    "title": "Bulk dependency bump without named packages",
+    "summary": "A subject like 'bump deps' merges many upgrades nobody can review; one dependency per change with the package named ('bump lodash from 4.17.20 to 4.17.21') keeps the cause and the revert clean.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:bump|update|upgrade)\\s+(?:all\\s+)?(?:deps|dependencies|packages)\\b",
+      "params": {
+        "caseSensitive": false,
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-review-and-quality",
+        "rule": "One dependency per change; bulk 'bump deps' merges are the riskiest upgrades",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bulk bump fails",
+        "input": "chore: bump deps\nchore: update dependencies",
+        "expect": "fail"
+      },
+      {
+        "label": "named single bump passes",
+        "input": "chore(deps): bump lodash from 4.17.20 to 4.17.21",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A bump that names the exact package and versions is a reviewable single change; a blanket 'bump deps' hides which package caused a breakage."
+  }
+]

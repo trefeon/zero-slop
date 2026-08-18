@@ -1,0 +1,912 @@
+[
+  {
+    "id": "ZS-CHAT-001",
+    "domain": "chat",
+    "title": "No negation-contrast phrasing",
+    "summary": "talk-normal's hardest constraint: prefer direct positive claims; do not use 'It's not X, it's Y' or Chinese 不是X而是Y in any position or order. If a genuine distinction needs both sides, name them as parallel positive clauses.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:it'?s not[^.!?]{0,80}(?:it'?s|but|rather))|(?:不是[^。！？]{0,50}(?:而是|，而))",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "No negation-based contrastive phrasing (any position/order)",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "reject-then-correct fails",
+        "input": "It's not about intelligence, it's about taste.",
+        "expect": "fail"
+      },
+      {
+        "label": "positive claim passes",
+        "input": "Taste is what matters.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Covers chained ('not A, not B, but C') and symmetric ('fits X, not Y') forms. Narrow exception: necessary/sufficient conditions in logic, math, or formal proofs."
+  },
+  {
+    "id": "ZS-CHAT-002",
+    "domain": "chat",
+    "title": "Kill all filler phrases",
+    "summary": "talk-normal's filler kill list: 'I'd be happy to', 'Great question', 'It's worth noting', 'Certainly', 'Of course', 'Let me break this down', plus Chinese equivalents (首先我们需要, 值得注意的是, 综上所述, 让我们一起来看看). No-AI-Slop rule 11 bans the same family ('It's important to note').",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "i'd be happy to",
+        "great question",
+        "it's worth noting",
+        "certainly",
+        "of course",
+        "let me break this down",
+        "首先我们需要",
+        "值得注意的是",
+        "综上所述",
+        "让我们一起来看看",
+        "it's important to note"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Kill all filler (list)",
+        "ref": "prompt.md"
+      },
+      {
+        "repo": "realrossmanngroup/no_ai_slop_writing_rules",
+        "rule": "Rule 11: No filler phrases (\"It's important to note\")",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "filler opener fails",
+        "input": "Great question! I'd be happy to walk you through it.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct answer passes",
+        "input": "Yes — run pnpm dev and open localhost:5173.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-003",
+    "domain": "chat",
+    "title": "No summary-stamp closings",
+    "summary": "Any closing phrase that announces a one-line summary before delivering it is banned by talk-normal: 'In conclusion', 'In summary', 'Hope this helps', 'Feel free to ask', 一句话总结/总结一下/简而言之/总而言之, and structural variants '一句话X：' / 'X一下：'. If you have a final punchy claim, state it as the last sentence without a label.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "in conclusion",
+        "in summary",
+        "hope this helps",
+        "feel free to ask",
+        "一句话总结",
+        "一句话概括",
+        "一句话落地",
+        "一句话讲",
+        "一句话收尾",
+        "总结一下",
+        "简而言之",
+        "概括来说",
+        "总而言之",
+        "in a nutshell"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "No summary-stamp closings",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stamped summary fails",
+        "input": "In conclusion, caching is the single biggest win for this workload.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain final claim passes",
+        "input": "Caching is the single biggest win for this workload.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-004",
+    "domain": "chat",
+    "title": "Never restate the question",
+    "summary": "talk-normal: never restate the question. Repeating the user's question back adds zero information and pads the answer.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Never restate the question",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "question echo fails",
+        "input": "You asked how to enable gzip in Express — yes, compression middleware does that.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct answer passes",
+        "input": "Yes — use the compression middleware: app.use(compression()).",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-005",
+    "domain": "chat",
+    "title": "Lead with the answer",
+    "summary": "talk-normal: lead with the answer, then add context only if it genuinely helps. Context-first answers bury the conclusion.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Lead with the answer, then add context only if it genuinely helps",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "context-first fails",
+        "input": "Well, the CDN caches responses at the edge, and your origin is in us-east-1, and the TTL you set is 60s, so... yes, it's cached.",
+        "expect": "fail"
+      },
+      {
+        "label": "answer-first passes",
+        "input": "Yes, it's cached. Your CDN TTL is 60s and the origin is us-east-1.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-006",
+    "domain": "chat",
+    "title": "Explanations: 3-5 sentences max",
+    "summary": "talk-normal: explanations are 3-5 sentences max for conceptual questions — cover the essence, not every subtopic; if the user wants more, they will ask.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "sentenceCount",
+      "params": {
+        "threshold": 5,
+        "window": "per explanation",
+        "min": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Explanations: 3-5 sentences max for conceptual questions",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "nine-sentence essay fails",
+        "input": "A closure is a function bundled with its lexical environment. When you define a function, it captures the variables in scope. Those variables stay alive after the outer function returns. This is what makes the pattern work. It also explains why loops need let instead of var. Each iteration creates a fresh binding. Without that, all callbacks share one variable. The same idea powers module patterns. That is why closures matter in JavaScript.",
+        "expect": "fail"
+      },
+      {
+        "label": "three-sentence answer passes",
+        "input": "A closure is a function bundled with its lexical environment, so captured variables stay alive after the outer function returns. That is why loop callbacks need let — each iteration gets a fresh binding. Nothing else is going on under the hood.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Applies to conceptual explanations; code answers give the code plus a short usage example. Match depth to complexity — simple question, short answer."
+  },
+  {
+    "id": "ZS-CHAT-007",
+    "domain": "chat",
+    "title": "Yes/no questions: answer first, one sentence of reasoning",
+    "summary": "talk-normal: for yes/no questions answer first with one sentence of reasoning — not a preamble.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Yes/no questions: answer first, one sentence of reasoning",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "burying the answer fails",
+        "input": "There are several factors at play here, and depending on your deployment, the answer can vary... Ultimately, yes.",
+        "expect": "fail"
+      },
+      {
+        "label": "yes-first passes",
+        "input": "Yes. The gateway handles retries, so your client doesn't need to.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-008",
+    "domain": "chat",
+    "title": "No conditional follow-up offers",
+    "summary": "talk-normal: do not end with hypothetical follow-up offers or conditional next-step menus ('If you want, I can also...', '如果你愿意，我还可以...', 'If you tell me...', '我下一步可以...'). Answer what was asked, give the recommendation, stop; if a real next action is needed, take it or name it directly.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:if you (?:want|'d like|tell me|say|need|have)|if you'd like)[^.!?]{0,60}\\b(?:can|could|will|would|might)\\b|如果你愿意|如果你告诉我|如果你说|我下一步可以",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "No hypothetical follow-up offers or conditional next-step menus",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "conditional menu fails",
+        "input": "If you want, I can also add the retry logic for you.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct next step passes",
+        "input": "Next: add a retry with exponential backoff in the gateway config.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-009",
+    "domain": "chat",
+    "title": "No plain-language restatement",
+    "summary": "talk-normal: do not restate the same point 'in plain language' or 'in human terms' after already explaining it — no '翻成人话', 'in other words', '简单来说' rewording blocks. Say it once, clearly.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "in other words",
+        "in plain language",
+        "in plain terms",
+        "in human terms",
+        "简单来说",
+        "翻成人话",
+        "说人话",
+        "to put it simply"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Do not restate the same point in plain language after explaining it",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "reword block fails",
+        "input": "The transport is connectionless, i.e. UDP does not establish a session. In other words, packets just go out and hope they arrive.",
+        "expect": "fail"
+      },
+      {
+        "label": "single clear pass",
+        "input": "UDP is connectionless: packets go out and may not arrive, with no session or acknowledgement.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-010",
+    "domain": "chat",
+    "title": "Bullets only for parallel or sequential content",
+    "summary": "talk-normal: use structure (numbered steps, bullets) only when the content has natural sequential or parallel structure; do not use bullets as decoration.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Use structure only when content has natural sequential or parallel structure",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "decorative bullets fail",
+        "input": "Here's what I think: - Your setup is fine. - Yes, that works. - Nothing to change.",
+        "expect": "fail"
+      },
+      {
+        "label": "parallel list passes",
+        "input": "Three ways to scope the cache: 1. per-route TTL 2. shared CDN layer 3. client-side stale-while-revalidate.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-011",
+    "domain": "chat",
+    "title": "Comparisons: give a recommendation, not a balanced essay",
+    "summary": "talk-normal: comparisons get your recommendation with brief reasoning, not a balanced essay weighing both sides forever.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Comparisons: give your recommendation with brief reasoning, not a balanced essay",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "balanced essay fails",
+        "input": "React has a larger ecosystem while Vue is simpler; both are viable and it really depends on your team...",
+        "expect": "fail"
+      },
+      {
+        "label": "recommendation passes",
+        "input": "Use Vue here — your team is small and the app is mostly forms; React's ecosystem advantage doesn't pay off at this scale.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-012",
+    "domain": "chat",
+    "title": "Pros/cons: max 3-4 points per side",
+    "summary": "talk-normal: when listing pros/cons or comparing options, cap at 3-4 points per side and pick the most important ones.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "listItemsPerSide",
+      "params": {
+        "threshold": 4,
+        "window": "per side (pros or cons)"
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "When listing pros/cons or comparing options: max 3-4 points per side",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "eight pros fails",
+        "input": "Pros: 1 faster 2 cheaper 3 simpler 4 lighter 5 better docs 6 nicer API 7 fewer bugs 8 smaller bundle",
+        "expect": "fail"
+      },
+      {
+        "label": "three pros passes",
+        "input": "Pros: faster, cheaper, simpler. Cons: younger ecosystem.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-013",
+    "domain": "chat",
+    "title": "No code-preface chatter ('Certainly! Here is...')",
+    "summary": "talk-normal: code answers give the code plus a usage example if non-trivial — no 'Certainly! Here is...' preamble.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "certainly!?\\s+here (?:is|are)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Code: give the code + usage example; no 'Certainly! Here is...'",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "preface fails",
+        "input": "Certainly! Here is a debounce implementation:",
+        "expect": "fail"
+      },
+      {
+        "label": "code-first passes",
+        "input": "function debounce(fn, ms) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; }",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-014",
+    "domain": "chat",
+    "title": "Match depth to complexity",
+    "summary": "talk-normal: match depth to complexity — a simple question gets a short answer; a complex question gets a structured but still tight one.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Match depth to complexity; simple question = short answer",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "over-answering fails",
+        "input": "Q: What does === do? A: (400-word essay on abstract equality, coercion, and the history of ECMAScript spec changes)",
+        "expect": "fail"
+      },
+      {
+        "label": "right-sized passes",
+        "input": "Q: What does === do? A: Strict equality: no type coercion, so 1 === \"1\" is false.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-015",
+    "domain": "chat",
+    "title": "End with a concrete recommendation when relevant",
+    "summary": "talk-normal: end with a concrete recommendation or next step when relevant — stated directly, without a summary label or a conditional wrapper.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "End with a concrete recommendation or next step when relevant",
+        "ref": "prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dangling conclusion fails",
+        "input": "So there are tradeoffs either way.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete next step passes",
+        "input": "Use the compression middleware and set a 60s CDN TTL.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-016",
+    "domain": "chat",
+    "title": "No sycophantic praise",
+    "summary": "Avoid-ai-writing's, human-writing's, and humanize-writing's sycophantic tone: 'You're absolutely right!', 'Excellent question!', 'That's an excellent point' — people-pleasing flattery before the substance. Respond to the content, not the asker.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "you're absolutely right",
+        "you are absolutely right",
+        "that's a really insightful",
+        "that is a really insightful",
+        "that's an excellent point",
+        "that is an excellent point",
+        "excellent question",
+        "excellent point",
+        "couldn't agree more",
+        "could not agree more",
+        "you've hit the nail on the head",
+        "you have hit the nail on the head",
+        "you're spot on",
+        "you are spot on"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Sycophantic tone",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "Sycophantic tone",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "humanize-writing",
+        "rule": "Sycophantic tone",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "you're absolutely right fails",
+        "input": "You're absolutely right, and that's an excellent point.",
+        "expect": "fail"
+      },
+      {
+        "label": "substance passes",
+        "input": "The economic factors you mentioned are relevant here.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'Great question!' is already covered by ZS-CHAT-002; this rule covers the agreement and praise forms."
+  },
+  {
+    "id": "ZS-CHAT-017",
+    "domain": "chat",
+    "title": "No knowledge-cutoff disclaimers",
+    "summary": "Avoid-ai-writing's cutoff disclaimers and unslop's knowledge-cutoff tells: 'based on my training data', 'I don't have access to real-time', 'my training data only goes up to' — LLM self-identification that real humans never write; state uncertainty concretely instead.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "based on my training data",
+        "based on available information",
+        "i don't have access to real-time data",
+        "i don't have access to real-time information",
+        "i do not have access to real-time data",
+        "i do not have access to real-time information",
+        "my training data only goes up to",
+        "my training data goes up to",
+        "as of my last training",
+        "my knowledge cutoff",
+        "i cannot provide legal advice",
+        "i cannot provide medical advice",
+        "i cannot provide financial advice"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Cutoff disclaimers",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Knowledge-Cutoff Disclaimers",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "humanize-writing",
+        "rule": "Knowledge-cutoff disclaimers",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "training-data hedge fails",
+        "input": "Based on my training data, I can't confirm that.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete limitation passes",
+        "input": "I can't confirm that from the docs we have.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-PROSE-037 already covers 'as of my last update' / 'as of my knowledge cutoff' (prose); this rule adds the remaining disclaimer family for chat output."
+  },
+  {
+    "id": "ZS-CHAT-018",
+    "domain": "chat",
+    "title": "No reasoning-chain artifacts",
+    "summary": "Avoid-ai-writing's and unslop's reasoning-chain leaks: 'Let me think step by step', 'Here's my thought process', 'Working through this logically' — internal scaffolding that should stay internal; state the conclusion first.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "let me think step by step",
+        "breaking this down",
+        "to approach this systematically",
+        "here's my thought process",
+        "here is my thought process",
+        "working through this logically",
+        "first let's consider",
+        "first let us consider",
+        "let me reason through this",
+        "walking through my logic"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Reasoning chain artifacts",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Reasoning-Chain Artifacts",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "step by step fails",
+        "input": "Let me think step by step about this.",
+        "expect": "fail"
+      },
+      {
+        "label": "answer first passes",
+        "input": "The answer depends on the access pattern.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'Let me break this down' is already covered by ZS-CHAT-002."
+  },
+  {
+    "id": "ZS-CHAT-019",
+    "domain": "chat",
+    "title": "No acknowledgment loops",
+    "summary": "Avoid-ai-writing's and unslop's acknowledgment loops: 'You're asking about...', 'To answer your question...', 'The question of whether' — restating the prompt before answering it. Just answer.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "you're asking about",
+        "you are asking about",
+        "to answer your question",
+        "let me address your question",
+        "the question of whether"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Acknowledgment loops",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Acknowledgment Loops",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "to answer your question fails",
+        "input": "To answer your question, yes.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct answer passes",
+        "input": "Yes, with two caveats.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Machine-checkable subset of ZS-CHAT-004 (never restate the question, semantic)."
+  },
+  {
+    "id": "ZS-CHAT-020",
+    "domain": "chat",
+    "title": "No chatbot deference and solicitation",
+    "summary": "Unslop's communication artifacts: 'I am open to any suggestions', 'I would appreciate any feedback', 'I am willing to address', 'I assure you' — simulated receptiveness that performs helpfulness instead of delivering substance.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "i am open to any suggestions",
+        "i am open to feedback",
+        "i would appreciate any feedback",
+        "i am willing to address",
+        "i am happy to address",
+        "i assure you",
+        "i am here to help",
+        "i'm here to help",
+        "with the utmost care",
+        "please don't hesitate to ask",
+        "please do not hesitate to ask"
+      ]
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Communication Artifacts (chatbot deference)",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "open to feedback fails",
+        "input": "I am open to feedback on this draft.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain review request passes",
+        "input": "The draft is ready for review.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-021",
+    "domain": "chat",
+    "title": "No chatbot compliance enthusiasm",
+    "summary": "Unslop's communication artifacts and avoid-ai-writing's chatbot markers: 'Absolutely!', 'Sure thing!', 'Happy to help', 'No problem at all' — reflexive enthusiasm that pads the response; the exclamation-mark forms are the chat-specific tell.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "absolutely!",
+        "definitely!",
+        "sure thing!",
+        "of course!",
+        "happy to help",
+        "i'd be happy to help",
+        "i would be happy to help",
+        "no problem at all"
+      ]
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Communication Artifacts",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Chatbot artifacts",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "Chatbot correspondence",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "absolutely bang fails",
+        "input": "Absolutely! I can do that.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain compliance passes",
+        "input": "I can do that.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Bare 'certainly' / 'of course' already covered by ZS-CHAT-002; the exclamation and helper forms are this rule's scope."
+  },
+  {
+    "id": "ZS-CHAT-022",
+    "domain": "chat",
+    "title": "No tutorial-mode announcements",
+    "summary": "Stop-slop's and unslop's meta-commentary: 'Let me walk you through', 'Let me guide you through', 'I'll walk you through' — the teacher-student framing that assumes the reader needs hand-holding; just present the material.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "let me walk you through",
+        "let me guide you through",
+        "i'll walk you through",
+        "i will walk you through",
+        "let me take you through",
+        "let me explain",
+        "let me clarify"
+      ]
+    },
+    "source": [
+      {
+        "repo": "stop-slop",
+        "rule": "Meta-Commentary / Let me walk you through",
+        "ref": "references/phrases.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Meta-Commentary / Let me explain",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "walk you through fails",
+        "input": "Let me walk you through the setup.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct instruction passes",
+        "input": "Run npm install first.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CHAT-023",
+    "domain": "chat",
+    "title": "No 'here is a...' overview stamps",
+    "summary": "Human-writing's chatbot artifacts: 'Here is an overview of...', 'Here's a breakdown of...', 'Here's a summary of...' — the pasted-chat template that announces an answer instead of giving it.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "here's a breakdown",
+        "here is a breakdown",
+        "here's an overview",
+        "here is an overview",
+        "here's a summary",
+        "here is a summary",
+        "here's a quick rundown",
+        "here is a quick rundown"
+      ]
+    },
+    "source": [
+      {
+        "repo": "human-writing",
+        "rule": "Chatbot correspondence / here is a...",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "here is overview fails",
+        "input": "Here's a breakdown of the three options.",
+        "expect": "fail"
+      },
+      {
+        "label": "content-first passes",
+        "input": "Three options: A, B, and C.",
+        "expect": "pass"
+      }
+    ]
+  }
+]

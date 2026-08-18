@@ -1,0 +1,41 @@
+name: Publish
+
+# Publish @zero-slop/core and @zero-slop/cli to npm on version tags.
+# Requires: npm trusted publishing (OIDC) or a NPM_TOKEN secret.
+# Docs: https://docs.npmjs.com/generating-provenance-statements
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm --filter @zero-slop/core build && pnpm --filter @zero-slop/cli build
+
+      - name: Publish core
+        run: pnpm --filter @zero-slop/core publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Publish CLI
+        run: pnpm --filter @zero-slop/cli publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

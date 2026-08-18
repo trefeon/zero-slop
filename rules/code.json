@@ -1,0 +1,1776 @@
+[
+  {
+    "id": "ZS-CODE-001",
+    "domain": "code",
+    "title": "Log-and-continue catch blocks",
+    "summary": "A catch clause that only logs and then continues suppresses the failure from callers; logging is not control flow. AI-generated async glue code frequently records an error and keeps going.",
+    "tier": "error",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "try { $$$BODY } catch ($ERR) { logger.warn($ERR); } // small try body, catch body is log-only, no rethrow/return",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "defensive.error-swallowing",
+        "ref": "src/rules/error-swallowing/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "log and continue fails",
+        "input": "try {\n  await pushUser(id);\n} catch (error) {\n  logger.warn(error);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "log and rethrow passes",
+        "input": "try {\n  await pushUser(id);\n} catch (error) {\n  logger.error({ error, id });\n  throw error;\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Filesystem-existence probes and boundary-heavy catches are downweighted. Prefer rethrow, an explicit result type, or a proven-safe local fallback."
+  },
+  {
+    "id": "ZS-CODE-002",
+    "domain": "code",
+    "title": "Catch replaces failure with default or generic error",
+    "summary": "A catch that returns a default literal or throws a generic replacement error flattens the original failure and makes downstream diagnosis harder.",
+    "tier": "error",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "try { return $X; } catch { return {}; } // also: catch { throw new Error('generic'); }",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "defensive.error-obscuring",
+        "ref": "src/rules/error-obscuring/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "default-return catch fails",
+        "input": "export function readConfig(raw: string) {\n  try {\n    return JSON.parse(raw);\n  } catch {\n    return {};\n  }\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "rethrow with context passes",
+        "input": "export function readConfig(raw: string) {\n  try {\n    return JSON.parse(raw);\n  } catch (error) {\n    throw new Error(\"Invalid config JSON\", { cause: error });\n  }\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Generic rethrows score lower than silent default-return patterns but are still flagged. Preserve failure meaning: rethrow, wrap with cause, or return a deliberate result type."
+  },
+  {
+    "id": "ZS-CODE-003",
+    "domain": "code",
+    "title": "Empty catch blocks",
+    "summary": "An empty catch body silently suppresses failures. It should rethrow, return a deliberate typed fallback with a comment, or validate earlier so the exceptional path is intentional.",
+    "tier": "error",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "try { $$$BODY } catch { } // empty catch body, no comment, small try block",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "defensive.empty-catch",
+        "ref": "src/rules/empty-catch/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty catch fails",
+        "input": "export function parseConfig(raw: string) {\n  try {\n    return JSON.parse(raw);\n  } catch {}\n  return null;\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "documented fallback passes",
+        "input": "try {\n  stored = localStorage.getItem(\"theme\");\n} catch {\n  // fall through to the default theme\n}\nreturn stored ?? \"light\";",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Local documented fallbacks with an explanatory comment are skipped; filesystem probes are downweighted."
+  },
+  {
+    "id": "ZS-CODE-004",
+    "domain": "code",
+    "title": "Promise .catch() default fallbacks",
+    "summary": "Promise-chain catch handlers that turn rejection into an empty body or a cheap sentinel (null, false, 0, \"\", [], {}) hide why the async operation failed; common in generated async glue code.",
+    "tier": "error",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "$promise.catch(() => null) | .catch(() => {}) | .catch((error) => { console.error(...); return false; })",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "defensive.promise-default-fallbacks",
+        "ref": "src/rules/promise-default-fallbacks/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "sentinel fallback fails",
+        "input": "export async function loadConfig() {\n  return fetchConfig().catch(() => null);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "propagate rejection passes",
+        "input": "export async function loadConfig() {\n  return fetchConfig().catch((error) => { throw error; });\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Domain-shaped fallbacks like `{ ok: false, reason }` are acceptable. Intentional fallbacks should be explicit, not null/false/empty-object sentinels."
+  },
+  {
+    "id": "ZS-CODE-005",
+    "domain": "code",
+    "title": "Stringified unknown errors",
+    "summary": "Flattening caught unknown values into generic strings via `error.message` or `String(error)` collapses richer failure objects; stringify only at the final UI or logging boundary.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "$err instanceof Error ? $err.message : String($err) // assigned to message/error fields or returned",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "defensive.stringified-unknown-errors",
+        "ref": "src/rules/stringified-unknown-errors/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "error flattening fails",
+        "input": "catch (error) {\n  return { success: false, error: error instanceof Error ? error.message : String(error) };\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "structured error passes",
+        "input": "catch (error) {\n  logger.error({ error });\n  return { success: false, error };\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: deriving a display string at the edge of the system is fine; erasing the richer error earlier in the flow is not."
+  },
+  {
+    "id": "ZS-CODE-006",
+    "domain": "code",
+    "title": "Generic status envelopes",
+    "summary": "Shallow boolean-and-payload wrappers like `{ ok: true, rows }` or `{ success: false, error }` describe transport status instead of domain meaning when they become the default return shape.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "{ success: $bool, error: $x } | { ok: $bool, data: $x } | { ok: $bool, rows: $x } | { success: $bool, message: $x }",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "api.generic-status-envelopes",
+        "ref": "src/rules/generic-status-envelopes/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "boolean envelope fails",
+        "input": "return { success: true, message: \"Repository created successfully\" };",
+        "expect": "fail"
+      },
+      {
+        "label": "domain object passes",
+        "input": "return { kind: \"created\", repository };",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A small `{ ok, data }` wrapper is sometimes fine; it becomes slop when it is the default shape for every operation. Prefer typed result variants for real success/failure branching."
+  },
+  {
+    "id": "ZS-CODE-007",
+    "domain": "code",
+    "title": "Generic record casts on parsed payloads",
+    "summary": "Casting unknown structured input to `Record<string, unknown>` (often straight from JSON.parse) turns uncertain external data into a roaming property bag instead of validating it into a domain type.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "const $bag = $value as Record<string, unknown>; // $bag in {parsed, payload, body, data, result, config}; extra weight from JSON.parse",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "types.generic-record-casts",
+        "ref": "src/rules/generic-record-casts/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generic record cast fails",
+        "input": "const parsed = JSON.parse(raw) as Record<string, unknown>;",
+        "expect": "fail"
+      },
+      {
+        "label": "schema-validated parse passes",
+        "input": "const input: unknown = JSON.parse(raw);\nconst parsed = UserConfigSchema.parse(input);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Treat input as unknown until proven: parse into a real domain type with a schema/decoder, or narrow with a type guard at the boundary."
+  },
+  {
+    "id": "ZS-CODE-008",
+    "domain": "code",
+    "title": "Type-check suppression (`as any`, `unknown as T`, `@ts-ignore`)",
+    "summary": "Escaping the type system with `as any`, `as unknown as T`, `@ts-ignore` or `@ts-nocheck` suppresses the checker instead of modelling the data; slop-scan's type-escape family treats unvalidated generic casts as a strong tell.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "@ts-ignore|@ts-nocheck|@ts-expect-error|\\bas any\\b|as unknown as",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "types.generic-record-casts (type-escape family)",
+        "ref": "src/rules/generic-record-casts/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "ts-ignore suppression fails",
+        "input": "// @ts-ignore -- trust me\nconst user = payload as any;",
+        "expect": "fail"
+      },
+      {
+        "label": "typed guard passes",
+        "input": "const user: User = parseUser(payload);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Canonicalization: slop-scan ships the `as Record<string, unknown>` detector (ZS-CODE-007); the textual `as any`/`@ts-ignore` variants are the same type-escape tell. `@ts-expect-error` with a real comment may be acceptable in migrations — allowlist the repo's documented cases."
+  },
+  {
+    "id": "ZS-CODE-009",
+    "domain": "code",
+    "title": "Placeholder comments gesturing at future work",
+    "summary": "Filler comments like 'add more validation if needed' or 'handle more cases here later' vaguely promise completeness instead of explaining current behavior or naming exact missing work.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "add more validation|handle more cases|extend this logic|customize this behavior|implement [\\w ]+ here|add more [\\w ]+ if needed",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "comments.placeholder-comments",
+        "ref": "src/rules/placeholder-comments/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vague future gesture fails",
+        "input": "// Add more validation if needed\nexport function normalizeName(input: string) {\n  return input.trim();\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete TODO passes",
+        "input": "// TODO(ben): validate locale-specific edge cases before enabling CSV import.\nexport function normalizeName(input: string) {\n  return input.trim();\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Conservative on purpose: routine TODOs and descriptive maintenance notes should not create noise. Replace placeholders with a concrete TODO that names the missing case, or delete the comment."
+  },
+  {
+    "id": "ZS-CODE-010",
+    "domain": "code",
+    "title": "Pass-through wrappers",
+    "summary": "Trivial functions whose body is a direct forward to another call add indirection without behavior; a wrapper should earn its existence with validation, normalization, retries, or a stable compatibility layer.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "export function $NAME($$$ARGS) { return $OTHER($$$ARGS); } // body is a single direct call; no alias/backward-compat comment",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "structure.pass-through-wrappers",
+        "ref": "src/rules/pass-through-wrappers/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rename-only wrapper fails",
+        "input": "export function getUser(id: string) {\n  return loadUser(id);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "compat alias passes",
+        "input": "// backward compatibility alias\nexport function fetchUserRecord(id: string) {\n  return getUser(id);\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Boundary wrappers around fetch/axios/prisma/redis-style APIs are exempt; alias and backward-compatibility comments are exempt."
+  },
+  {
+    "id": "ZS-CODE-011",
+    "domain": "code",
+    "title": "Async ceremony (redundant await / async pass-through)",
+    "summary": "`return await foo()` around a direct call and trivial async wrappers with no internal await make the call graph larger without making behavior clearer.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "async function $NAME($$$ARGS) { return await $OTHER($$$ARGS); } // redundant await or async passthrough with no internal await",
+      "params": {
+        "language": "typescript"
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "defensive.async-noise",
+        "ref": "src/rules/async-noise/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "redundant return await fails",
+        "input": "async function loadUser(id: string) {\n  return await fetchUser(id);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "real async work passes",
+        "input": "async function loadUser(id: string) {\n  const user = await fetchUser(id);\n  return normalizeUser(user);\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Remove async entirely when just forwarding a promise; remove redundant await when immediately returning the awaited value. Edge-facing wrappers (fetch, axios, prisma, redis) are exempt."
+  },
+  {
+    "id": "ZS-CODE-012",
+    "domain": "code",
+    "title": "Duplicate function signatures across source files",
+    "summary": "Near-identical helper bodies copy-pasted across 3+ files (normalizing local names) fork future fixes; extraction into one reusable helper prevents silent copy-paste drift.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "duplicateFunctionSignatureClusters",
+      "params": {
+        "minFiles": 3,
+        "excludePassThrough": true,
+        "excludeTests": true
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "structure.duplicate-function-signatures",
+        "ref": "src/rules/duplicate-function-signatures/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "same helper shape in 3 files fails",
+        "input": "// src/users/normalize.ts\nexport function normalizeUser(input: ApiUser) {\n  const name = input.name?.trim() ?? \"\";\n  const email = input.email?.toLowerCase() ?? \"\";\n  return { name, email, active: Boolean(input.active) };\n}\n// src/teams + src/accounts repeat the same body with renamed locals",
+        "expect": "fail"
+      },
+      {
+        "label": "shared helper passes",
+        "input": "function normalizePersonLike(input: { name?: string; email?: string; active?: boolean }) {\n  return {\n    name: input.name?.trim() ?? \"\",\n    email: input.email?.toLowerCase() ?? \"\",\n    active: Boolean(input.active),\n  };\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Clusters count only at 3+ files; tiny functions and pass-through wrappers are excluded; duplication is acceptable when domain concepts are truly diverging."
+  },
+  {
+    "id": "ZS-CODE-013",
+    "domain": "code",
+    "title": "Duplicate test mock/setup shapes",
+    "summary": "The same mock wiring repeated across 3+ test files bloats every suite; shared scenario builders keep test intent focused on what changes per case.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "duplicateTestMockSetupClusters",
+      "params": {
+        "minFiles": 3
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "tests.duplicate-mock-setup",
+        "ref": "src/rules/duplicate-mock-setup/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "same mock setup in 3 test files fails",
+        "input": "// users.test.ts / teams.test.ts / accounts.test.ts each repeat:\nvi.mocked(api.fetchUser).mockResolvedValue({ id: 1, name: \"Ada\" });",
+        "expect": "fail"
+      },
+      {
+        "label": "shared mock helper passes",
+        "input": "function mockUserFetch(overrides: Partial<User> = {}) {\n  vi.mocked(api.fetchUser).mockResolvedValue({ id: 1, name: \"Ada\", ...overrides });\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Generic declarations (vi.mock, vi.spyOn) and cleanup-only statements (mockReset, mockClear) do not contribute."
+  },
+  {
+    "id": "ZS-CODE-014",
+    "domain": "code",
+    "title": "Over-fragmented directories of tiny files",
+    "summary": "Directories with 6+ files where 60%+ are <=25 lines and heavy on wrappers/barrels look modular on disk while forcing readers to jump between many tiny files to understand one behavior.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "tinyFileRatioPerDirectory",
+      "params": {
+        "minFiles": 6,
+        "tinyFileMaxLines": 25,
+        "tinyRatioThreshold": 0.6
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "structure.over-fragmentation",
+        "ref": "src/rules/over-fragmentation/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "wrapper-heavy directory fails",
+        "input": "src/payments/ = index.ts, create-payment.ts, update-payment.ts, delete-payment.ts, get-payment.ts, payment-types.ts (6+ files, mostly <=25-line wrappers/barrels)",
+        "expect": "fail"
+      },
+      {
+        "label": "cohesive modules pass",
+        "input": "src/payments/ = service.ts, types.ts, gateways/ (small but substantial implementation files)",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Asset buckets (icons/, assets/) and test-heavy directories are suppressed; the goal is module boundaries that follow behavior, not fewer files at all costs."
+  },
+  {
+    "id": "ZS-CODE-015",
+    "domain": "code",
+    "title": "Pure re-export barrel files",
+    "summary": "Files whose every top-level statement is a re-export (2+) add another place to chase symbols through; barrels should improve discoverability without hiding module boundaries.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "barrelDensityPerFile",
+      "params": {
+        "minReExports": 2,
+        "pureBarrelOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "structure.barrel-density",
+        "ref": "src/rules/barrel-density/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "pure barrel fails",
+        "input": "export * from \"./client\";\nexport * from \"./types\";\nexport { createStore } from \"./store\";",
+        "expect": "fail"
+      },
+      {
+        "label": "module with one re-export passes",
+        "input": "import { createStoreImpl } from \"./store\";\nexport function createStore() {\n  return createStoreImpl();\n}\nexport { type Store } from \"./types\";",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Keep barrels small and intentional; avoid barrel-to-barrel indirection layers."
+  },
+  {
+    "id": "ZS-CODE-016",
+    "domain": "code",
+    "title": "Directory fan-out hotspots",
+    "summary": "Directories whose file count is unusually large relative to siblings (ceil(median*2.25), or repo average*2.5, min 6 files) become dumping grounds for loosely related one-file-per-concept fragments.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "fileCountVsSiblingBaseline",
+      "params": {
+        "siblingMultiplier": 2.25,
+        "globalMultiplier": 2.5,
+        "minFiles": 6
+      }
+    },
+    "source": [
+      {
+        "repo": "slop-scan",
+        "rule": "structure.directory-fanout-hotspot",
+        "ref": "src/rules/directory-fanout-hotspot/README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "16-file dir next to 3-4 file siblings fails",
+        "input": "src/api (3 files), src/auth (4 files), src/billing (3 files), src/generated-actions (16 files: action-01.ts .. action-16.ts)",
+        "expect": "fail"
+      },
+      {
+        "label": "asset bucket passes",
+        "input": "src/icons/ with add.tsx, remove.tsx, search.tsx, ... (asset-like directory, expected wide shape)",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Asset-like and test-matrix directories are suppressed; prefer deeper subdomain boundaries or merging ultra-thin files once a folder becomes a grab bag."
+  },
+  {
+    "id": "ZS-CODE-017",
+    "domain": "code",
+    "title": "Reimplementing an existing helper",
+    "summary": "A new private function whose body duplicates something the repo already owns (utils/helpers/sibling module) forks every future fix; agents write from the prompt outward, not the repo inward.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 1: Reimplementing an existing helper",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "re-implemented validator fails",
+        "input": "# repo already has utils.validate_email\ndef _is_valid_email(s):\n    pattern = r\"^[\\w.+-]+@[\\w-]+\\.[\\w.]+\"\n    if re.match(pattern, s):\n        return True\n    return False",
+        "expect": "fail"
+      },
+      {
+        "label": "reused helper passes",
+        "input": "from .utils import validate_email\n\nif validate_email(s):\n    ...",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Build a mental index of the repo's existing helpers before scanning or implementing (grep utils/helpers/common/validators). Severity 1 if the duplication is measured (hot path with benchmark, vendored code)."
+  },
+  {
+    "id": "ZS-CODE-018",
+    "domain": "code",
+    "title": "`_v2` / `_new` / `_impl` clone functions",
+    "summary": "Keeping `foo` and `foo_v2` both alive with copy-pasted bodies creates two sources of truth; the agent should merge (a parameter or the newer body) and keep one name.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(^|[._])(v2|_new|_impl|_improved|_enhanced)(?=$|[^a-z0-9_])|^(enhanced|improved|new)_",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 2: _v2 / _new / _impl clones",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "foo_v2 alongside foo fails",
+        "input": "def save_user(data): ...\ndef save_user_v2(data): ...  # same body with one branch changed",
+        "expect": "fail"
+      },
+      {
+        "label": "documented migration passes",
+        "input": "# migrating to v2 API, old path removed in 3.0\ndef save_user(data): ...",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Check git history / CHANGELOG before merging: `_v2` during a documented migration is exempt."
+  },
+  {
+    "id": "ZS-CODE-019",
+    "domain": "code",
+    "title": "Reinventing the standard library / installed deps",
+    "summary": "Hand-rolled groupby, deep-copy-via-JSON, manual URL parsing, or bespoke date math duplicate behavior that stdlib or an already-installed dependency already provides correctly.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 3: Reinventing the standard library / installed deps",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hand-rolled deep copy fails",
+        "input": "def deep_copy(obj):\n    return json.loads(json.dumps(obj))",
+        "expect": "fail"
+      },
+      {
+        "label": "stdlib copy passes",
+        "input": "import copy\ncopied = copy.deepcopy(obj)",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Verify the equivalent exists in stdlib or an installed dependency before flagging."
+  },
+  {
+    "id": "ZS-CODE-020",
+    "domain": "code",
+    "title": "Single-implementation abstractions",
+    "summary": "An ABC/interface/Protocol, registry, or factory with exactly one concrete class or registration adds flexibility for a future that was never requested; inline it until a second implementation arrives.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 4: Single-implementation abstraction",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "one-backend registry fails",
+        "input": "class AbstractReportBackend(ABC): ...\nclass TextReportBackend(AbstractReportBackend): ...\n_BACKENDS = {\"text\": TextReportBackend}  # only one registration, one call site",
+        "expect": "fail"
+      },
+      {
+        "label": "plain function passes",
+        "input": "_BACKENDS = {\"text\": lambda rows: \"\\n\".join(map(str, rows))}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Registries/ABCs in actual plugin systems are exempt when entry points load implementations dynamically. Purpose-gate: the abstraction can return when the second implementation arrives."
+  },
+  {
+    "id": "ZS-CODE-021",
+    "domain": "code",
+    "title": "Dead 'for future use' code",
+    "summary": "Helpers with no call site, parameters no caller passes, and 'provided for extensibility' exports cost review, grep hits, and false confidence; delete them — git remembers.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 5: Dead 'for future use' code",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unused export fails",
+        "input": "def export_*_to_dict(...): ...  # 'provided for extensibility', zero call sites in repo, scripts, or templates",
+        "expect": "fail"
+      },
+      {
+        "label": "referenced helper passes",
+        "input": "def render_report(rows): ...  # called from main.py and report CLI",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Grep the whole repo — including scripts and templates — before deleting; docstrings promising 'flexible, extensible, seamlessly' are signals."
+  },
+  {
+    "id": "ZS-CODE-022",
+    "domain": "code",
+    "title": "Config/API sprawl for a local case",
+    "summary": "A new global flag, config field, CLI arg, or public parameter consulted from exactly one place multiplies the state space forever; make it local or a parameter of the one function that cares.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 7: Config/API sprawl for a local case",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "one-consumer global knob fails",
+        "input": "settings.enable_custom_mapping = True  # read by exactly one function, no other callers or docs",
+        "expect": "fail"
+      },
+      {
+        "label": "local parameter passes",
+        "input": "def transform(rows, mapping):\n    ...  # mapping is a parameter of the function that cares",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Applies to module-level constants that only one function reads; keep local needs local."
+  },
+  {
+    "id": "ZS-CODE-023",
+    "domain": "code",
+    "title": "Broad exception swallowing (`except Exception: pass`)",
+    "summary": "A broad/bare except that returns a default, logs nothing, or passes converts crashes (visible, debuggable) into silent corruption; narrow to the exceptions that can actually occur, or let it raise.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "except\\s+(Exception|BaseException)?\\s*:\\s*(pass|return None|return \\{\\})?\\s*$",
+      "params": {
+        "caseSensitive": false,
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 8: Broad exception swallowing",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare except pass fails",
+        "input": "try:\n    rows = fetch_rows()\nexcept Exception:\n    pass",
+        "expect": "fail"
+      },
+      {
+        "label": "narrow logged except passes",
+        "input": "try:\n    rows = fetch_rows()\nexcept ConnectionError as exc:\n    logger.error(\"db down\", exc_info=exc)\n    raise",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Defensive code at trust boundaries (parsing user input, network payloads) may legitimately catch broadly but must still log, not pass. Error swallowing that logs and is commented is a deliberate resilience decision."
+  },
+  {
+    "id": "ZS-CODE-024",
+    "domain": "code",
+    "title": "Unjustified try-import fallbacks",
+    "summary": "`try: import fast_x except ImportError: import x` with no benchmark, no extras entry, and no test of the fallback path leaves two code paths where one is untested.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "try: import $fast except ImportError: import $slow // optional-dependency dance with no extras metadata / benchmark / fallback test",
+      "params": {
+        "language": "python"
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 9: Unjustified try-import fallback",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unbenchmarked fallback fails",
+        "input": "try:\n    import orjson\n    json = orjson\nexcept ImportError:\n    import json",
+        "expect": "fail"
+      },
+      {
+        "label": "packaged extras passes",
+        "input": "try:\n    import orjson as json\nexcept ImportError:\n    import json  # listed in pyproject [project.optional-dependencies] fast = [\"orjson\"], fallback tested",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The tell is unjustified, not fallback: documented platform differences, packaged extras, and version gates during a migration are fine. If the dependency matters, declare it; if not, drop it."
+  },
+  {
+    "id": "ZS-CODE-025",
+    "domain": "code",
+    "title": "Attribute-probing chains",
+    "summary": "`hasattr`/`getattr`/`isinstance` ladders that accept 'dict or object or maybe None', copy-pasted at every field access, compensate for not knowing the real type instead of writing to it.",
+    "tier": "warning",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "hasattr($x, \"$field\") and getattr($x, \"$field\", None) and isinstance(getattr($x, \"$field\"), $T) // probing ladder repeated per field",
+      "params": {
+        "language": "python"
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 10: Attribute-probing chains",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dict-or-object ladder fails",
+        "input": "def title_of(item):\n    if hasattr(item, \"title\"):\n        return getattr(item, \"title\", None)\n    return item.get(\"title\") if isinstance(item, dict) else None",
+        "expect": "fail"
+      },
+      {
+        "label": "typed access passes",
+        "input": "def title_of(item: Article) -> str:\n    return item.title",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Probing is legitimate exactly where data is untrusted (plugin-supplied objects) but should not be copy-pasted per field; find the real type and write to it."
+  },
+  {
+    "id": "ZS-CODE-026",
+    "domain": "code",
+    "title": "Paranoid re-validation",
+    "summary": "Re-checking invariants the type system or an upstream gate already guarantees (e.g. `if x is not None` on a value just constructed) signals the agent never traced the actual contract.",
+    "tier": "info",
+    "kind": "ast",
+    "matcher": {
+      "type": "ast",
+      "pattern": "if $x is not None: ... // where $x was just constructed/assigned non-null in the same scope",
+      "params": {
+        "language": "python"
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 11: Paranoid re-validation",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "redundant None check fails",
+        "input": "x = build_value()\nif x is not None:\n    return x.value",
+        "expect": "fail"
+      },
+      {
+        "label": "boundary validation passes",
+        "input": "def handle(payload: dict | None):\n    if payload is None:\n        return []\n    return payload[\"rows\"]",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Re-validation is correct at real trust boundaries, not wherever the type was left unexamined."
+  },
+  {
+    "id": "ZS-CODE-027",
+    "domain": "code",
+    "title": "Narrating comments",
+    "summary": "A comment that restates the next line, addresses the reviewer ('This change ensures correctness'), or resolves its own TODO in the same PR adds noise; a comment earns its line only by stating what the code cannot say.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "# (This change|This commit|This code|We now|we now) (ensures|guarantees|handles|fixes)|# Join the rows with newlines|# [Ll]oop through (each|all)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 12: Narrating comments",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "restating comment fails",
+        "input": "# Join the rows with newlines\nreturn \"\\n\".join(map(str, rows))",
+        "expect": "fail"
+      },
+      {
+        "label": "constraint comment passes",
+        "input": "# Keep in sync with the upstream API contract.\nreturn normalizeName(input.trim())",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The regex catches reviewer-addressed and template phrasing; pure restatement of the adjacent statement needs AST/semantic judgment. One narrating comment is nothing — a cluster with other slop is a confession."
+  },
+  {
+    "id": "ZS-CODE-028",
+    "domain": "code",
+    "title": "Boilerplate / empty documentation",
+    "summary": "Docstrings that restate the function name ('def get_user(): \"\"\"Get the user.\"\"\"') or pad with marketing adjectives (robust, comprehensive, seamless) document nothing the code cannot say.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\"\"\"(Get|Set|Creates?|Handles?|Provides?) the [\\w ]+\\.?\"\"\"|robust|comprehensive|seamless|seamlessly",
+      "params": {
+        "caseSensitive": false,
+        "docstringOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 13: Boilerplate docstrings",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "name-restating docstring fails",
+        "input": "def get_user():\n    \"\"\"Get the user.\"\"\"\n    return users.find(id)",
+        "expect": "fail"
+      },
+      {
+        "label": "contract docstring passes",
+        "input": "def get_user(user_id: int) -> User:\n    \"\"\"Return the user; raises NotFound when the id is stale.\"\"\"\n    return users.find(user_id)",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Name-restatement requires context (AST); marketing-adjective detection is textual. Docs should record constraints and non-obvious behavior, not the function name."
+  },
+  {
+    "id": "ZS-CODE-029",
+    "domain": "code",
+    "title": "Dead imports, unused variables, decorative banners",
+    "summary": "Imports left from deleted attempts, `# ===== SECTION =====` banners, leftover print/debug logging, and emoji in identifiers are implementation debris that a healthy codebase does not carry.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^#\\s*={3,}|^={3,}.*(SECTION|START|END)|console\\.log\\(\\s*[\"'][Dd]ebug|print\\(\\s*[\"'][Dd]ebug",
+      "params": {
+        "caseSensitive": false,
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 14: Dead imports, unused variables, decorative banners",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "banner and debug print fail",
+        "input": "# ====== SECTION: AUTH ======\nprint(\"debug: loading auth\")\nimport auth",
+        "expect": "fail"
+      },
+      {
+        "label": "clean module passes",
+        "input": "import auth\n\ndef login(): ...",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Unused-import and unused-variable detection needs AST/language tooling; the regex covers banners and leftover debug statements. Remove emoji from identifiers and log lines."
+  },
+  {
+    "id": "ZS-CODE-030",
+    "domain": "code",
+    "title": "Tests that assert the mock",
+    "summary": "A test where every collaborator is mocked and the assertion only checks the mock was called can never fail for a real reason; it verifies scaffolding, not behavior.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 15: Tests that assert the mock (report-only by default)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "mock-call assertion fails",
+        "input": "def test_send():\n    mailer = Mock()\n    send(mailer, \"hi\")\n    mailer.send.assert_called_once_with(\"hi\")  # asserts the mock, not any real behavior",
+        "expect": "fail"
+      },
+      {
+        "label": "behavior assertion passes",
+        "input": "def test_send():\n    result = send(SmtpClient(), \"hi\")\n    assert result.delivered is True  # observable outcome",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Report-only by default in code-humanizer; fix only with maintainer approval. Test slop inflates coverage without protecting behavior."
+  },
+  {
+    "id": "ZS-CODE-031",
+    "domain": "code",
+    "title": "Trivial or duplicated assertions",
+    "summary": "Asserting literals, or re-testing the same case under three names to inflate coverage, adds maintenance cost without testing new behavior.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 16: Trivial or duplicated assertions",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "duplicate coverage padding fails",
+        "input": "def test_add_1(): assert add(1, 1) == 2\ndef test_add_2(): assert add(1, 1) == 2\ndef test_add_3(): assert add(1, 1) == 2",
+        "expect": "fail"
+      },
+      {
+        "label": "distinct cases pass",
+        "input": "def test_add_identity(): assert add(0, 5) == 5\ndef test_add_negative(): assert add(-1, 1) == 0\ndef test_add_overflow(): assert add(2**31, 1) == 2**31 + 1",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Same case under multiple names to hit coverage targets is padding; vary inputs, boundaries, and failure cases instead."
+  },
+  {
+    "id": "ZS-CODE-032",
+    "domain": "code",
+    "title": "Added-comment cap per change",
+    "summary": "PRs that add more than 10 comments across changed files are flagged: dense commenting is a common AI-slop signal, and comments should earn their lines.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "addedCommentCount",
+      "params": {
+        "maxPerChange": 10
+      }
+    },
+    "source": [
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "max-added-comments (default 10)",
+        "ref": "action.yaml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "12 added comments fails",
+        "input": "PR diff adds 12 comment lines across 3 changed files",
+        "expect": "fail"
+      },
+      {
+        "label": "5 added comments passes",
+        "input": "PR diff adds 5 comment lines across 3 changed files",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Set 0 to disable. Counts added comments in all changed files; combines with narrating-comment and placeholder-comment content checks."
+  },
+  {
+    "id": "ZS-CODE-033",
+    "domain": "code",
+    "title": "Dead interactive elements",
+    "summary": "Every interactive element must have real behavior or be removed: a button or link that does nothing is a defect, not decoration; placeholders need a clear TODO in code and a visible label.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-26 — Interactive Elements",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "C-2 — Functional Completeness",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "no-op button fails",
+        "input": "<button onClick={() => {}}>Upgrade</button>  // no handler body, no TODO + visible label",
+        "expect": "fail"
+      },
+      {
+        "label": "real handler passes",
+        "input": "<button onClick={() => startTrial()}>Upgrade</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hard Gate rule. Acceptable placeholder only with a clear `// TODO` comment in code AND a visible 'Coming soon' label."
+  },
+  {
+    "id": "ZS-CODE-034",
+    "domain": "code",
+    "title": "No file/CSS patching via scripts",
+    "summary": "Implementing or altering features by running an external script that rewrites source or CSS with string replacement is broken by design; build features directly in source.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-33 — No File/CSS Patching via Scripts",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "css patch script fails",
+        "input": "# patch.py: rewrites app.css with string replacement to inject styles\ncss = open(\"app.css\").read().replace(\".btn\", \".btn.custom\")",
+        "expect": "fail"
+      },
+      {
+        "label": "source-level styling passes",
+        "input": ".btn.custom { border-radius: 8px; }  // written directly in the stylesheet",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hard Gate rule. A feature added by a patch script (e.g. Python editing .css files) must be rewritten in source."
+  },
+  {
+    "id": "ZS-CODE-035",
+    "domain": "code",
+    "title": "Verify before you deliver",
+    "summary": "A design or feature that has never been run or built is not finished: build it, check the console for errors, exercise every interactive element, and check themes and breakpoints before delivery.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-35 — Verify Before You Deliver",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "delivered without running fails",
+        "input": "// PR shipped without running the app, no console check, interactive elements unexercised",
+        "expect": "fail"
+      },
+      {
+        "label": "verified delivery passes",
+        "input": "// app built and run, console clean, every interactive element exercised, all themes/breakpoints checked",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hard Gate rule. Includes 'no unverified builds': never deliver code whose build/runtime behavior is unobserved."
+  },
+  {
+    "id": "ZS-CODE-036",
+    "domain": "code",
+    "title": "Real content or honest placeholder in code/docs",
+    "summary": "Every claim, feature, or value embedded in code and its documentation must come from real information or be an explicitly labeled placeholder — never fabricate realistic-looking content, stats, or assertions.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-38 — Real Content or Honest Placeholder",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-36 — No Fabricated Claims",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented stat fails",
+        "input": "const uptime = \"99.99% SLA\";  // no real SLO exists anywhere in the project",
+        "expect": "fail"
+      },
+      {
+        "label": "labeled placeholder passes",
+        "input": "const uptime = \"[REAL DATA]\";  // explicitly labeled placeholder until the SLO is measured",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hard Gate rule. Placeholders are written as what they are (`[REAL DATA]`, 'Coming soon'), never disguised as final; an empty section is better than a fabricated one. Unverified performance/security/compliance claims in code comments are covered here."
+  },
+  {
+    "id": "ZS-CODE-037",
+    "domain": "code",
+    "title": "Wildcard imports",
+    "summary": "`from module import *` (or `import *`) pulls every public name into the local namespace: dependencies become invisible, silent name collisions shadow real symbols, and static analysis and IDE navigation are defeated.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^\\s*(?:from\\s+[\\w.]+\\s+import\\s+\\*|import\\s+\\*)\\s*$",
+      "params": {
+        "caseSensitive": false,
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality",
+        "rule": "Avoid wildcard imports (`from module import *`)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "wildcard import fails",
+        "input": "from os import *\nfrom mypackage.helpers import *  # what shadows what?",
+        "expect": "fail"
+      },
+      {
+        "label": "explicit names pass",
+        "input": "from os.path import join\nfrom mypackage.helpers import normalize, slugify",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: a curated `__init__.py` re-export guarded by an explicit `__all__` is the accepted exception; prefer explicit re-exports even there."
+  },
+  {
+    "id": "ZS-CODE-038",
+    "domain": "code",
+    "title": "Bare except with no exception type",
+    "summary": "A bare `except:` (or `except BaseException:`) swallows everything, including KeyboardInterrupt and SystemExit, making the program hard to interrupt and hiding real bugs; catch the narrowest type you can actually handle.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^\\s*except\\s*:",
+      "params": {
+        "caseSensitive": false,
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality",
+        "rule": "Avoid bare / overly broad `except`",
+        "ref": "references/quality-antipatterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare except fails",
+        "input": "def divide(a, b):\n    try:\n        return a / b\n    except:              # bare: hides ZeroDivisionError, TypeError, and Ctrl-C\n        return None",
+        "expect": "fail"
+      },
+      {
+        "label": "narrow handler passes",
+        "input": "def divide(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        log.warning(\"division by zero\")\n        return None",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Complements ZS-CODE-023 (broad except that swallows with pass/None). A generic `except Exception` is tolerable only as a last-position handler that logs or re-raises; a bare `except:` is never."
+  },
+  {
+    "id": "ZS-CODE-039",
+    "domain": "code",
+    "title": "Singleton comparison with `==` / identity check on values",
+    "summary": "PEP 8 requires comparing None/True/False with `is`/`is not`, not `==`/`!=`: identity comparison is unambiguous and immune to objects overriding `__eq__`. Conversely, `is \"literal\"` tests object identity on values and silently breaks once interning stops.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:==|!=)\\s*(?:None|True|False)\\b|\\bis\\s+[\"']",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality",
+        "rule": "Compare singletons with `is`, not `==` (PEP 8)",
+        "ref": "references/quality-antipatterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "equality on singleton fails",
+        "input": "if result == None:\n    return\ndef is_admin(name):\n    return name is \"admin\"   # identity check on a str value",
+        "expect": "fail"
+      },
+      {
+        "label": "identity on singletons passes",
+        "input": "if result is None:\n    return\nif active:\n    run()",
+        "expect": "pass"
+      }
+    ],
+    "notes": "`is`/`is not` is correct only for singletons; value comparison must use `==`/`!=`. Both directions of the confusion are the tell."
+  },
+  {
+    "id": "ZS-CODE-040",
+    "domain": "code",
+    "title": "Magic numbers in business logic",
+    "summary": "Unexplained numeric literals in comparisons and arithmetic force readers to reverse-engineer intent and make changes error-prone; non-obvious values belong in named, documented constants.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:==|!=|>=|<=|>|<)\\s*(?:[2-9]|\\d{2,}|\\d+\\.\\d+)\\b|[-+*/]\\s*\\d+\\.\\d+\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality",
+        "rule": "Magic numbers — name your constants",
+        "ref": "references/quality-antipatterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare literals in logic fail",
+        "input": "if retries > 5:\n    raise RetryExhausted\ntime.sleep(attempt * 0.2)",
+        "expect": "fail"
+      },
+      {
+        "label": "named constants pass",
+        "input": "if retries > MAX_RETRIES:\n    raise RetryExhausted\ntime.sleep(attempt * BASE_BACKOFF_SECONDS)\nindex += 1",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Heuristic: 0, 1, and -1 in conventional roles (indexing, increments, sentinels) are excluded; decimals in arithmetic are flagged. Triage non-obvious literals that should be constants."
+  },
+  {
+    "id": "ZS-CODE-041",
+    "domain": "code",
+    "title": "Inline lint suppressions without justification",
+    "summary": "`eslint-disable`, `# noqa`, and `# pragma: no cover` inserted to silence a linter instead of fixing the code are a classic AI-slop gaming move; each suppression should carry the reason it is genuinely required.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:\\/\\/\\s*eslint-disable(?:-next-line|-line)?\\b|#\\s*noqa(?::\\s*\\w+(?:,\\s*\\w+)*)?\\b|#\\s*pragma:\\s*no cover\\b)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "plankton-code-quality",
+        "rule": "Config Protection (Defense Against Rule-Gaming)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "blanket suppression fails",
+        "input": "// eslint-disable-next-line no-unused-vars\nconst legacy = payload;\nx = foo()  # noqa: E501,W503",
+        "expect": "fail"
+      },
+      {
+        "label": "no suppressions passes",
+        "input": "const legacy = payload;\nx = foo()",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Triage: a suppression with an explicit reason (`// eslint-disable-next-line ... -- legacy types; see #88`) is acceptable; bare suppressions with no explanation are the tell."
+  },
+  {
+    "id": "ZS-CODE-042",
+    "domain": "code",
+    "title": "Linter rule disabled in config",
+    "summary": "Turning a lint rule `\"off\"`/`\"ignore\"` in .eslintrc, biome.json, .ruff.toml, or pyproject.toml to make violations pass instead of fixing code is rule-gaming; config changes that suppress violations need explicit review before merge.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bno[-A-Z][\\w-]*[\"']?\\s*[:=]\\s*[\"'](?:off|ignore)[\"']|\\b(?:E\\d{3}|F\\d{3}|PLR\\d{4}|S\\d{3}|C\\d{3}|W\\d{3})\\s*[\"']?\\s*[:=]\\s*[\"'](?:off|ignore)[\"']",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "plankton-code-quality",
+        "rule": "Config Tamper Guard",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rule set to off fails",
+        "input": "// .eslintrc.json\n{\n  \"rules\": { \"no-unused-vars\": \"off\" }\n}\n// .ruff.toml\n\"E501\" = \"ignore\"",
+        "expect": "fail"
+      },
+      {
+        "label": "rule kept on passes",
+        "input": "// .eslintrc.json\n{\n  \"rules\": { \"no-unused-vars\": \"error\" }\n}\n\"E501\" = \"error\"",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Matches rule ids (no-* names, Ruff/pylint/flake8/bandit codes) set to off/ignore in config files. Changing a rule to off to silence new violations is the slop signal; deliberate team-wide relaxations are triage-exempt."
+  },
+  {
+    "id": "ZS-CODE-043",
+    "domain": "code",
+    "title": "Generic or empty error messages",
+    "summary": "Error messages like 'Something went wrong', 'An error occurred', or an empty string carry no diagnosis; titles must be specific and searchable, naming what failed and why (never a bare 'Error').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:throw\\s+new\\s+\\w*Error|raise\\s+\\w*Error|return\\s+\\w*Error)\\(\\s*[\"']\\s*[\"']\\s*\\)|(?:throw\\s+new\\s+\\w*Error|raise\\s+\\w*Error)\\(\\s*[\"'](?:something went wrong|an error occurred|unknown error|error occurred|internal error|unexpected error|oops!?|failed|error)[^\"']*[\"']\\s*\\)(?!\\s*[+%.,])",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "quality-code-review",
+        "rule": "Error message quality is a legitimate review item",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generic message fails",
+        "input": "throw new Error(\"Something went wrong\");\nraise ValueError(\"Error\")",
+        "expect": "fail"
+      },
+      {
+        "label": "specific message passes",
+        "input": "throw new Error(`Order ${id} failed: qty changed from ${before} to ${after}`);\nraise ValueError(f\"payment {code} declined\")",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Static generic phrases only; messages that interpolate values (template literals, f-strings, concatenation) are exempt here and reviewed under ZS-CODE-047 for change context."
+  },
+  {
+    "id": "ZS-CODE-044",
+    "domain": "code",
+    "title": "Custom exception class not derived from Exception",
+    "summary": "A class named *Error/*Exception that does not inherit from the exception hierarchy cannot be raised or caught — `class PaymentError(object):` fails at runtime and breaks every except clause expecting it.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "class\\s+\\w*(?:Error|Exception)\\b(?!\\s*\\([^)]*\\b(?:Exception|[A-Z]\\w*Error|Enum)\\b|\\s+extends\\s+\\w*Error\\b)",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality",
+        "rule": "Custom exceptions must derive from the exception hierarchy",
+        "ref": "references/quality-antipatterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "non-exception base fails",
+        "input": "class PaymentError(object):\n    def __init__(self, code, message):\n        self.code = code\n        self.message = message\nraise PaymentError(402, \"declined\")",
+        "expect": "fail"
+      },
+      {
+        "label": "proper hierarchy passes",
+        "input": "class PaymentError(Exception):\n    def __init__(self, code, message):\n        super().__init__(message)\n        self.code = code\nclass MoneyError(ValueError):\n    pass\nclass HttpError(str, Enum):\n    pass\nclass ApiError extends Error {}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Heuristic: names ending in Error/Exception are expected to derive from Exception (Python) or extend Error (TS). Subclasses of specific exceptions (ValueError, OSError) and *Error enums are accepted; object/BaseException bases are flagged. A class that is never raised is triage-exempt."
+  },
+  {
+    "id": "ZS-CODE-045",
+    "domain": "code",
+    "title": "File crosses 1000-line boundary",
+    "summary": "Pushing a file past ~1000 lines is a strong maintainability smell by default: the change should decompose into helpers, subcomponents, or modules first rather than letting the file sprawl.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "fileLineCount",
+      "params": {
+        "maxPerFile": 1000
+      }
+    },
+    "source": [
+      {
+        "repo": "thermo-nuclear-code-quality-review",
+        "rule": "Do not let a PR push a file from under 1k lines to over 1k lines",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "code-review-and-quality",
+        "rule": "Watch file size, not just diff size (~1000 total lines is a common inspection signal)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1001-line file fails",
+        "input": "const line_0 = 0;\nconst line_1 = 1;\nconst line_2 = 2;\nconst line_3 = 3;\nconst line_4 = 4;\nconst line_5 = 5;\nconst line_6 = 6;\nconst line_7 = 7;\nconst line_8 = 8;\nconst line_9 = 9;\nconst line_10 = 10;\nconst line_11 = 11;\nconst line_12 = 12;\nconst line_13 = 13;\nconst line_14 = 14;\nconst line_15 = 15;\nconst line_16 = 16;\nconst line_17 = 17;\nconst line_18 = 18;\nconst line_19 = 19;\nconst line_20 = 20;\nconst line_21 = 21;\nconst line_22 = 22;\nconst line_23 = 23;\nconst line_24 = 24;\nconst line_25 = 25;\nconst line_26 = 26;\nconst line_27 = 27;\nconst line_28 = 28;\nconst line_29 = 29;\nconst line_30 = 30;\nconst line_31 = 31;\nconst line_32 = 32;\nconst line_33 = 33;\nconst line_34 = 34;\nconst line_35 = 35;\nconst line_36 = 36;\nconst line_37 = 37;\nconst line_38 = 38;\nconst line_39 = 39;\nconst line_40 = 40;\nconst line_41 = 41;\nconst line_42 = 42;\nconst line_43 = 43;\nconst line_44 = 44;\nconst line_45 = 45;\nconst line_46 = 46;\nconst line_47 = 47;\nconst line_48 = 48;\nconst line_49 = 49;\nconst line_50 = 50;\nconst line_51 = 51;\nconst line_52 = 52;\nconst line_53 = 53;\nconst line_54 = 54;\nconst line_55 = 55;\nconst line_56 = 56;\nconst line_57 = 57;\nconst line_58 = 58;\nconst line_59 = 59;\nconst line_60 = 60;\nconst line_61 = 61;\nconst line_62 = 62;\nconst line_63 = 63;\nconst line_64 = 64;\nconst line_65 = 65;\nconst line_66 = 66;\nconst line_67 = 67;\nconst line_68 = 68;\nconst line_69 = 69;\nconst line_70 = 70;\nconst line_71 = 71;\nconst line_72 = 72;\nconst line_73 = 73;\nconst line_74 = 74;\nconst line_75 = 75;\nconst line_76 = 76;\nconst line_77 = 77;\nconst line_78 = 78;\nconst line_79 = 79;\nconst line_80 = 80;\nconst line_81 = 81;\nconst line_82 = 82;\nconst line_83 = 83;\nconst line_84 = 84;\nconst line_85 = 85;\nconst line_86 = 86;\nconst line_87 = 87;\nconst line_88 = 88;\nconst line_89 = 89;\nconst line_90 = 90;\nconst line_91 = 91;\nconst line_92 = 92;\nconst line_93 = 93;\nconst line_94 = 94;\nconst line_95 = 95;\nconst line_96 = 96;\nconst line_97 = 97;\nconst line_98 = 98;\nconst line_99 = 99;\nconst line_100 = 100;\nconst line_101 = 101;\nconst line_102 = 102;\nconst line_103 = 103;\nconst line_104 = 104;\nconst line_105 = 105;\nconst line_106 = 106;\nconst line_107 = 107;\nconst line_108 = 108;\nconst line_109 = 109;\nconst line_110 = 110;\nconst line_111 = 111;\nconst line_112 = 112;\nconst line_113 = 113;\nconst line_114 = 114;\nconst line_115 = 115;\nconst line_116 = 116;\nconst line_117 = 117;\nconst line_118 = 118;\nconst line_119 = 119;\nconst line_120 = 120;\nconst line_121 = 121;\nconst line_122 = 122;\nconst line_123 = 123;\nconst line_124 = 124;\nconst line_125 = 125;\nconst line_126 = 126;\nconst line_127 = 127;\nconst line_128 = 128;\nconst line_129 = 129;\nconst line_130 = 130;\nconst line_131 = 131;\nconst line_132 = 132;\nconst line_133 = 133;\nconst line_134 = 134;\nconst line_135 = 135;\nconst line_136 = 136;\nconst line_137 = 137;\nconst line_138 = 138;\nconst line_139 = 139;\nconst line_140 = 140;\nconst line_141 = 141;\nconst line_142 = 142;\nconst line_143 = 143;\nconst line_144 = 144;\nconst line_145 = 145;\nconst line_146 = 146;\nconst line_147 = 147;\nconst line_148 = 148;\nconst line_149 = 149;\nconst line_150 = 150;\nconst line_151 = 151;\nconst line_152 = 152;\nconst line_153 = 153;\nconst line_154 = 154;\nconst line_155 = 155;\nconst line_156 = 156;\nconst line_157 = 157;\nconst line_158 = 158;\nconst line_159 = 159;\nconst line_160 = 160;\nconst line_161 = 161;\nconst line_162 = 162;\nconst line_163 = 163;\nconst line_164 = 164;\nconst line_165 = 165;\nconst line_166 = 166;\nconst line_167 = 167;\nconst line_168 = 168;\nconst line_169 = 169;\nconst line_170 = 170;\nconst line_171 = 171;\nconst line_172 = 172;\nconst line_173 = 173;\nconst line_174 = 174;\nconst line_175 = 175;\nconst line_176 = 176;\nconst line_177 = 177;\nconst line_178 = 178;\nconst line_179 = 179;\nconst line_180 = 180;\nconst line_181 = 181;\nconst line_182 = 182;\nconst line_183 = 183;\nconst line_184 = 184;\nconst line_185 = 185;\nconst line_186 = 186;\nconst line_187 = 187;\nconst line_188 = 188;\nconst line_189 = 189;\nconst line_190 = 190;\nconst line_191 = 191;\nconst line_192 = 192;\nconst line_193 = 193;\nconst line_194 = 194;\nconst line_195 = 195;\nconst line_196 = 196;\nconst line_197 = 197;\nconst line_198 = 198;\nconst line_199 = 199;\nconst line_200 = 200;\nconst line_201 = 201;\nconst line_202 = 202;\nconst line_203 = 203;\nconst line_204 = 204;\nconst line_205 = 205;\nconst line_206 = 206;\nconst line_207 = 207;\nconst line_208 = 208;\nconst line_209 = 209;\nconst line_210 = 210;\nconst line_211 = 211;\nconst line_212 = 212;\nconst line_213 = 213;\nconst line_214 = 214;\nconst line_215 = 215;\nconst line_216 = 216;\nconst line_217 = 217;\nconst line_218 = 218;\nconst line_219 = 219;\nconst line_220 = 220;\nconst line_221 = 221;\nconst line_222 = 222;\nconst line_223 = 223;\nconst line_224 = 224;\nconst line_225 = 225;\nconst line_226 = 226;\nconst line_227 = 227;\nconst line_228 = 228;\nconst line_229 = 229;\nconst line_230 = 230;\nconst line_231 = 231;\nconst line_232 = 232;\nconst line_233 = 233;\nconst line_234 = 234;\nconst line_235 = 235;\nconst line_236 = 236;\nconst line_237 = 237;\nconst line_238 = 238;\nconst line_239 = 239;\nconst line_240 = 240;\nconst line_241 = 241;\nconst line_242 = 242;\nconst line_243 = 243;\nconst line_244 = 244;\nconst line_245 = 245;\nconst line_246 = 246;\nconst line_247 = 247;\nconst line_248 = 248;\nconst line_249 = 249;\nconst line_250 = 250;\nconst line_251 = 251;\nconst line_252 = 252;\nconst line_253 = 253;\nconst line_254 = 254;\nconst line_255 = 255;\nconst line_256 = 256;\nconst line_257 = 257;\nconst line_258 = 258;\nconst line_259 = 259;\nconst line_260 = 260;\nconst line_261 = 261;\nconst line_262 = 262;\nconst line_263 = 263;\nconst line_264 = 264;\nconst line_265 = 265;\nconst line_266 = 266;\nconst line_267 = 267;\nconst line_268 = 268;\nconst line_269 = 269;\nconst line_270 = 270;\nconst line_271 = 271;\nconst line_272 = 272;\nconst line_273 = 273;\nconst line_274 = 274;\nconst line_275 = 275;\nconst line_276 = 276;\nconst line_277 = 277;\nconst line_278 = 278;\nconst line_279 = 279;\nconst line_280 = 280;\nconst line_281 = 281;\nconst line_282 = 282;\nconst line_283 = 283;\nconst line_284 = 284;\nconst line_285 = 285;\nconst line_286 = 286;\nconst line_287 = 287;\nconst line_288 = 288;\nconst line_289 = 289;\nconst line_290 = 290;\nconst line_291 = 291;\nconst line_292 = 292;\nconst line_293 = 293;\nconst line_294 = 294;\nconst line_295 = 295;\nconst line_296 = 296;\nconst line_297 = 297;\nconst line_298 = 298;\nconst line_299 = 299;\nconst line_300 = 300;\nconst line_301 = 301;\nconst line_302 = 302;\nconst line_303 = 303;\nconst line_304 = 304;\nconst line_305 = 305;\nconst line_306 = 306;\nconst line_307 = 307;\nconst line_308 = 308;\nconst line_309 = 309;\nconst line_310 = 310;\nconst line_311 = 311;\nconst line_312 = 312;\nconst line_313 = 313;\nconst line_314 = 314;\nconst line_315 = 315;\nconst line_316 = 316;\nconst line_317 = 317;\nconst line_318 = 318;\nconst line_319 = 319;\nconst line_320 = 320;\nconst line_321 = 321;\nconst line_322 = 322;\nconst line_323 = 323;\nconst line_324 = 324;\nconst line_325 = 325;\nconst line_326 = 326;\nconst line_327 = 327;\nconst line_328 = 328;\nconst line_329 = 329;\nconst line_330 = 330;\nconst line_331 = 331;\nconst line_332 = 332;\nconst line_333 = 333;\nconst line_334 = 334;\nconst line_335 = 335;\nconst line_336 = 336;\nconst line_337 = 337;\nconst line_338 = 338;\nconst line_339 = 339;\nconst line_340 = 340;\nconst line_341 = 341;\nconst line_342 = 342;\nconst line_343 = 343;\nconst line_344 = 344;\nconst line_345 = 345;\nconst line_346 = 346;\nconst line_347 = 347;\nconst line_348 = 348;\nconst line_349 = 349;\nconst line_350 = 350;\nconst line_351 = 351;\nconst line_352 = 352;\nconst line_353 = 353;\nconst line_354 = 354;\nconst line_355 = 355;\nconst line_356 = 356;\nconst line_357 = 357;\nconst line_358 = 358;\nconst line_359 = 359;\nconst line_360 = 360;\nconst line_361 = 361;\nconst line_362 = 362;\nconst line_363 = 363;\nconst line_364 = 364;\nconst line_365 = 365;\nconst line_366 = 366;\nconst line_367 = 367;\nconst line_368 = 368;\nconst line_369 = 369;\nconst line_370 = 370;\nconst line_371 = 371;\nconst line_372 = 372;\nconst line_373 = 373;\nconst line_374 = 374;\nconst line_375 = 375;\nconst line_376 = 376;\nconst line_377 = 377;\nconst line_378 = 378;\nconst line_379 = 379;\nconst line_380 = 380;\nconst line_381 = 381;\nconst line_382 = 382;\nconst line_383 = 383;\nconst line_384 = 384;\nconst line_385 = 385;\nconst line_386 = 386;\nconst line_387 = 387;\nconst line_388 = 388;\nconst line_389 = 389;\nconst line_390 = 390;\nconst line_391 = 391;\nconst line_392 = 392;\nconst line_393 = 393;\nconst line_394 = 394;\nconst line_395 = 395;\nconst line_396 = 396;\nconst line_397 = 397;\nconst line_398 = 398;\nconst line_399 = 399;\nconst line_400 = 400;\nconst line_401 = 401;\nconst line_402 = 402;\nconst line_403 = 403;\nconst line_404 = 404;\nconst line_405 = 405;\nconst line_406 = 406;\nconst line_407 = 407;\nconst line_408 = 408;\nconst line_409 = 409;\nconst line_410 = 410;\nconst line_411 = 411;\nconst line_412 = 412;\nconst line_413 = 413;\nconst line_414 = 414;\nconst line_415 = 415;\nconst line_416 = 416;\nconst line_417 = 417;\nconst line_418 = 418;\nconst line_419 = 419;\nconst line_420 = 420;\nconst line_421 = 421;\nconst line_422 = 422;\nconst line_423 = 423;\nconst line_424 = 424;\nconst line_425 = 425;\nconst line_426 = 426;\nconst line_427 = 427;\nconst line_428 = 428;\nconst line_429 = 429;\nconst line_430 = 430;\nconst line_431 = 431;\nconst line_432 = 432;\nconst line_433 = 433;\nconst line_434 = 434;\nconst line_435 = 435;\nconst line_436 = 436;\nconst line_437 = 437;\nconst line_438 = 438;\nconst line_439 = 439;\nconst line_440 = 440;\nconst line_441 = 441;\nconst line_442 = 442;\nconst line_443 = 443;\nconst line_444 = 444;\nconst line_445 = 445;\nconst line_446 = 446;\nconst line_447 = 447;\nconst line_448 = 448;\nconst line_449 = 449;\nconst line_450 = 450;\nconst line_451 = 451;\nconst line_452 = 452;\nconst line_453 = 453;\nconst line_454 = 454;\nconst line_455 = 455;\nconst line_456 = 456;\nconst line_457 = 457;\nconst line_458 = 458;\nconst line_459 = 459;\nconst line_460 = 460;\nconst line_461 = 461;\nconst line_462 = 462;\nconst line_463 = 463;\nconst line_464 = 464;\nconst line_465 = 465;\nconst line_466 = 466;\nconst line_467 = 467;\nconst line_468 = 468;\nconst line_469 = 469;\nconst line_470 = 470;\nconst line_471 = 471;\nconst line_472 = 472;\nconst line_473 = 473;\nconst line_474 = 474;\nconst line_475 = 475;\nconst line_476 = 476;\nconst line_477 = 477;\nconst line_478 = 478;\nconst line_479 = 479;\nconst line_480 = 480;\nconst line_481 = 481;\nconst line_482 = 482;\nconst line_483 = 483;\nconst line_484 = 484;\nconst line_485 = 485;\nconst line_486 = 486;\nconst line_487 = 487;\nconst line_488 = 488;\nconst line_489 = 489;\nconst line_490 = 490;\nconst line_491 = 491;\nconst line_492 = 492;\nconst line_493 = 493;\nconst line_494 = 494;\nconst line_495 = 495;\nconst line_496 = 496;\nconst line_497 = 497;\nconst line_498 = 498;\nconst line_499 = 499;\nconst line_500 = 500;\nconst line_501 = 501;\nconst line_502 = 502;\nconst line_503 = 503;\nconst line_504 = 504;\nconst line_505 = 505;\nconst line_506 = 506;\nconst line_507 = 507;\nconst line_508 = 508;\nconst line_509 = 509;\nconst line_510 = 510;\nconst line_511 = 511;\nconst line_512 = 512;\nconst line_513 = 513;\nconst line_514 = 514;\nconst line_515 = 515;\nconst line_516 = 516;\nconst line_517 = 517;\nconst line_518 = 518;\nconst line_519 = 519;\nconst line_520 = 520;\nconst line_521 = 521;\nconst line_522 = 522;\nconst line_523 = 523;\nconst line_524 = 524;\nconst line_525 = 525;\nconst line_526 = 526;\nconst line_527 = 527;\nconst line_528 = 528;\nconst line_529 = 529;\nconst line_530 = 530;\nconst line_531 = 531;\nconst line_532 = 532;\nconst line_533 = 533;\nconst line_534 = 534;\nconst line_535 = 535;\nconst line_536 = 536;\nconst line_537 = 537;\nconst line_538 = 538;\nconst line_539 = 539;\nconst line_540 = 540;\nconst line_541 = 541;\nconst line_542 = 542;\nconst line_543 = 543;\nconst line_544 = 544;\nconst line_545 = 545;\nconst line_546 = 546;\nconst line_547 = 547;\nconst line_548 = 548;\nconst line_549 = 549;\nconst line_550 = 550;\nconst line_551 = 551;\nconst line_552 = 552;\nconst line_553 = 553;\nconst line_554 = 554;\nconst line_555 = 555;\nconst line_556 = 556;\nconst line_557 = 557;\nconst line_558 = 558;\nconst line_559 = 559;\nconst line_560 = 560;\nconst line_561 = 561;\nconst line_562 = 562;\nconst line_563 = 563;\nconst line_564 = 564;\nconst line_565 = 565;\nconst line_566 = 566;\nconst line_567 = 567;\nconst line_568 = 568;\nconst line_569 = 569;\nconst line_570 = 570;\nconst line_571 = 571;\nconst line_572 = 572;\nconst line_573 = 573;\nconst line_574 = 574;\nconst line_575 = 575;\nconst line_576 = 576;\nconst line_577 = 577;\nconst line_578 = 578;\nconst line_579 = 579;\nconst line_580 = 580;\nconst line_581 = 581;\nconst line_582 = 582;\nconst line_583 = 583;\nconst line_584 = 584;\nconst line_585 = 585;\nconst line_586 = 586;\nconst line_587 = 587;\nconst line_588 = 588;\nconst line_589 = 589;\nconst line_590 = 590;\nconst line_591 = 591;\nconst line_592 = 592;\nconst line_593 = 593;\nconst line_594 = 594;\nconst line_595 = 595;\nconst line_596 = 596;\nconst line_597 = 597;\nconst line_598 = 598;\nconst line_599 = 599;\nconst line_600 = 600;\nconst line_601 = 601;\nconst line_602 = 602;\nconst line_603 = 603;\nconst line_604 = 604;\nconst line_605 = 605;\nconst line_606 = 606;\nconst line_607 = 607;\nconst line_608 = 608;\nconst line_609 = 609;\nconst line_610 = 610;\nconst line_611 = 611;\nconst line_612 = 612;\nconst line_613 = 613;\nconst line_614 = 614;\nconst line_615 = 615;\nconst line_616 = 616;\nconst line_617 = 617;\nconst line_618 = 618;\nconst line_619 = 619;\nconst line_620 = 620;\nconst line_621 = 621;\nconst line_622 = 622;\nconst line_623 = 623;\nconst line_624 = 624;\nconst line_625 = 625;\nconst line_626 = 626;\nconst line_627 = 627;\nconst line_628 = 628;\nconst line_629 = 629;\nconst line_630 = 630;\nconst line_631 = 631;\nconst line_632 = 632;\nconst line_633 = 633;\nconst line_634 = 634;\nconst line_635 = 635;\nconst line_636 = 636;\nconst line_637 = 637;\nconst line_638 = 638;\nconst line_639 = 639;\nconst line_640 = 640;\nconst line_641 = 641;\nconst line_642 = 642;\nconst line_643 = 643;\nconst line_644 = 644;\nconst line_645 = 645;\nconst line_646 = 646;\nconst line_647 = 647;\nconst line_648 = 648;\nconst line_649 = 649;\nconst line_650 = 650;\nconst line_651 = 651;\nconst line_652 = 652;\nconst line_653 = 653;\nconst line_654 = 654;\nconst line_655 = 655;\nconst line_656 = 656;\nconst line_657 = 657;\nconst line_658 = 658;\nconst line_659 = 659;\nconst line_660 = 660;\nconst line_661 = 661;\nconst line_662 = 662;\nconst line_663 = 663;\nconst line_664 = 664;\nconst line_665 = 665;\nconst line_666 = 666;\nconst line_667 = 667;\nconst line_668 = 668;\nconst line_669 = 669;\nconst line_670 = 670;\nconst line_671 = 671;\nconst line_672 = 672;\nconst line_673 = 673;\nconst line_674 = 674;\nconst line_675 = 675;\nconst line_676 = 676;\nconst line_677 = 677;\nconst line_678 = 678;\nconst line_679 = 679;\nconst line_680 = 680;\nconst line_681 = 681;\nconst line_682 = 682;\nconst line_683 = 683;\nconst line_684 = 684;\nconst line_685 = 685;\nconst line_686 = 686;\nconst line_687 = 687;\nconst line_688 = 688;\nconst line_689 = 689;\nconst line_690 = 690;\nconst line_691 = 691;\nconst line_692 = 692;\nconst line_693 = 693;\nconst line_694 = 694;\nconst line_695 = 695;\nconst line_696 = 696;\nconst line_697 = 697;\nconst line_698 = 698;\nconst line_699 = 699;\nconst line_700 = 700;\nconst line_701 = 701;\nconst line_702 = 702;\nconst line_703 = 703;\nconst line_704 = 704;\nconst line_705 = 705;\nconst line_706 = 706;\nconst line_707 = 707;\nconst line_708 = 708;\nconst line_709 = 709;\nconst line_710 = 710;\nconst line_711 = 711;\nconst line_712 = 712;\nconst line_713 = 713;\nconst line_714 = 714;\nconst line_715 = 715;\nconst line_716 = 716;\nconst line_717 = 717;\nconst line_718 = 718;\nconst line_719 = 719;\nconst line_720 = 720;\nconst line_721 = 721;\nconst line_722 = 722;\nconst line_723 = 723;\nconst line_724 = 724;\nconst line_725 = 725;\nconst line_726 = 726;\nconst line_727 = 727;\nconst line_728 = 728;\nconst line_729 = 729;\nconst line_730 = 730;\nconst line_731 = 731;\nconst line_732 = 732;\nconst line_733 = 733;\nconst line_734 = 734;\nconst line_735 = 735;\nconst line_736 = 736;\nconst line_737 = 737;\nconst line_738 = 738;\nconst line_739 = 739;\nconst line_740 = 740;\nconst line_741 = 741;\nconst line_742 = 742;\nconst line_743 = 743;\nconst line_744 = 744;\nconst line_745 = 745;\nconst line_746 = 746;\nconst line_747 = 747;\nconst line_748 = 748;\nconst line_749 = 749;\nconst line_750 = 750;\nconst line_751 = 751;\nconst line_752 = 752;\nconst line_753 = 753;\nconst line_754 = 754;\nconst line_755 = 755;\nconst line_756 = 756;\nconst line_757 = 757;\nconst line_758 = 758;\nconst line_759 = 759;\nconst line_760 = 760;\nconst line_761 = 761;\nconst line_762 = 762;\nconst line_763 = 763;\nconst line_764 = 764;\nconst line_765 = 765;\nconst line_766 = 766;\nconst line_767 = 767;\nconst line_768 = 768;\nconst line_769 = 769;\nconst line_770 = 770;\nconst line_771 = 771;\nconst line_772 = 772;\nconst line_773 = 773;\nconst line_774 = 774;\nconst line_775 = 775;\nconst line_776 = 776;\nconst line_777 = 777;\nconst line_778 = 778;\nconst line_779 = 779;\nconst line_780 = 780;\nconst line_781 = 781;\nconst line_782 = 782;\nconst line_783 = 783;\nconst line_784 = 784;\nconst line_785 = 785;\nconst line_786 = 786;\nconst line_787 = 787;\nconst line_788 = 788;\nconst line_789 = 789;\nconst line_790 = 790;\nconst line_791 = 791;\nconst line_792 = 792;\nconst line_793 = 793;\nconst line_794 = 794;\nconst line_795 = 795;\nconst line_796 = 796;\nconst line_797 = 797;\nconst line_798 = 798;\nconst line_799 = 799;\nconst line_800 = 800;\nconst line_801 = 801;\nconst line_802 = 802;\nconst line_803 = 803;\nconst line_804 = 804;\nconst line_805 = 805;\nconst line_806 = 806;\nconst line_807 = 807;\nconst line_808 = 808;\nconst line_809 = 809;\nconst line_810 = 810;\nconst line_811 = 811;\nconst line_812 = 812;\nconst line_813 = 813;\nconst line_814 = 814;\nconst line_815 = 815;\nconst line_816 = 816;\nconst line_817 = 817;\nconst line_818 = 818;\nconst line_819 = 819;\nconst line_820 = 820;\nconst line_821 = 821;\nconst line_822 = 822;\nconst line_823 = 823;\nconst line_824 = 824;\nconst line_825 = 825;\nconst line_826 = 826;\nconst line_827 = 827;\nconst line_828 = 828;\nconst line_829 = 829;\nconst line_830 = 830;\nconst line_831 = 831;\nconst line_832 = 832;\nconst line_833 = 833;\nconst line_834 = 834;\nconst line_835 = 835;\nconst line_836 = 836;\nconst line_837 = 837;\nconst line_838 = 838;\nconst line_839 = 839;\nconst line_840 = 840;\nconst line_841 = 841;\nconst line_842 = 842;\nconst line_843 = 843;\nconst line_844 = 844;\nconst line_845 = 845;\nconst line_846 = 846;\nconst line_847 = 847;\nconst line_848 = 848;\nconst line_849 = 849;\nconst line_850 = 850;\nconst line_851 = 851;\nconst line_852 = 852;\nconst line_853 = 853;\nconst line_854 = 854;\nconst line_855 = 855;\nconst line_856 = 856;\nconst line_857 = 857;\nconst line_858 = 858;\nconst line_859 = 859;\nconst line_860 = 860;\nconst line_861 = 861;\nconst line_862 = 862;\nconst line_863 = 863;\nconst line_864 = 864;\nconst line_865 = 865;\nconst line_866 = 866;\nconst line_867 = 867;\nconst line_868 = 868;\nconst line_869 = 869;\nconst line_870 = 870;\nconst line_871 = 871;\nconst line_872 = 872;\nconst line_873 = 873;\nconst line_874 = 874;\nconst line_875 = 875;\nconst line_876 = 876;\nconst line_877 = 877;\nconst line_878 = 878;\nconst line_879 = 879;\nconst line_880 = 880;\nconst line_881 = 881;\nconst line_882 = 882;\nconst line_883 = 883;\nconst line_884 = 884;\nconst line_885 = 885;\nconst line_886 = 886;\nconst line_887 = 887;\nconst line_888 = 888;\nconst line_889 = 889;\nconst line_890 = 890;\nconst line_891 = 891;\nconst line_892 = 892;\nconst line_893 = 893;\nconst line_894 = 894;\nconst line_895 = 895;\nconst line_896 = 896;\nconst line_897 = 897;\nconst line_898 = 898;\nconst line_899 = 899;\nconst line_900 = 900;\nconst line_901 = 901;\nconst line_902 = 902;\nconst line_903 = 903;\nconst line_904 = 904;\nconst line_905 = 905;\nconst line_906 = 906;\nconst line_907 = 907;\nconst line_908 = 908;\nconst line_909 = 909;\nconst line_910 = 910;\nconst line_911 = 911;\nconst line_912 = 912;\nconst line_913 = 913;\nconst line_914 = 914;\nconst line_915 = 915;\nconst line_916 = 916;\nconst line_917 = 917;\nconst line_918 = 918;\nconst line_919 = 919;\nconst line_920 = 920;\nconst line_921 = 921;\nconst line_922 = 922;\nconst line_923 = 923;\nconst line_924 = 924;\nconst line_925 = 925;\nconst line_926 = 926;\nconst line_927 = 927;\nconst line_928 = 928;\nconst line_929 = 929;\nconst line_930 = 930;\nconst line_931 = 931;\nconst line_932 = 932;\nconst line_933 = 933;\nconst line_934 = 934;\nconst line_935 = 935;\nconst line_936 = 936;\nconst line_937 = 937;\nconst line_938 = 938;\nconst line_939 = 939;\nconst line_940 = 940;\nconst line_941 = 941;\nconst line_942 = 942;\nconst line_943 = 943;\nconst line_944 = 944;\nconst line_945 = 945;\nconst line_946 = 946;\nconst line_947 = 947;\nconst line_948 = 948;\nconst line_949 = 949;\nconst line_950 = 950;\nconst line_951 = 951;\nconst line_952 = 952;\nconst line_953 = 953;\nconst line_954 = 954;\nconst line_955 = 955;\nconst line_956 = 956;\nconst line_957 = 957;\nconst line_958 = 958;\nconst line_959 = 959;\nconst line_960 = 960;\nconst line_961 = 961;\nconst line_962 = 962;\nconst line_963 = 963;\nconst line_964 = 964;\nconst line_965 = 965;\nconst line_966 = 966;\nconst line_967 = 967;\nconst line_968 = 968;\nconst line_969 = 969;\nconst line_970 = 970;\nconst line_971 = 971;\nconst line_972 = 972;\nconst line_973 = 973;\nconst line_974 = 974;\nconst line_975 = 975;\nconst line_976 = 976;\nconst line_977 = 977;\nconst line_978 = 978;\nconst line_979 = 979;\nconst line_980 = 980;\nconst line_981 = 981;\nconst line_982 = 982;\nconst line_983 = 983;\nconst line_984 = 984;\nconst line_985 = 985;\nconst line_986 = 986;\nconst line_987 = 987;\nconst line_988 = 988;\nconst line_989 = 989;\nconst line_990 = 990;\nconst line_991 = 991;\nconst line_992 = 992;\nconst line_993 = 993;\nconst line_994 = 994;\nconst line_995 = 995;\nconst line_996 = 996;\nconst line_997 = 997;\nconst line_998 = 998;\nconst line_999 = 999;\nconst line_1000 = 1000;",
+        "expect": "fail"
+      },
+      {
+        "label": "380-line file passes",
+        "input": "const line_0 = 0;\nconst line_1 = 1;\nconst line_2 = 2;\nconst line_3 = 3;\nconst line_4 = 4;\nconst line_5 = 5;\nconst line_6 = 6;\nconst line_7 = 7;\nconst line_8 = 8;\nconst line_9 = 9;\nconst line_10 = 10;\nconst line_11 = 11;\nconst line_12 = 12;\nconst line_13 = 13;\nconst line_14 = 14;\nconst line_15 = 15;\nconst line_16 = 16;\nconst line_17 = 17;\nconst line_18 = 18;\nconst line_19 = 19;\nconst line_20 = 20;\nconst line_21 = 21;\nconst line_22 = 22;\nconst line_23 = 23;\nconst line_24 = 24;\nconst line_25 = 25;\nconst line_26 = 26;\nconst line_27 = 27;\nconst line_28 = 28;\nconst line_29 = 29;\nconst line_30 = 30;\nconst line_31 = 31;\nconst line_32 = 32;\nconst line_33 = 33;\nconst line_34 = 34;\nconst line_35 = 35;\nconst line_36 = 36;\nconst line_37 = 37;\nconst line_38 = 38;\nconst line_39 = 39;\nconst line_40 = 40;\nconst line_41 = 41;\nconst line_42 = 42;\nconst line_43 = 43;\nconst line_44 = 44;\nconst line_45 = 45;\nconst line_46 = 46;\nconst line_47 = 47;\nconst line_48 = 48;\nconst line_49 = 49;\nconst line_50 = 50;\nconst line_51 = 51;\nconst line_52 = 52;\nconst line_53 = 53;\nconst line_54 = 54;\nconst line_55 = 55;\nconst line_56 = 56;\nconst line_57 = 57;\nconst line_58 = 58;\nconst line_59 = 59;\nconst line_60 = 60;\nconst line_61 = 61;\nconst line_62 = 62;\nconst line_63 = 63;\nconst line_64 = 64;\nconst line_65 = 65;\nconst line_66 = 66;\nconst line_67 = 67;\nconst line_68 = 68;\nconst line_69 = 69;\nconst line_70 = 70;\nconst line_71 = 71;\nconst line_72 = 72;\nconst line_73 = 73;\nconst line_74 = 74;\nconst line_75 = 75;\nconst line_76 = 76;\nconst line_77 = 77;\nconst line_78 = 78;\nconst line_79 = 79;\nconst line_80 = 80;\nconst line_81 = 81;\nconst line_82 = 82;\nconst line_83 = 83;\nconst line_84 = 84;\nconst line_85 = 85;\nconst line_86 = 86;\nconst line_87 = 87;\nconst line_88 = 88;\nconst line_89 = 89;\nconst line_90 = 90;\nconst line_91 = 91;\nconst line_92 = 92;\nconst line_93 = 93;\nconst line_94 = 94;\nconst line_95 = 95;\nconst line_96 = 96;\nconst line_97 = 97;\nconst line_98 = 98;\nconst line_99 = 99;\nconst line_100 = 100;\nconst line_101 = 101;\nconst line_102 = 102;\nconst line_103 = 103;\nconst line_104 = 104;\nconst line_105 = 105;\nconst line_106 = 106;\nconst line_107 = 107;\nconst line_108 = 108;\nconst line_109 = 109;\nconst line_110 = 110;\nconst line_111 = 111;\nconst line_112 = 112;\nconst line_113 = 113;\nconst line_114 = 114;\nconst line_115 = 115;\nconst line_116 = 116;\nconst line_117 = 117;\nconst line_118 = 118;\nconst line_119 = 119;\nconst line_120 = 120;\nconst line_121 = 121;\nconst line_122 = 122;\nconst line_123 = 123;\nconst line_124 = 124;\nconst line_125 = 125;\nconst line_126 = 126;\nconst line_127 = 127;\nconst line_128 = 128;\nconst line_129 = 129;\nconst line_130 = 130;\nconst line_131 = 131;\nconst line_132 = 132;\nconst line_133 = 133;\nconst line_134 = 134;\nconst line_135 = 135;\nconst line_136 = 136;\nconst line_137 = 137;\nconst line_138 = 138;\nconst line_139 = 139;\nconst line_140 = 140;\nconst line_141 = 141;\nconst line_142 = 142;\nconst line_143 = 143;\nconst line_144 = 144;\nconst line_145 = 145;\nconst line_146 = 146;\nconst line_147 = 147;\nconst line_148 = 148;\nconst line_149 = 149;\nconst line_150 = 150;\nconst line_151 = 151;\nconst line_152 = 152;\nconst line_153 = 153;\nconst line_154 = 154;\nconst line_155 = 155;\nconst line_156 = 156;\nconst line_157 = 157;\nconst line_158 = 158;\nconst line_159 = 159;\nconst line_160 = 160;\nconst line_161 = 161;\nconst line_162 = 162;\nconst line_163 = 163;\nconst line_164 = 164;\nconst line_165 = 165;\nconst line_166 = 166;\nconst line_167 = 167;\nconst line_168 = 168;\nconst line_169 = 169;\nconst line_170 = 170;\nconst line_171 = 171;\nconst line_172 = 172;\nconst line_173 = 173;\nconst line_174 = 174;\nconst line_175 = 175;\nconst line_176 = 176;\nconst line_177 = 177;\nconst line_178 = 178;\nconst line_179 = 179;\nconst line_180 = 180;\nconst line_181 = 181;\nconst line_182 = 182;\nconst line_183 = 183;\nconst line_184 = 184;\nconst line_185 = 185;\nconst line_186 = 186;\nconst line_187 = 187;\nconst line_188 = 188;\nconst line_189 = 189;\nconst line_190 = 190;\nconst line_191 = 191;\nconst line_192 = 192;\nconst line_193 = 193;\nconst line_194 = 194;\nconst line_195 = 195;\nconst line_196 = 196;\nconst line_197 = 197;\nconst line_198 = 198;\nconst line_199 = 199;\nconst line_200 = 200;\nconst line_201 = 201;\nconst line_202 = 202;\nconst line_203 = 203;\nconst line_204 = 204;\nconst line_205 = 205;\nconst line_206 = 206;\nconst line_207 = 207;\nconst line_208 = 208;\nconst line_209 = 209;\nconst line_210 = 210;\nconst line_211 = 211;\nconst line_212 = 212;\nconst line_213 = 213;\nconst line_214 = 214;\nconst line_215 = 215;\nconst line_216 = 216;\nconst line_217 = 217;\nconst line_218 = 218;\nconst line_219 = 219;\nconst line_220 = 220;\nconst line_221 = 221;\nconst line_222 = 222;\nconst line_223 = 223;\nconst line_224 = 224;\nconst line_225 = 225;\nconst line_226 = 226;\nconst line_227 = 227;\nconst line_228 = 228;\nconst line_229 = 229;\nconst line_230 = 230;\nconst line_231 = 231;\nconst line_232 = 232;\nconst line_233 = 233;\nconst line_234 = 234;\nconst line_235 = 235;\nconst line_236 = 236;\nconst line_237 = 237;\nconst line_238 = 238;\nconst line_239 = 239;\nconst line_240 = 240;\nconst line_241 = 241;\nconst line_242 = 242;\nconst line_243 = 243;\nconst line_244 = 244;\nconst line_245 = 245;\nconst line_246 = 246;\nconst line_247 = 247;\nconst line_248 = 248;\nconst line_249 = 249;\nconst line_250 = 250;\nconst line_251 = 251;\nconst line_252 = 252;\nconst line_253 = 253;\nconst line_254 = 254;\nconst line_255 = 255;\nconst line_256 = 256;\nconst line_257 = 257;\nconst line_258 = 258;\nconst line_259 = 259;\nconst line_260 = 260;\nconst line_261 = 261;\nconst line_262 = 262;\nconst line_263 = 263;\nconst line_264 = 264;\nconst line_265 = 265;\nconst line_266 = 266;\nconst line_267 = 267;\nconst line_268 = 268;\nconst line_269 = 269;\nconst line_270 = 270;\nconst line_271 = 271;\nconst line_272 = 272;\nconst line_273 = 273;\nconst line_274 = 274;\nconst line_275 = 275;\nconst line_276 = 276;\nconst line_277 = 277;\nconst line_278 = 278;\nconst line_279 = 279;\nconst line_280 = 280;\nconst line_281 = 281;\nconst line_282 = 282;\nconst line_283 = 283;\nconst line_284 = 284;\nconst line_285 = 285;\nconst line_286 = 286;\nconst line_287 = 287;\nconst line_288 = 288;\nconst line_289 = 289;\nconst line_290 = 290;\nconst line_291 = 291;\nconst line_292 = 292;\nconst line_293 = 293;\nconst line_294 = 294;\nconst line_295 = 295;\nconst line_296 = 296;\nconst line_297 = 297;\nconst line_298 = 298;\nconst line_299 = 299;\nconst line_300 = 300;\nconst line_301 = 301;\nconst line_302 = 302;\nconst line_303 = 303;\nconst line_304 = 304;\nconst line_305 = 305;\nconst line_306 = 306;\nconst line_307 = 307;\nconst line_308 = 308;\nconst line_309 = 309;\nconst line_310 = 310;\nconst line_311 = 311;\nconst line_312 = 312;\nconst line_313 = 313;\nconst line_314 = 314;\nconst line_315 = 315;\nconst line_316 = 316;\nconst line_317 = 317;\nconst line_318 = 318;\nconst line_319 = 319;\nconst line_320 = 320;\nconst line_321 = 321;\nconst line_322 = 322;\nconst line_323 = 323;\nconst line_324 = 324;\nconst line_325 = 325;\nconst line_326 = 326;\nconst line_327 = 327;\nconst line_328 = 328;\nconst line_329 = 329;\nconst line_330 = 330;\nconst line_331 = 331;\nconst line_332 = 332;\nconst line_333 = 333;\nconst line_334 = 334;\nconst line_335 = 335;\nconst line_336 = 336;\nconst line_337 = 337;\nconst line_338 = 338;\nconst line_339 = 339;\nconst line_340 = 340;\nconst line_341 = 341;\nconst line_342 = 342;\nconst line_343 = 343;\nconst line_344 = 344;\nconst line_345 = 345;\nconst line_346 = 346;\nconst line_347 = 347;\nconst line_348 = 348;\nconst line_349 = 349;\nconst line_350 = 350;\nconst line_351 = 351;\nconst line_352 = 352;\nconst line_353 = 353;\nconst line_354 = 354;\nconst line_355 = 355;\nconst line_356 = 356;\nconst line_357 = 357;\nconst line_358 = 358;\nconst line_359 = 359;\nconst line_360 = 360;\nconst line_361 = 361;\nconst line_362 = 362;\nconst line_363 = 363;\nconst line_364 = 364;\nconst line_365 = 365;\nconst line_366 = 366;\nconst line_367 = 367;\nconst line_368 = 368;\nconst line_369 = 369;\nconst line_370 = 370;\nconst line_371 = 371;\nconst line_372 = 372;\nconst line_373 = 373;\nconst line_374 = 374;\nconst line_375 = 375;\nconst line_376 = 376;\nconst line_377 = 377;\nconst line_378 = 378;\nconst line_379 = 379;",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Waivable only with a compelling structural reason and a clearly organized file; watch total file size in addition to diff size."
+  },
+  {
+    "id": "ZS-CODE-046",
+    "domain": "code",
+    "title": "Destructive DB call with empty/None filter",
+    "summary": "`frappe.db.set_value(\"Site\", None, ...)` or `frappe.db.delete(\"Site\")` with no filter updates or deletes every row in the table; these must error, never silently operate on the whole table.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "frappe\\.db\\.(?:set_value|get_value)\\(\\s*[\"'][^\"')]*[\"']\\s*,\\s*(?:None|\"\"|'')\\s*,|frappe\\.db\\.delete\\(\\s*[\"'][^\"')]*[\"']\\s*\\)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "quality-code-review",
+        "rule": "Watch for destructive DB APIs with empty/None filters",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "filterless delete fails",
+        "input": "frappe.db.delete(\"Site\")           # deletes every row\ndoc = frappe.db.set_value(\"Site\", None, \"status\", \"Active\")",
+        "expect": "fail"
+      },
+      {
+        "label": "scoped filter passes",
+        "input": "frappe.db.delete(\"Site\", {\"name\": site_name})\nfrappe.db.set_value(\"Site\", site_name, \"status\", \"Active\")",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The dangerous form is a quoted table/doctype name with no second argument (delete) or an explicit None/empty-string name (set_value/get_value). `from frappe import db` aliases are not caught by the regex — triage those."
+  },
+  {
+    "id": "ZS-CODE-047",
+    "domain": "code",
+    "title": "Error message without change context",
+    "summary": "An error thrown from a static literal cannot tell the user what changed; messages must reference the row, the field, and before→after values (e.g. 'qty changed from 1 → 2').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:throw\\s+new\\s+\\w*Error|raise\\s+\\w*Error)\\(\\s*[\"'][^\"'%${}\\n]+[\"']\\s*\\)(?!\\s*[+%.,])",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "quality-code-review",
+        "rule": "State what changed: the row, the field, and before→after values",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "static message fails",
+        "input": "throw new Error(\"Order qty changed\");",
+        "expect": "fail"
+      },
+      {
+        "label": "before/after values pass",
+        "input": "throw new Error(\"Order \" + id + \" qty changed from \" + before + \" to \" + after);\nraise ValueError(f\"qty {before} -> {after}\")",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A message with no interpolation markers cannot carry the before→after context the reviewer needs. Generic phrases are also covered by ZS-CODE-043; this rule catches static messages regardless of wording."
+  },
+  {
+    "id": "ZS-CODE-048",
+    "domain": "code",
+    "title": "God class over 500 lines",
+    "summary": "A single class spanning more than 500 lines accumulates multiple responsibilities and forces readers to hold a huge state in mind; decompose it once the SRP boundary is crossed.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "classLineCount",
+      "params": {
+        "maxPerClass": 500
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality-principles",
+        "rule": "No god classes (> 500 lines)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "540-line class fails",
+        "input": "const line_0 = 0;\nconst line_1 = 1;\nconst line_2 = 2;\nconst line_3 = 3;\nconst line_4 = 4;\nconst line_5 = 5;\nconst line_6 = 6;\nconst line_7 = 7;\nconst line_8 = 8;\nconst line_9 = 9;\nconst line_10 = 10;\nconst line_11 = 11;\nconst line_12 = 12;\nconst line_13 = 13;\nconst line_14 = 14;\nconst line_15 = 15;\nconst line_16 = 16;\nconst line_17 = 17;\nconst line_18 = 18;\nconst line_19 = 19;\nconst line_20 = 20;\nconst line_21 = 21;\nconst line_22 = 22;\nconst line_23 = 23;\nconst line_24 = 24;\nconst line_25 = 25;\nconst line_26 = 26;\nconst line_27 = 27;\nconst line_28 = 28;\nconst line_29 = 29;\nconst line_30 = 30;\nconst line_31 = 31;\nconst line_32 = 32;\nconst line_33 = 33;\nconst line_34 = 34;\nconst line_35 = 35;\nconst line_36 = 36;\nconst line_37 = 37;\nconst line_38 = 38;\nconst line_39 = 39;\nconst line_40 = 40;\nconst line_41 = 41;\nconst line_42 = 42;\nconst line_43 = 43;\nconst line_44 = 44;\nconst line_45 = 45;\nconst line_46 = 46;\nconst line_47 = 47;\nconst line_48 = 48;\nconst line_49 = 49;\nconst line_50 = 50;\nconst line_51 = 51;\nconst line_52 = 52;\nconst line_53 = 53;\nconst line_54 = 54;\nconst line_55 = 55;\nconst line_56 = 56;\nconst line_57 = 57;\nconst line_58 = 58;\nconst line_59 = 59;\nconst line_60 = 60;\nconst line_61 = 61;\nconst line_62 = 62;\nconst line_63 = 63;\nconst line_64 = 64;\nconst line_65 = 65;\nconst line_66 = 66;\nconst line_67 = 67;\nconst line_68 = 68;\nconst line_69 = 69;\nconst line_70 = 70;\nconst line_71 = 71;\nconst line_72 = 72;\nconst line_73 = 73;\nconst line_74 = 74;\nconst line_75 = 75;\nconst line_76 = 76;\nconst line_77 = 77;\nconst line_78 = 78;\nconst line_79 = 79;\nconst line_80 = 80;\nconst line_81 = 81;\nconst line_82 = 82;\nconst line_83 = 83;\nconst line_84 = 84;\nconst line_85 = 85;\nconst line_86 = 86;\nconst line_87 = 87;\nconst line_88 = 88;\nconst line_89 = 89;\nconst line_90 = 90;\nconst line_91 = 91;\nconst line_92 = 92;\nconst line_93 = 93;\nconst line_94 = 94;\nconst line_95 = 95;\nconst line_96 = 96;\nconst line_97 = 97;\nconst line_98 = 98;\nconst line_99 = 99;\nconst line_100 = 100;\nconst line_101 = 101;\nconst line_102 = 102;\nconst line_103 = 103;\nconst line_104 = 104;\nconst line_105 = 105;\nconst line_106 = 106;\nconst line_107 = 107;\nconst line_108 = 108;\nconst line_109 = 109;\nconst line_110 = 110;\nconst line_111 = 111;\nconst line_112 = 112;\nconst line_113 = 113;\nconst line_114 = 114;\nconst line_115 = 115;\nconst line_116 = 116;\nconst line_117 = 117;\nconst line_118 = 118;\nconst line_119 = 119;\nconst line_120 = 120;\nconst line_121 = 121;\nconst line_122 = 122;\nconst line_123 = 123;\nconst line_124 = 124;\nconst line_125 = 125;\nconst line_126 = 126;\nconst line_127 = 127;\nconst line_128 = 128;\nconst line_129 = 129;\nconst line_130 = 130;\nconst line_131 = 131;\nconst line_132 = 132;\nconst line_133 = 133;\nconst line_134 = 134;\nconst line_135 = 135;\nconst line_136 = 136;\nconst line_137 = 137;\nconst line_138 = 138;\nconst line_139 = 139;\nconst line_140 = 140;\nconst line_141 = 141;\nconst line_142 = 142;\nconst line_143 = 143;\nconst line_144 = 144;\nconst line_145 = 145;\nconst line_146 = 146;\nconst line_147 = 147;\nconst line_148 = 148;\nconst line_149 = 149;\nconst line_150 = 150;\nconst line_151 = 151;\nconst line_152 = 152;\nconst line_153 = 153;\nconst line_154 = 154;\nconst line_155 = 155;\nconst line_156 = 156;\nconst line_157 = 157;\nconst line_158 = 158;\nconst line_159 = 159;\nconst line_160 = 160;\nconst line_161 = 161;\nconst line_162 = 162;\nconst line_163 = 163;\nconst line_164 = 164;\nconst line_165 = 165;\nconst line_166 = 166;\nconst line_167 = 167;\nconst line_168 = 168;\nconst line_169 = 169;\nconst line_170 = 170;\nconst line_171 = 171;\nconst line_172 = 172;\nconst line_173 = 173;\nconst line_174 = 174;\nconst line_175 = 175;\nconst line_176 = 176;\nconst line_177 = 177;\nconst line_178 = 178;\nconst line_179 = 179;\nconst line_180 = 180;\nconst line_181 = 181;\nconst line_182 = 182;\nconst line_183 = 183;\nconst line_184 = 184;\nconst line_185 = 185;\nconst line_186 = 186;\nconst line_187 = 187;\nconst line_188 = 188;\nconst line_189 = 189;\nconst line_190 = 190;\nconst line_191 = 191;\nconst line_192 = 192;\nconst line_193 = 193;\nconst line_194 = 194;\nconst line_195 = 195;\nconst line_196 = 196;\nconst line_197 = 197;\nconst line_198 = 198;\nconst line_199 = 199;\nconst line_200 = 200;\nconst line_201 = 201;\nconst line_202 = 202;\nconst line_203 = 203;\nconst line_204 = 204;\nconst line_205 = 205;\nconst line_206 = 206;\nconst line_207 = 207;\nconst line_208 = 208;\nconst line_209 = 209;\nconst line_210 = 210;\nconst line_211 = 211;\nconst line_212 = 212;\nconst line_213 = 213;\nconst line_214 = 214;\nconst line_215 = 215;\nconst line_216 = 216;\nconst line_217 = 217;\nconst line_218 = 218;\nconst line_219 = 219;\nconst line_220 = 220;\nconst line_221 = 221;\nconst line_222 = 222;\nconst line_223 = 223;\nconst line_224 = 224;\nconst line_225 = 225;\nconst line_226 = 226;\nconst line_227 = 227;\nconst line_228 = 228;\nconst line_229 = 229;\nconst line_230 = 230;\nconst line_231 = 231;\nconst line_232 = 232;\nconst line_233 = 233;\nconst line_234 = 234;\nconst line_235 = 235;\nconst line_236 = 236;\nconst line_237 = 237;\nconst line_238 = 238;\nconst line_239 = 239;\nconst line_240 = 240;\nconst line_241 = 241;\nconst line_242 = 242;\nconst line_243 = 243;\nconst line_244 = 244;\nconst line_245 = 245;\nconst line_246 = 246;\nconst line_247 = 247;\nconst line_248 = 248;\nconst line_249 = 249;\nconst line_250 = 250;\nconst line_251 = 251;\nconst line_252 = 252;\nconst line_253 = 253;\nconst line_254 = 254;\nconst line_255 = 255;\nconst line_256 = 256;\nconst line_257 = 257;\nconst line_258 = 258;\nconst line_259 = 259;\nconst line_260 = 260;\nconst line_261 = 261;\nconst line_262 = 262;\nconst line_263 = 263;\nconst line_264 = 264;\nconst line_265 = 265;\nconst line_266 = 266;\nconst line_267 = 267;\nconst line_268 = 268;\nconst line_269 = 269;\nconst line_270 = 270;\nconst line_271 = 271;\nconst line_272 = 272;\nconst line_273 = 273;\nconst line_274 = 274;\nconst line_275 = 275;\nconst line_276 = 276;\nconst line_277 = 277;\nconst line_278 = 278;\nconst line_279 = 279;\nconst line_280 = 280;\nconst line_281 = 281;\nconst line_282 = 282;\nconst line_283 = 283;\nconst line_284 = 284;\nconst line_285 = 285;\nconst line_286 = 286;\nconst line_287 = 287;\nconst line_288 = 288;\nconst line_289 = 289;\nconst line_290 = 290;\nconst line_291 = 291;\nconst line_292 = 292;\nconst line_293 = 293;\nconst line_294 = 294;\nconst line_295 = 295;\nconst line_296 = 296;\nconst line_297 = 297;\nconst line_298 = 298;\nconst line_299 = 299;\nconst line_300 = 300;\nconst line_301 = 301;\nconst line_302 = 302;\nconst line_303 = 303;\nconst line_304 = 304;\nconst line_305 = 305;\nconst line_306 = 306;\nconst line_307 = 307;\nconst line_308 = 308;\nconst line_309 = 309;\nconst line_310 = 310;\nconst line_311 = 311;\nconst line_312 = 312;\nconst line_313 = 313;\nconst line_314 = 314;\nconst line_315 = 315;\nconst line_316 = 316;\nconst line_317 = 317;\nconst line_318 = 318;\nconst line_319 = 319;\nconst line_320 = 320;\nconst line_321 = 321;\nconst line_322 = 322;\nconst line_323 = 323;\nconst line_324 = 324;\nconst line_325 = 325;\nconst line_326 = 326;\nconst line_327 = 327;\nconst line_328 = 328;\nconst line_329 = 329;\nconst line_330 = 330;\nconst line_331 = 331;\nconst line_332 = 332;\nconst line_333 = 333;\nconst line_334 = 334;\nconst line_335 = 335;\nconst line_336 = 336;\nconst line_337 = 337;\nconst line_338 = 338;\nconst line_339 = 339;\nconst line_340 = 340;\nconst line_341 = 341;\nconst line_342 = 342;\nconst line_343 = 343;\nconst line_344 = 344;\nconst line_345 = 345;\nconst line_346 = 346;\nconst line_347 = 347;\nconst line_348 = 348;\nconst line_349 = 349;\nconst line_350 = 350;\nconst line_351 = 351;\nconst line_352 = 352;\nconst line_353 = 353;\nconst line_354 = 354;\nconst line_355 = 355;\nconst line_356 = 356;\nconst line_357 = 357;\nconst line_358 = 358;\nconst line_359 = 359;\nconst line_360 = 360;\nconst line_361 = 361;\nconst line_362 = 362;\nconst line_363 = 363;\nconst line_364 = 364;\nconst line_365 = 365;\nconst line_366 = 366;\nconst line_367 = 367;\nconst line_368 = 368;\nconst line_369 = 369;\nconst line_370 = 370;\nconst line_371 = 371;\nconst line_372 = 372;\nconst line_373 = 373;\nconst line_374 = 374;\nconst line_375 = 375;\nconst line_376 = 376;\nconst line_377 = 377;\nconst line_378 = 378;\nconst line_379 = 379;\nconst line_380 = 380;\nconst line_381 = 381;\nconst line_382 = 382;\nconst line_383 = 383;\nconst line_384 = 384;\nconst line_385 = 385;\nconst line_386 = 386;\nconst line_387 = 387;\nconst line_388 = 388;\nconst line_389 = 389;\nconst line_390 = 390;\nconst line_391 = 391;\nconst line_392 = 392;\nconst line_393 = 393;\nconst line_394 = 394;\nconst line_395 = 395;\nconst line_396 = 396;\nconst line_397 = 397;\nconst line_398 = 398;\nconst line_399 = 399;\nconst line_400 = 400;\nconst line_401 = 401;\nconst line_402 = 402;\nconst line_403 = 403;\nconst line_404 = 404;\nconst line_405 = 405;\nconst line_406 = 406;\nconst line_407 = 407;\nconst line_408 = 408;\nconst line_409 = 409;\nconst line_410 = 410;\nconst line_411 = 411;\nconst line_412 = 412;\nconst line_413 = 413;\nconst line_414 = 414;\nconst line_415 = 415;\nconst line_416 = 416;\nconst line_417 = 417;\nconst line_418 = 418;\nconst line_419 = 419;\nconst line_420 = 420;\nconst line_421 = 421;\nconst line_422 = 422;\nconst line_423 = 423;\nconst line_424 = 424;\nconst line_425 = 425;\nconst line_426 = 426;\nconst line_427 = 427;\nconst line_428 = 428;\nconst line_429 = 429;\nconst line_430 = 430;\nconst line_431 = 431;\nconst line_432 = 432;\nconst line_433 = 433;\nconst line_434 = 434;\nconst line_435 = 435;\nconst line_436 = 436;\nconst line_437 = 437;\nconst line_438 = 438;\nconst line_439 = 439;\nconst line_440 = 440;\nconst line_441 = 441;\nconst line_442 = 442;\nconst line_443 = 443;\nconst line_444 = 444;\nconst line_445 = 445;\nconst line_446 = 446;\nconst line_447 = 447;\nconst line_448 = 448;\nconst line_449 = 449;\nconst line_450 = 450;\nconst line_451 = 451;\nconst line_452 = 452;\nconst line_453 = 453;\nconst line_454 = 454;\nconst line_455 = 455;\nconst line_456 = 456;\nconst line_457 = 457;\nconst line_458 = 458;\nconst line_459 = 459;\nconst line_460 = 460;\nconst line_461 = 461;\nconst line_462 = 462;\nconst line_463 = 463;\nconst line_464 = 464;\nconst line_465 = 465;\nconst line_466 = 466;\nconst line_467 = 467;\nconst line_468 = 468;\nconst line_469 = 469;\nconst line_470 = 470;\nconst line_471 = 471;\nconst line_472 = 472;\nconst line_473 = 473;\nconst line_474 = 474;\nconst line_475 = 475;\nconst line_476 = 476;\nconst line_477 = 477;\nconst line_478 = 478;\nconst line_479 = 479;\nconst line_480 = 480;\nconst line_481 = 481;\nconst line_482 = 482;\nconst line_483 = 483;\nconst line_484 = 484;\nconst line_485 = 485;\nconst line_486 = 486;\nconst line_487 = 487;\nconst line_488 = 488;\nconst line_489 = 489;\nconst line_490 = 490;\nconst line_491 = 491;\nconst line_492 = 492;\nconst line_493 = 493;\nconst line_494 = 494;\nconst line_495 = 495;\nconst line_496 = 496;\nconst line_497 = 497;\nconst line_498 = 498;\nconst line_499 = 499;\nconst line_500 = 500;\nconst line_501 = 501;\nconst line_502 = 502;\nconst line_503 = 503;\nconst line_504 = 504;\nconst line_505 = 505;\nconst line_506 = 506;\nconst line_507 = 507;\nconst line_508 = 508;\nconst line_509 = 509;\nconst line_510 = 510;\nconst line_511 = 511;\nconst line_512 = 512;\nconst line_513 = 513;\nconst line_514 = 514;\nconst line_515 = 515;\nconst line_516 = 516;\nconst line_517 = 517;\nconst line_518 = 518;\nconst line_519 = 519;\nconst line_520 = 520;\nconst line_521 = 521;\nconst line_522 = 522;\nconst line_523 = 523;\nconst line_524 = 524;\nconst line_525 = 525;\nconst line_526 = 526;\nconst line_527 = 527;\nconst line_528 = 528;\nconst line_529 = 529;\nconst line_530 = 530;\nconst line_531 = 531;\nconst line_532 = 532;\nconst line_533 = 533;\nconst line_534 = 534;\nconst line_535 = 535;\nconst line_536 = 536;\nconst line_537 = 537;\nconst line_538 = 538;\nconst line_539 = 539;",
+        "expect": "fail"
+      },
+      {
+        "label": "120-line class passes",
+        "input": "const line_0 = 0;\nconst line_1 = 1;\nconst line_2 = 2;\nconst line_3 = 3;\nconst line_4 = 4;\nconst line_5 = 5;\nconst line_6 = 6;\nconst line_7 = 7;\nconst line_8 = 8;\nconst line_9 = 9;\nconst line_10 = 10;\nconst line_11 = 11;\nconst line_12 = 12;\nconst line_13 = 13;\nconst line_14 = 14;\nconst line_15 = 15;\nconst line_16 = 16;\nconst line_17 = 17;\nconst line_18 = 18;\nconst line_19 = 19;\nconst line_20 = 20;\nconst line_21 = 21;\nconst line_22 = 22;\nconst line_23 = 23;\nconst line_24 = 24;\nconst line_25 = 25;\nconst line_26 = 26;\nconst line_27 = 27;\nconst line_28 = 28;\nconst line_29 = 29;\nconst line_30 = 30;\nconst line_31 = 31;\nconst line_32 = 32;\nconst line_33 = 33;\nconst line_34 = 34;\nconst line_35 = 35;\nconst line_36 = 36;\nconst line_37 = 37;\nconst line_38 = 38;\nconst line_39 = 39;\nconst line_40 = 40;\nconst line_41 = 41;\nconst line_42 = 42;\nconst line_43 = 43;\nconst line_44 = 44;\nconst line_45 = 45;\nconst line_46 = 46;\nconst line_47 = 47;\nconst line_48 = 48;\nconst line_49 = 49;\nconst line_50 = 50;\nconst line_51 = 51;\nconst line_52 = 52;\nconst line_53 = 53;\nconst line_54 = 54;\nconst line_55 = 55;\nconst line_56 = 56;\nconst line_57 = 57;\nconst line_58 = 58;\nconst line_59 = 59;\nconst line_60 = 60;\nconst line_61 = 61;\nconst line_62 = 62;\nconst line_63 = 63;\nconst line_64 = 64;\nconst line_65 = 65;\nconst line_66 = 66;\nconst line_67 = 67;\nconst line_68 = 68;\nconst line_69 = 69;\nconst line_70 = 70;\nconst line_71 = 71;\nconst line_72 = 72;\nconst line_73 = 73;\nconst line_74 = 74;\nconst line_75 = 75;\nconst line_76 = 76;\nconst line_77 = 77;\nconst line_78 = 78;\nconst line_79 = 79;\nconst line_80 = 80;\nconst line_81 = 81;\nconst line_82 = 82;\nconst line_83 = 83;\nconst line_84 = 84;\nconst line_85 = 85;\nconst line_86 = 86;\nconst line_87 = 87;\nconst line_88 = 88;\nconst line_89 = 89;\nconst line_90 = 90;\nconst line_91 = 91;\nconst line_92 = 92;\nconst line_93 = 93;\nconst line_94 = 94;\nconst line_95 = 95;\nconst line_96 = 96;\nconst line_97 = 97;\nconst line_98 = 98;\nconst line_99 = 99;\nconst line_100 = 100;\nconst line_101 = 101;\nconst line_102 = 102;\nconst line_103 = 103;\nconst line_104 = 104;\nconst line_105 = 105;\nconst line_106 = 106;\nconst line_107 = 107;\nconst line_108 = 108;\nconst line_109 = 109;\nconst line_110 = 110;\nconst line_111 = 111;\nconst line_112 = 112;\nconst line_113 = 113;\nconst line_114 = 114;\nconst line_115 = 115;\nconst line_116 = 116;\nconst line_117 = 117;\nconst line_118 = 118;\nconst line_119 = 119;",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Requires class-boundary extraction (AST); verify with wc -l-style counting of the class body. Complements the 1000-line file gate (ZS-CODE-045) at class granularity."
+  },
+  {
+    "id": "ZS-CODE-049",
+    "domain": "code",
+    "title": "Untracked TODO/FIXME without ticket reference",
+    "summary": "A `// TODO`/`FIXME` that names no ticket or issue is an untracked hack: per Broken Window theory it stays forever or is silently boarded up; every deferred item needs a tracked reference or a fix.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:TODO|FIXME|HACK)\\b(?!\\s*[:(-]\\s*(?:[A-Z]{2,}-\\d+|#\\d+|\\b\\d{3,}\\b))",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "improve-code-quality",
+        "rule": "Broken Window Theory: fix hacks immediately or board them up with a tracked ticket — never an untracked `// TODO`",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "ticketless todo fails",
+        "input": "// TODO: add retry here\n# FIXME: handle pagination",
+        "expect": "fail"
+      },
+      {
+        "label": "tracked todo passes",
+        "input": "// TODO(#1234): add retry here\n# FIXME: JIRA-42 handle pagination",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A reference immediately after the marker (ticket id, issue number, or bare 3+ digit id) counts as tracked. Multi-item numbered TODO lists without a ticket are flagged."
+  },
+  {
+    "id": "ZS-CODE-050",
+    "domain": "code",
+    "title": "Generic except before specific handler",
+    "summary": "Ordering `except Exception` before a more specific handler makes the specific clause dead code — it can never run; specific handlers must come first, with a generic `except Exception` only in last position.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^([ \\t]*)except\\s+Exception\\b[^\\n]*\\n(?:[ \\t]*[^\\n]*\\n)*?^\\1except\\s+[A-Z]\\w+",
+      "params": {
+        "caseSensitive": false,
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "code-quality",
+        "rule": "Prefer specific exception handlers — order handlers narrowest-first",
+        "ref": "references/quality-antipatterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generic first fails",
+        "input": "try:\n    process()\nexcept Exception:\n    log.exception(\"failed\")\nexcept ValueError:\n    handle()",
+        "expect": "fail"
+      },
+      {
+        "label": "specific first passes",
+        "input": "try:\n    process()\nexcept ValueError:\n    handle()\nexcept Exception:\n    log.exception(\"failed\")\n    raise",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Partial regex: matches an `except Exception` clause at the same indentation followed by a more specific `except X` in the same block. Tuple-form handlers (`except (A, B):`) and nested same-indent blocks are triage cases."
+  },
+  {
+    "id": "ZS-CODE-051",
+    "domain": "code",
+    "title": "SQL built by string interpolation or concatenation",
+    "summary": "Building SQL with f-strings or `\"...\" + var` invites injection and defeats parameterization; use the ORM/query builder or parameter substitution (`%s`, `?`, `:name`) exclusively.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "f[\"'][^\"']*\\b(?:SELECT|INSERT|UPDATE|DELETE|WHERE)\\b|[\"'][^\"']*\\b(?:SELECT|INSERT|UPDATE|DELETE)\\b[^\"']*[\"']\\s*\\+",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "quality-code-review",
+        "rule": "NEVER build SQL by string concatenation/f-strings",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "code-review-and-quality",
+        "rule": "Are SQL queries parameterized (no string concatenation)?",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "interpolated SQL fails",
+        "input": "query = f\"SELECT * FROM users WHERE id = {user_id}\"\nsql = \"SELECT * FROM t WHERE x = \" + x",
+        "expect": "fail"
+      },
+      {
+        "label": "parameterized query passes",
+        "input": "frappe.db.sql(\"SELECT * FROM users WHERE id = %s\", (user_id,))\nrows = db.query(\"SELECT id FROM users WHERE id = ?\", [uid])",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The tell is an f-prefixed SQL string or a quoted SQL literal concatenated with `+`; parameterized queries with placeholders pass. ORM builders (frappe.qb, query builders) are the preferred form."
+  }
+]

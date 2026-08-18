@@ -1,0 +1,576 @@
+[
+  {
+    "id": "ZS-A11Y-001",
+    "domain": "a11y",
+    "title": "Normal text contrast ≥ 4.5:1",
+    "summary": "All normal text must meet WCAG AA 4.5:1 (antislop R-25; antislop-human 'Low-Contrast Text'; Claude design-system-prompt contrast chapter; pa11y audits WCAG2AA by default). Light grey text on white is the most common miss.",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "contrastRatio",
+      "params": { "threshold": 4.5, "window": "text-background pair", "unit": "ratio" }
+    },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-25 Color Contrast (4.5:1 normal text)", "ref": "antislop.md" },
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Low-Contrast Text (compute the ratio, do not eyeball)", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Contrast (WCAG): normal text under 18px minimum 4.5:1", "ref": "claude/system-prompt.md" },
+      { "repo": "pa11y/pa11y", "rule": "Automated accessibility testing; WCAG2AA default standard", "ref": "README.md" }
+    ],
+    "tests": [
+      { "label": "4.48:1 fails", "input": "color: #777777; background: #FFFFFF; /* ratio 4.48, below 4.5 */", "expect": "fail" },
+      { "label": "7.5:1 passes", "input": "color: #444444; background: #FFFFFF; /* ratio 7.5 */", "expect": "pass" }
+    ],
+    "notes": "Contrast is local: test every spot text passes over, including over images and gradients. Use the WCAG formula ((L1+0.05)/(L2+0.05)) or a checker; never eyeball."
+  },
+  {
+    "id": "ZS-A11Y-002",
+    "domain": "a11y",
+    "title": "Large text contrast ≥ 3:1",
+    "summary": "Large text (18px+ bold or 24px+ regular) needs only 3:1 per WCAG AA (antislop R-25; Claude design-system-prompt; Hallmark gate 40 thresholds).",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "contrastRatio",
+      "params": { "threshold": 3.0, "window": "large text pair (>=18px bold or >=24px regular)" }
+    },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-25 (large text 18px+ minimum 3:1)", "ref": "antislop.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Large text (18px+ bold or 24px+): minimum 3:1", "ref": "claude/system-prompt.md" },
+      { "repo": "Nutlope/hallmark", "rule": "Gate 40 contrast thresholds (large text WCAG 3:1)", "ref": "skills/hallmark/references/slop-test.md" }
+    ],
+    "tests": [
+      { "label": "2.85:1 large text fails", "input": "font-size: 20px; color: #999999; background: #FFFFFF; /* 2.85 < 3.0 */", "expect": "fail" },
+      { "label": "3.54:1 large text passes", "input": "font-size: 20px; color: #888888; background: #FFFFFF; /* 3.54 >= 3.0 */", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-003",
+    "domain": "a11y",
+    "title": "Non-text UI contrast ≥ 3:1",
+    "summary": "Component boundaries, icons, input borders, focus indicators, and status indicators need 3:1 against adjacent colors (WCAG 1.4.11; antislop-human 'Non-Text Contrast'; Claude design-system-prompt UI components 3:1; Hallmark gate 40 includes focus rings at 3:1).",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "contrastRatio",
+      "params": { "threshold": 3.0, "window": "UI component vs adjacent background" }
+    },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Non-Text Contrast (3:1, WCAG 1.4.11)", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "UI components (buttons, icons): minimum 3:1", "ref": "claude/system-prompt.md" },
+      { "repo": "Nutlope/hallmark", "rule": "Gate 40 (icons and focus rings need WCAG 3:1)", "ref": "skills/hallmark/references/slop-test.md" }
+    ],
+    "tests": [
+      { "label": "hairline border fails", "input": "input { border: 1px solid #DDDDDD; background: #FFFFFF; } /* ~1.5:1 */", "expect": "fail" },
+      { "label": "visible boundary passes", "input": "input { border: 1px solid #767676; background: #FFFFFF; } /* ~4.5:1 */", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-004",
+    "domain": "a11y",
+    "title": "No contrast claims without computation",
+    "summary": "The grey-on-grey hallucination: claiming a pairing passes AA without running the math (antislop-human). '#555555 on black is 2.8:1 — it fails'; the eye overestimates contrast on grey pairs and agents repeat the claim because it sounds plausible.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "The Grey-on-Grey Hallucination", "ref": "skills/antislop-human/SKILL.md" }
+    ],
+    "tests": [
+      { "label": "uncomputed claim fails", "input": "This #555555 on black easily passes AA contrast.", "expect": "fail" },
+      { "label": "computed verdict passes", "input": "#777777 on white is 4.48:1, which fails the 4.5:1 threshold for normal text.", "expect": "pass" }
+    ],
+    "notes": "Never assert a pairing passes; run the contrast checker or the formula. #555555 on black computes to 2.8:1."
+  },
+  {
+    "id": "ZS-A11Y-005",
+    "domain": "a11y",
+    "title": "Text over photo/gradient: verify the worst spot",
+    "summary": "White text over an image or gradient that is light in some areas drops below 4.5:1 where the image is light; checking one bright spot only is the tell (antislop-human 'Text Over a Photo or Gradient'; antislop R-25 requires testing the whole area).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Text Over a Photo or Gradient / R-25 (test the whole area, not one point)", "ref": "skills/antislop-human/SKILL.md" }
+    ],
+    "tests": [
+      { "label": "single-spot check fails", "input": "White headline over a hero photo, contrast verified only at the dark corner.", "expect": "fail" },
+      { "label": "scrim + worst spot passes", "input": "Headline over a scrim; verified the lightest part of the image still clears 4.5:1.", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-006",
+    "domain": "a11y",
+    "title": "Never remove the focus outline",
+    "summary": "`outline: none` or `outline: 0` with no replacement focus style removes the only keyboard visibility indicator; banned by antislop R-32, antislop-human, and the Claude design-system-prompt ('one of the most common accessibility failures').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "outline\\s*:\\s*(?:none|0)\\b",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-32 Keyboard Accessibility (FORBIDDEN outline: none without replacement)", "ref": "antislop.md" },
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Removed Focus Outline", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Never remove the focus ring; replace it with :focus-visible", "ref": "claude/system-prompt.md" }
+    ],
+    "tests": [
+      { "label": "bare outline none fails", "input": "a { outline: none; }", "expect": "fail" },
+      { "label": "replaced focus style passes", "input": "button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-007",
+    "domain": "a11y",
+    "title": "Focus indicator must be visible and 3:1",
+    "summary": "A focus ring the same color as the background, one that only appears on hover, or one thinner than a 1px border fails the contrast bar (antislop-human 'Weak or Invisible Focus Indicator'); Hallmark gate 26 requires :focus-visible, :active, and :disabled styling on every interactive element.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Weak or Invisible Focus Indicator (R-32, R-34)", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Nutlope/hallmark", "rule": "Gate 26: interactive element lacks :focus-visible / :active / :disabled", "ref": "skills/hallmark/references/slop-test.md" }
+    ],
+    "tests": [
+      { "label": "invisible focus fails", "input": "button:focus { outline-color: #FFFFFF; } /* white ring on a white page */", "expect": "fail" },
+      { "label": "high-contrast ring passes", "input": "button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }", "expect": "pass" }
+    ],
+    "notes": "Check the indicator in every theme you ship, light and dark (R-34). Focus rings must also appear instantly — no fade-in (Hallmark gate 15)."
+  },
+  {
+    "id": "ZS-A11Y-008",
+    "domain": "a11y",
+    "title": "No mouse-only interactions",
+    "summary": "Menus that open on hover only, dropdowns that click-open but do not keyboard-open, drag-and-drop with no keyboard fallback: each excludes keyboard and assistive-tech users (antislop-human 'Mouse-Only Patterns'; Claude design-system-prompt keyboard navigation; antislop R-32).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Mouse-Only Patterns (R-32)", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Keyboard navigation: everything reachable and operable by keyboard; hover-only interactions fail", "ref": "claude/system-prompt.md" }
+    ],
+    "tests": [
+      { "label": "hover-only menu fails", "input": "Dropdown opens on :hover only; Enter/Space do nothing when the trigger is focused.", "expect": "fail" },
+      { "label": "keyboard-operable passes", "input": "Dropdown opens on click or Enter/Space and navigates with arrow keys; Esc closes it.", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-009",
+    "domain": "a11y",
+    "title": "Logical tab order; dialogs close on Escape",
+    "summary": "Focus that jumps around, skips content, or lands on hidden elements because DOM order does not match visual order makes navigation unpredictable (antislop-human 'Broken Tab Order'); modals must close on Escape (Claude design-system-prompt; antislop R-32).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Broken Tab Order (R-32)", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Modals must close on Escape; tab order must be logical", "ref": "claude/system-prompt.md" }
+    ],
+    "tests": [
+      { "label": "scattered tabindex fails", "input": "tabindex=\"5\" on the footer link, tabindex=\"1\" on a hidden sidebar — focus jumps past main content.", "expect": "fail" },
+      { "label": "source-order passes", "input": "DOM order matches visual order; skip link jumps to main; modal traps focus and closes on Escape.", "expect": "pass" }
+    ],
+    "notes": "Never give real content tabindex=\"-1\" unless part of a controlled focus trap such as a dialog."
+  },
+  {
+    "id": "ZS-A11Y-010",
+    "domain": "a11y",
+    "title": "Interactive hit targets ≥ 44px",
+    "summary": "Tap/click targets smaller than 44px × 44px exclude touch and low-precision users (antislop R-03 minimum tap target 44px; Claude design-system-prompt 'interactive hit targets: never smaller than 44px × 44px').",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "hitTargetSize",
+      "params": { "threshold": 44, "unit": "px", "dimension": "min(width, height)" }
+    },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-03 (button sizes meet the minimum tap target 44px)", "ref": "antislop.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Interactive hit targets: never smaller than 44px × 44px", "ref": "claude/system-prompt.md" }
+    ],
+    "tests": [
+      { "label": "32px button fails", "input": "button { width: 32px; height: 32px; }", "expect": "fail" },
+      { "label": "44px target passes", "input": "button { min-width: 44px; min-height: 44px; }", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-011",
+    "domain": "a11y",
+    "title": "No color-only status feedback",
+    "summary": "Success/error/status communicated only by color excludes color-blind and low-vision users and disappears in forced-colors mode (antislop-human 'Color-Only Feedback'; Claude design-system-prompt 'don't rely on color alone to communicate state').",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Color-Only Feedback (C-4)", "ref": "skills/antislop-human/SKILL.md" },
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Don't rely on color alone to communicate state — pair with icons, text, or position", "ref": "claude/system-prompt.md" }
+    ],
+    "tests": [
+      { "label": "red border only fails", "input": "input.invalid { border-color: red; } /* no message, no icon */", "expect": "fail" },
+      { "label": "text-first error passes", "input": "\"Password must be at least 8 characters\" shown beside the red-bordered field.", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-012",
+    "domain": "a11y",
+    "title": "Motion must have a prefers-reduced-motion fallback",
+    "summary": "Every animation/transition needs a @media (prefers-reduced-motion: reduce) alternative (Claude design-system-prompt Motion; Hallmark gate 27: any transform/animation keyframe not covered by the fallback fails).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "@keyframes|animation\\s*:|transition\\s*:",
+      "params": { "requiresFallback": "@media (prefers-reduced-motion: reduce)", "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Respect prefers-reduced-motion", "ref": "claude/system-prompt.md" },
+      { "repo": "Nutlope/hallmark", "rule": "Gate 27: every transform/animation keyframe covered by prefers-reduced-motion", "ref": "skills/hallmark/references/slop-test.md" }
+    ],
+    "tests": [
+      { "label": "uncovered animation fails", "input": ".card { transition: transform 0.3s ease; } /* no reduced-motion media query in the stylesheet */", "expect": "fail" },
+      { "label": "reduced-motion block passes", "input": "@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-013",
+    "domain": "a11y",
+    "title": "Use semantic HTML, not div-on-click",
+    "summary": "Buttons are <button>, links are <a>, structure uses <nav>/<main>/<article>; ARIA is a patch for when semantic HTML can't express the role (Claude design-system-prompt 'Semantic HTML'; pa11y/axe audits flag role misuse).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:div|span)[^>]*on(?:click|keydown|keyup)\\s*=",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Semantic HTML: <button> for buttons, never <div onclick>; proper heading hierarchy", "ref": "claude/system-prompt.md" },
+      { "repo": "pa11y/pa11y", "rule": "Runs axe-core / HTML_CodeSniffer WCAG audits", "ref": "README.md" }
+    ],
+    "tests": [
+      { "label": "div onclick fails", "input": "<div onclick=\"submit()\">Send</div>", "expect": "fail" },
+      { "label": "real button passes", "input": "<button type=\"submit\">Send</button>", "expect": "pass" }
+    ],
+    "notes": "Also covers heading hierarchy: don't skip levels (<h1> to <h3>)."
+  },
+  {
+    "id": "ZS-A11Y-014",
+    "domain": "a11y",
+    "title": "Alt text on meaningful images",
+    "summary": "Every meaningful image needs descriptive alt text; decorative images get alt=\"\"; missing alt fails screen-reader and automated audits (Claude design-system-prompt screen-reader support; pa11y example: 'Img element is the only content of the link, but is missing alt text').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<img(?![^>]*\\balt\\s*=)[^>]*>",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Alt text on every meaningful image; empty alt for decorative", "ref": "claude/system-prompt.md" },
+      { "repo": "pa11y/pa11y", "rule": "Audits alt-text violations (HTML_CodeSniffer example result)", "ref": "README.md" }
+    ],
+    "tests": [
+      { "label": "missing alt fails", "input": "<img src=\"quarterly-chart.png\">", "expect": "fail" },
+      { "label": "descriptive alt passes", "input": "<img src=\"quarterly-chart.png\" alt=\"Q3 revenue rose 12% quarter over quarter\">", "expect": "pass" }
+    ],
+    "notes": "Decorative images use alt=\"\" so screen readers skip them."
+  },
+  {
+    "id": "ZS-A11Y-015",
+    "domain": "a11y",
+    "title": "Labels on every form input",
+    "summary": "Placeholder text is not a label — it disappears when the user types (Claude design-system-prompt form design; 'labels on every form input').",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Labels on every form input; placeholder is not a label", "ref": "claude/system-prompt.md" }
+    ],
+    "tests": [
+      { "label": "placeholder-only fails", "input": "<input placeholder=\"Email address\"> with no <label for> or aria-label.", "expect": "fail" },
+      { "label": "linked label passes", "input": "<label for=\"email\">Email address</label><input id=\"email\" type=\"email\" autocomplete=\"email\">", "expect": "pass" }
+    ],
+    "notes": "Use type=\"email\"/\"tel\" and autocomplete attributes for mobile keyboards and autofill."
+  },
+  {
+    "id": "ZS-A11Y-016",
+    "domain": "a11y",
+    "title": "Text must reflow at 200% zoom",
+    "summary": "Fixed pixel font sizes and overflow:hidden containers that clip text at 200% zoom break WCAG 1.4.4 text resizing (antislop-human 'Text That Cannot Zoom', R-35).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": { "type": "semantic" },
+    "source": [
+      { "repo": "miqdadbadjuber/anti-slop", "rule": "Text That Cannot Zoom (WCAG 1.4.4, R-35)", "ref": "skills/antislop-human/SKILL.md" }
+    ],
+    "tests": [
+      { "label": "clipped at zoom fails", "input": "body { font-size: 12px; } .copy { overflow: hidden; height: 200px; } /* text clips at 200% zoom */", "expect": "fail" },
+      { "label": "fluid type passes", "input": "body { font-size: clamp(16px, 1rem + 0.5vw, 20px); } /* reflows at 200% zoom on a narrow viewport */", "expect": "pass" }
+    ]
+  },
+  {
+    "id": "ZS-A11Y-017",
+    "domain": "a11y",
+    "title": "Focus indicator at least 2px or equivalent area",
+    "summary": "A custom focus indicator thinner than 2px — outline: 1px, outline: thin — fails the visible-area bar for keyboard users (better-accessibility: 'Use at least a 2px solid perimeter or an equivalent visible area'; WCAG 2.4.7 minimum 2px per wcag-accessibility-audit).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": ":focus(?:-visible)?[^{]*\\{[^}]*outline\\s*:\\s*(?:thin|0?\\.5px|1px)\\b",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Visible Focus Rings — at least 2px solid perimeter or equivalent visible area", "ref": "SKILL.md" },
+      { "repo": "better-accessibility", "rule": "Focus rings — custom outline: 2px solid; never thinner", "ref": "focus-and-keyboard.md" },
+      { "repo": "wcag-accessibility-audit", "rule": "2.4.7 Focus Visible — minimum 2px, high contrast", "ref": "SKILL.md" }
+    ],
+    "tests": [
+      { "label": "1px ring fails", "input": "a:focus-visible { outline: 1px solid #333; }", "expect": "fail" },
+      { "label": "2px ring passes", "input": "a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }", "expect": "pass" }
+    ],
+    "notes": "Works with ZS-A11Y-006 (never outline: none) and ZS-A11Y-007 (the ring's contrast must be verified against every adjacent color). A 2px+ outline is the floor; verify the complete indicator in every theme, including forced-colors mode."
+  },
+  {
+    "id": "ZS-A11Y-018",
+    "domain": "a11y",
+    "title": "sr-only must hide visually, not from assistive tech",
+    "summary": "An .sr-only / .visually-hidden class implemented with display: none or visibility: hidden removes the content from assistive tech entirely — the pattern hides from everyone (better-accessibility screen-readers: 'Never use display:none or visibility:hidden for this; both remove the content from assistive tech entirely').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\.(?:sr-only|visually-hidden|srtext|screen-reader-text)[^{]*\\{[^}]*?(?:display\\s*:\\s*none|visibility\\s*:\\s*hidden)",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Visually hidden content — canonical .sr-only pattern; never display:none or visibility:hidden", "ref": "screen-readers.md" }
+    ],
+    "tests": [
+      { "label": "display none sr-only fails", "input": ".sr-only { position: absolute; display: none; }", "expect": "fail" },
+      { "label": "canonical clip pattern passes", "input": ".sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }", "expect": "pass" }
+    ],
+    "notes": "Use 1px boxes, not 0 — some screen readers skip zero-sized elements. white-space: nowrap prevents words from being read as one run-together string. Skip links add a focus variant that un-hides the element (:focus overrides the positioning)."
+  },
+  {
+    "id": "ZS-A11Y-019",
+    "domain": "a11y",
+    "title": "Autoplaying media needs visible controls",
+    "summary": "Media that moves, blinks, or updates automatically for more than 5 seconds needs a visible pause/stop control (WCAG 2.2.2); muted looping hero videos included (better-accessibility motion-and-zoom: 'No autoplaying media without visible controls').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:video|audio)(?=[^>]*\\bautoplay\\b)(?![^>]*\\bcontrols\\b)[^>]*>",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "No autoplaying media without visible controls (WCAG 2.2.2)", "ref": "motion-and-zoom.md" },
+      { "repo": "wcag-accessibility-audit", "rule": "2.2.2 auto-playing media with controls", "ref": "SKILL.md" }
+    ],
+    "tests": [
+      { "label": "control-less autoplay fails", "input": "<video src=\"hero-loop.mp4\" autoplay muted loop></video>", "expect": "fail" },
+      { "label": "controls present passes", "input": "<video src=\"hero-loop.mp4\" autoplay muted loop controls></video>", "expect": "pass" }
+    ],
+    "notes": "Under prefers-reduced-motion, kill autoplay entirely and start carousels paused. Media without sound that runs longer than 5 seconds still needs the pause control — duration is the trigger, not audio."
+  },
+  {
+    "id": "ZS-A11Y-020",
+    "domain": "a11y",
+    "title": "Auto-dismiss timers need a 5-second floor",
+    "summary": "Auto-dismissing toasts that time out in under 5 seconds give users no window to act; 5 seconds is the floor, and hovering or focusing the toast must pause the timer (better-accessibility motion-and-zoom: 'If a toast must time out, 5 seconds is the floor').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "setTimeout\\([^;]{0,120},\\s*(?:\\d{1,3}|[1-4]\\d{3})\\s*\\)",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Autoplay and timed UI — 5 second floor; hover/focus pauses the timer", "ref": "motion-and-zoom.md" }
+    ],
+    "tests": [
+      { "label": "3s dismiss fails", "input": "setTimeout(() => dismissToast(), 3000);", "expect": "fail" },
+      { "label": "5s floor passes", "input": "setTimeout(() => dismissToast(), 5000);", "expect": "pass" }
+    ],
+    "notes": "Flags dismiss-style timers under 5000ms. Not every setTimeout is a dismissal timer — review hits in context. Low-stakes confirmations may auto-dismiss; anything containing an action, an error, or information the user may need to act on stays until dismissed."
+  },
+  {
+    "id": "ZS-A11Y-021",
+    "domain": "a11y",
+    "title": "Toasts need a live region to announce",
+    "summary": "A toast with no aria-live or role is invisible to screen readers — the only way to convey the information fails (fixing-accessibility: 'toasts must not be the only way to convey critical information'; better-accessibility: toasts belong in a polite role=\"status\" live region).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:div|section|span)(?![^>]*\\b(?:aria-live|role)\\s*=)[^>]*class=\"[^\"]*\\b(?:toast|snackbar)\\b[^\"]*\"[^>]*>",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "fixing-accessibility", "rule": "Toasts must not be the only way to convey critical information", "ref": "SKILL.md" },
+      { "repo": "better-accessibility", "rule": "Announce Dynamic Content — polite live region (role=\"status\") for toasts", "ref": "SKILL.md" },
+      { "repo": "better-accessibility", "rule": "Live regions — role=\"status\" for toasts, role=\"alert\" for urgent errors", "ref": "screen-readers.md" }
+    ],
+    "tests": [
+      { "label": "unannounced toast fails", "input": "<div class=\"toast\">Document deleted</div>", "expect": "fail" },
+      { "label": "status toast passes", "input": "<div role=\"status\" class=\"toast\">Document deleted</div>", "expect": "pass" }
+    ],
+    "notes": "Default to polite (role=\"status\"); reserve role=\"alert\" / aria-live=\"assertive\" for urgent errors not tied to a control. The 'only path to an action inside an auto-dismissing toast' variant — data loss on a schedule — is semantic and deferred to M3."
+  },
+  {
+    "id": "ZS-A11Y-022",
+    "domain": "a11y",
+    "title": "Placeholder is not a label",
+    "summary": "An input with placeholder= but no accessible name attribute leaves the field unlabeled — placeholder text disappears the moment the user types (better-accessibility forms: 'A placeholder is never a label'; fixing-accessibility: every input must be labeled).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<input(?![^>]*\\b(?:aria-label|aria-labelledby)\\s*=)[^>]*\\bplaceholder\\s*=[^>]*>",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Labels — placeholder is never a label", "ref": "forms.md" },
+      { "repo": "fixing-accessibility", "rule": "Every input, select, and textarea must be labeled", "ref": "SKILL.md" }
+    ],
+    "tests": [
+      { "label": "placeholder-only fails", "input": "<input type=\"text\" placeholder=\"Email address\">", "expect": "fail" },
+      { "label": "named placeholder passes", "input": "<input type=\"email\" placeholder=\"name@company.com\" aria-label=\"Email address\">", "expect": "pass" }
+    ],
+    "notes": "The regex inspects the input element only; a linked <label for> or wrapping label also satisfies but is a cross-element association (see semantic ZS-A11Y-015). Placeholders used in addition to a label are fine and show an example of the expected format."
+  },
+  {
+    "id": "ZS-A11Y-023",
+    "domain": "a11y",
+    "title": "No fixed min-width blocking 320px reflow",
+    "summary": "A fixed min-width of 800px or more on a container forces horizontal scrolling at the 320px equivalent (400% zoom on a 1280px viewport), breaking WCAG 1.4.10 reflow — content must work with vertical scrolling only (better-accessibility motion-and-zoom; wcag-accessibility-audit 1.4.10).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "min-width\\s*:\\s*(?:[89]\\d\\d|[1-9]\\d{3,})px",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Reflow at 320px — no two-dimensional scrolling", "ref": "motion-and-zoom.md" },
+      { "repo": "wcag-accessibility-audit", "rule": "1.4.10 Reflow — content reflows to 320px width without horizontal scrolling", "ref": "SKILL.md" }
+    ],
+    "tests": [
+      { "label": "1200px min-width fails", "input": ".page { min-width: 1200px; }", "expect": "fail" },
+      { "label": "max-width centered passes", "input": ".page { max-width: 1200px; margin-inline: auto; }", "expect": "pass" }
+    ],
+    "notes": "min-width is the blocker; max-width is fine. Genuinely two-dimensional content (tables, maps, code blocks) scrolls inside its own container — that is the 2D-content exception, not a page-level min-width. Fixed heights on text containers are the same failure mode under 200% zoom: prefer min-height."
+  },
+  {
+    "id": "ZS-A11Y-024",
+    "domain": "a11y",
+    "title": "No forced-color-adjust: none without system colors",
+    "summary": "forced-color-adjust: none freezes the authored color in Windows High Contrast mode, defeating the user's forced-colors palette (better-accessibility focus-and-keyboard: 'never freeze the authored color with forced-color-adjust: none unless the control remains perceivable').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "forced-color-adjust\\s*:\\s*none",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Forced-colors — keep default color adjustment or use a system color such as Highlight", "ref": "focus-and-keyboard.md" }
+    ],
+    "tests": [
+      { "label": "frozen color fails", "input": "a { forced-color-adjust: none; }", "expect": "fail" },
+      { "label": "system color passes", "input": "@media (forced-colors: active) { a:focus-visible { outline: 2px solid Highlight; } }", "expect": "pass" }
+    ],
+    "notes": "In forced-colors: active, keep the default color adjustment or explicitly use a system color (Highlight, ButtonText, CanvasText). Custom focus colors must be re-verified under forced colors, not frozen."
+  },
+  {
+    "id": "ZS-A11Y-025",
+    "domain": "a11y",
+    "title": "No positive tabindex values",
+    "summary": "Positive tabindex hijacks the tab order for the whole page, jumping focus past content in DOM order; only tabindex=\"0\" (join natural order) and tabindex=\"-1\" (programmatic focus) are valid (better-accessibility focus-and-keyboard: 'Positive tabindex: never. It hijacks the tab order for the whole page; fix the DOM order instead').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "tabindex\\s*=\\s*\"[1-9]\\d*\"|tabindex\\s*=\\s*'[1-9]\\d*'",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "tabindex rules — only 0 and -1, never positive values", "ref": "focus-and-keyboard.md" },
+      { "repo": "fixing-accessibility", "rule": "Do not use tabindex greater than 0", "ref": "SKILL.md" }
+    ],
+    "tests": [
+      { "label": "positive tabindex fails", "input": "<div tabindex=\"5\">Footer link</div>", "expect": "fail" },
+      { "label": "roving tabindex passes", "input": "<button tabindex=\"-1\">Menu item</button>", "expect": "pass" }
+    ],
+    "notes": "Concrete, machine-checkable half of the semantic broken-tab-order rule (ZS-A11Y-009): fix the DOM order instead of patching with positive values. Roving tabindex for composite widgets: active item 0, all others -1."
+  },
+  {
+    "id": "ZS-A11Y-026",
+    "domain": "a11y",
+    "title": "Never aria-hidden a focusable element",
+    "summary": "aria-hidden=\"true\" on a focusable element creates tab stops that don't exist for screen readers — elements you can Tab to that are invisible to assistive tech (better-accessibility: 'Never put it on (or above) a focusable element; that creates stops you can Tab to that don't exist for a screen reader').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:button|input|select|textarea)[^>]*\\baria-hidden\\s*=\\s*\"true\"|<a(?=[^>]*\\bhref\\s*=)[^>]*\\baria-hidden\\s*=\\s*\"true\"",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Never put aria-hidden on (or above) a focusable element", "ref": "semantics-and-aria.md" },
+      { "repo": "better-accessibility", "rule": "aria-hidden — never on a focusable element", "ref": "screen-readers.md" }
+    ],
+    "tests": [
+      { "label": "hidden link fails", "input": "<a href=\"/docs\" aria-hidden=\"true\">Docs</a>", "expect": "fail" },
+      { "label": "hidden icon passes", "input": "<svg aria-hidden=\"true\" focusable=\"false\"><path /></svg>", "expect": "pass" }
+    ],
+    "notes": "If you hide something interactive, also remove it from the tab order (and from focusability). Decorative elements get aria-hidden=\"true\" only when they are genuinely non-focusable."
+  },
+  {
+    "id": "ZS-A11Y-027",
+    "domain": "a11y",
+    "title": "No aria-label on role-less div or span",
+    "summary": "aria-label on a plain <div> or <span> is ignored by most screen readers — names on non-interactive, role-less elements do nothing (better-accessibility semantics-and-aria: 'Names on non-interactive, role-less elements are ignored by most screen readers').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:div|span)(?![^>]*\\brole\\s*=)[^>]*\\baria-label\\s*=",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "better-accessibility", "rule": "Common ARIA mistakes — aria-label on a plain div or span", "ref": "semantics-and-aria.md" }
+    ],
+    "tests": [
+      { "label": "div aria-label fails", "input": "<div aria-label=\"Main menu\">", "expect": "fail" },
+      { "label": "role-backed name passes", "input": "<div role=\"menu\" aria-label=\"Main menu\">", "expect": "pass" }
+    ],
+    "notes": "aria-label only works on elements with a role or native naming. The real fix is usually a native element — <button>, <a>, <nav> — rather than ARIA on a div."
+  },
+  {
+    "id": "ZS-A11Y-028",
+    "domain": "a11y",
+    "title": "Icon-only buttons need accessible names",
+    "summary": "An icon-only button with no aria-label or aria-labelledby has no accessible name — screen readers announce nothing or read the file name (fixing-accessibility: 'icon-only buttons must have aria-label or aria-labelledby'; better-accessibility: 'Icon-only buttons need a descriptive aria-label').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<button(?![^>]*\\b(?:aria-label|aria-labelledby)\\s*=)[^>]*>\\s*<(?:svg|img)",
+      "params": { "caseSensitive": false }
+    },
+    "source": [
+      { "repo": "fixing-accessibility", "rule": "Icon-only buttons must have aria-label or aria-labelledby", "ref": "SKILL.md" },
+      { "repo": "better-accessibility", "rule": "Accessible Names Everywhere — icon-only buttons need a descriptive aria-label", "ref": "SKILL.md" }
+    ],
+    "tests": [
+      { "label": "unlabeled icon button fails", "input": "<button class=\"icon-btn\"><svg><path /></svg></button>", "expect": "fail" },
+      { "label": "named icon button passes", "input": "<button aria-label=\"Close\"><svg aria-hidden=\"true\"><path /></svg></button>", "expect": "pass" }
+    ],
+    "notes": "The icon inside a labeled button should be aria-hidden=\"true\" so the name isn't doubled. A visible text label inside the button also satisfies the rule (text-first buttons don't match this pattern); aria-labelledby pointing at a visible label works too."
+  }
+]

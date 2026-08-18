@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Rules DB gate
+        run: pnpm validate:rules
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Core engine tests
+        run: pnpm --filter @zero-slop/core test
+
+      - name: CLI tests
+        run: pnpm --filter @zero-slop/cli test
+
+      - name: Build
+        run: pnpm --filter @zero-slop/core build && pnpm --filter @zero-slop/cli build
+
+      # Dogfood: zero-slop gates its own docs. The repo passes at 0 error-tier
+      # findings; this gate keeps it there. `gate` takes a single path, so run
+      # it once per target.
+      - name: Self-scan
+        run: node packages/cli/dist/index.js gate docs/ && node packages/cli/dist/index.js gate README.md

@@ -1,0 +1,23 @@
+# Reference: cloned third-party research repos (not part of this project)
+reference/
+
+# Node / TS workspace
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Test coverage
+coverage/
+
+# OS
+.DS_Store
+Thumbs.db

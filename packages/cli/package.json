@@ -1,0 +1,55 @@
+{
+  "name": "@zero-slop/cli",
+  "version": "0.1.0",
+  "description": "Zero-slop CLI: command-line runner for the anti-AI-slop rules engine.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trefeon/zero-slop.git"
+  },
+  "homepage": "https://github.com/trefeon/zero-slop",
+  "bugs": {
+    "url": "https://github.com/trefeon/zero-slop/issues"
+  },
+  "keywords": [
+    "zero-slop",
+    "anti-slop",
+    "ai-slop",
+    "ai-generated",
+    "linter",
+    "cli",
+    "writing",
+    "quality",
+    "code-quality"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "type": "module",
+  "bin": {
+    "zero-slop": "./dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "rules"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "sync-rules": "node ../../scripts/copy-rules.mjs"
+  },
+  "dependencies": {
+    "@zero-slop/core": "workspace:*",
+    "commander": "^15.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.0.0"
+  }
+}

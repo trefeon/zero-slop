@@ -1,0 +1,50 @@
+{
+  "name": "@zero-slop/core",
+  "version": "0.1.0",
+  "description": "Zero-slop rules database: types, loader, and validator for the canonical anti-AI-slop tells.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trefeon/zero-slop.git"
+  },
+  "homepage": "https://github.com/trefeon/zero-slop",
+  "bugs": {
+    "url": "https://github.com/trefeon/zero-slop/issues"
+  },
+  "keywords": [
+    "zero-slop",
+    "anti-slop",
+    "ai-slop",
+    "rules",
+    "lint",
+    "writing",
+    "quality"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "vitest": "^4.0.0"
+  }
+}

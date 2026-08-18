@@ -1,0 +1,29 @@
+{
+  "name": "zero-slop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Anti-AI-slop framework: rules database, check engines, CLI, CI action, agent.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trefeon/zero-slop.git"
+  },
+  "homepage": "https://github.com/trefeon/zero-slop",
+  "bugs": {
+    "url": "https://github.com/trefeon/zero-slop/issues"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "validate:rules": "tsx packages/core/src/validate.ts",
+    "typecheck": "tsc -p packages/core/tsconfig.json --noEmit",
+    "build:core": "pnpm --filter @zero-slop/core build"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}

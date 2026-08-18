@@ -1,0 +1,5082 @@
+[
+  {
+    "id": "ZS-PROSE-001",
+    "domain": "prose",
+    "title": "Banned AI verbs",
+    "summary": "A stable set of verbs (delve, leverage, utilize, facilitate, ...) is statistically overrepresented in AI text across every reference corpus; plain equivalents exist for each.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "delve",
+        "leverage",
+        "utilize",
+        "facilitate",
+        "foster",
+        "bolster",
+        "underscore",
+        "unveil",
+        "navigate",
+        "streamline",
+        "enhance",
+        "endeavour",
+        "endeavor",
+        "ascertain",
+        "elucidate",
+        "harness",
+        "embark",
+        "supercharge",
+        "elevate",
+        "spearhead",
+        "commence",
+        "optimise",
+        "optimize",
+        "encompass",
+        "garner",
+        "showcase",
+        "highlighting",
+        "emphasizing",
+        "enhancing"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Words to cut",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 21: No AI verbs",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Overused verbs",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned vocabulary",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Banned vocabulary",
+        "ref": "banned-vocabulary.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "banned verb fails",
+        "input": "We leverage the framework to streamline deployment.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain verb passes",
+        "input": "We use the framework to speed up deployment.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Literal technical uses are context-sensitive; e.g. 'navigate the website' is acceptable, 'navigate the regulatory process' is not (see ZS-PROSE-067 exclusion zones)."
+  },
+  {
+    "id": "ZS-PROSE-002",
+    "domain": "prose",
+    "title": "Banned AI adjectives",
+    "summary": "Robust, comprehensive, pivotal, seamless and friends are the most overused adjectives in AI text; they add fake gravitas where a plain word or a fact belongs.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "robust",
+        "comprehensive",
+        "pivotal",
+        "crucial",
+        "vital",
+        "transformative",
+        "cutting-edge",
+        "groundbreaking",
+        "innovative",
+        "seamless",
+        "intricate",
+        "nuanced",
+        "multifaceted",
+        "holistic",
+        "paramount",
+        "meticulous",
+        "vibrant",
+        "renowned",
+        "profound",
+        "epic",
+        "unprecedented",
+        "remarkable",
+        "stunning",
+        "game-changing"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Words to cut",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Overused adjectives",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned vocabulary",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Banned vocabulary",
+        "ref": "banned-vocabulary.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "puff adjective fails",
+        "input": "The platform offers a seamless, transformative experience.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain adjective passes",
+        "input": "The platform loads pages in 200ms.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Context-aware severity: 'a comprehensive audit by the FTC in 2024' is lower severity than 'a comprehensive examination of the issues' (named entity next to the word)."
+  },
+  {
+    "id": "ZS-PROSE-003",
+    "domain": "prose",
+    "title": "Metaphorical nouns (tapestry, realm, beacon, ...)",
+    "summary": "AI injects false gravitas by using concrete nouns metaphorically ('a tapestry of regulations', 'a beacon of hope'); literal uses of the same words are fine.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "tapestry",
+        "realm",
+        "beacon",
+        "testament",
+        "symphony",
+        "ecosystem",
+        "landscape",
+        "interplay"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Words to cut",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Overused metaphorical nouns / Metaphorical vs. literal distinction",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned vocabulary",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Banned vocabulary (conditional bans)",
+        "ref": "banned-vocabulary.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "metaphorical use fails",
+        "input": "The startup is a beacon of hope in the AI landscape.",
+        "expect": "fail"
+      },
+      {
+        "label": "literal use passes",
+        "input": "The lighthouse guides ships into the harbor.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Requires bigram context: flag only metaphorical uses ('a tapestry of regulations'), not literal ones ('medieval tapestry', 'last will and testament', 'Arizona landscape')."
+  },
+  {
+    "id": "ZS-PROSE-004",
+    "domain": "prose",
+    "title": "Empty intensifiers and filler adverbs",
+    "summary": "Extremely, dramatically, truly, literally and similar intensifiers are banned or flagged across all references; they inflate without proving. Keep only when they carry genuine emphasis or uncertainty.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "extremely",
+        "dramatically",
+        "exceptionally",
+        "significantly",
+        "incredibly",
+        "remarkably",
+        "truly",
+        "absolutely",
+        "literally",
+        "very",
+        "really",
+        "simply",
+        "actually",
+        "honestly",
+        "fundamentally",
+        "importantly",
+        "crucially",
+        "inherently",
+        "inevitably",
+        "clearly",
+        "obviously",
+        "essentially",
+        "basically",
+        "certainly",
+        "definitely",
+        "surely",
+        "undoubtedly",
+        "quite",
+        "interestingly",
+        "naturally",
+        "ultimately",
+        "just"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Often-empty adverbs",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 4: No intensifiers",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Filler words and empty intensifiers",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty intensifier fails",
+        "input": "The results are extremely significant for the industry.",
+        "expect": "fail"
+      },
+      {
+        "label": "no intensifier passes",
+        "input": "The build failed, and I watched the deploy roll back.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: 'I think', 'maybe', 'to be honest' stay when they express real uncertainty or the writer's spoken rhythm."
+  },
+  {
+    "id": "ZS-PROSE-005",
+    "domain": "prose",
+    "title": "Academic AI tells",
+    "summary": "Academic-sounding filler ('shed light on', 'a plethora of', 'prior to', 'in terms of') reads as AI even in non-academic prose; plain equivalents are shorter and clearer.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "shed light on",
+        "pave the way for",
+        "paving the way",
+        "a myriad of",
+        "a plethora of",
+        "paramount",
+        "pertaining to",
+        "prior to",
+        "subsequent to",
+        "in light of",
+        "with respect to",
+        "in terms of",
+        "the fact that"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 22: No academic AI tells",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Academic-specific AI tells",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Banned phrases",
+        "ref": "banned-vocabulary.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "academic tell fails",
+        "input": "The study sheds light on a myriad of prior findings.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain wording passes",
+        "input": "The study explains several earlier findings.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-006",
+    "domain": "prose",
+    "title": "Banned opening phrases",
+    "summary": "'In today's fast-paced world', 'It's important to note that', 'Let's dive into' and kin are throat-clearing openers that delay the point; every reference bans them.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "in today's fast-paced world",
+        "in today's digital age",
+        "in today's world",
+        "in an era of",
+        "in the ever-evolving landscape of",
+        "in the realm of",
+        "in the world of",
+        "it's important to note that",
+        "it is important to note that",
+        "let's delve into",
+        "let's dive in",
+        "let's dive deeper",
+        "imagine a world where",
+        "when it comes to",
+        "at its core",
+        "in the age of"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Often-empty phrases",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 11: No filler phrases",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Opening phrases to avoid",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Banned phrases",
+        "ref": "banned-vocabulary.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "throat-clearing opener fails",
+        "input": "In today's fast-paced world, teams need to move quickly.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct opener passes",
+        "input": "Teams ship faster when the build takes two minutes.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-007",
+    "domain": "prose",
+    "title": "Banned transition phrases",
+    "summary": "Furthermore, Moreover, That being said, At its core and similar connective filler are AI defaults; plain connectors (also, and, but, however, still) work better.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "furthermore",
+        "moreover",
+        "notwithstanding",
+        "that being said",
+        "with that in mind",
+        "it's worth mentioning that",
+        "it is worth mentioning that",
+        "it's worth noting that",
+        "it is worth noting that",
+        "at its core",
+        "to put it simply",
+        "in essence",
+        "this begs the question",
+        "in the landscape of",
+        "additionally",
+        "firstly",
+        "secondly",
+        "thirdly"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 20: No AI transition phrases",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Overused transitions / Transitional phrases to avoid",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases and openers",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "transition filler fails",
+        "input": "Furthermore, the fix is cheap; moreover, it is fast.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain connector passes",
+        "input": "The fix is cheap, and it is fast.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Threshold context: if more than 30% of paragraphs in an article begin with a transition word or adverbial clause, the text is structurally artificial (see ZS-PROSE-053)."
+  },
+  {
+    "id": "ZS-PROSE-008",
+    "domain": "prose",
+    "title": "Banned concluding and summary phrases",
+    "summary": "'In conclusion', 'At the end of the day', 'Ultimately', 'Overall' announce a recap the reader just lived through; end on the last concrete point instead.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "in conclusion",
+        "to sum up",
+        "in the final analysis",
+        "all things considered",
+        "at the end of the day",
+        "ultimately",
+        "overall",
+        "the bottom line is"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Summary-recap endings",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Concluding phrases to avoid",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "summary opener fails",
+        "input": "In conclusion, the migration delivered real savings.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct close passes",
+        "input": "The migration cut monthly spend by $4,000.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-009",
+    "domain": "prose",
+    "title": "Throat-clearing openers",
+    "summary": "'Here's the thing', 'Let me be clear', 'I'll be honest' promise substance the sentence then delivers anyway; cut them and state the point.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "here's the thing",
+        "here is the thing",
+        "here's what i mean",
+        "here is what i mean",
+        "let me be clear",
+        "i'll be honest",
+        "i will be honest",
+        "the uncomfortable truth is",
+        "here's the deal",
+        "here is the deal",
+        "without further ado",
+        "in a nutshell"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Throat-clearing openers",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "throat-clearer fails",
+        "input": "Here's the thing: the gate is broken.",
+        "expect": "fail"
+      },
+      {
+        "label": "point stated directly passes",
+        "input": "The gate is broken.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-010",
+    "domain": "prose",
+    "title": "Faux-insight setups",
+    "summary": "'What most people get wrong', 'The part everyone misses', 'Here's what nobody tells you' flatter the writer as the lone expert; the claim should stand on its own.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "this is the part most people skip",
+        "what most people get wrong",
+        "here's what nobody tells you",
+        "here is what nobody tells you",
+        "the part everyone misses",
+        "what nobody tells you",
+        "what most people don't know",
+        "what most people do not know"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Faux-insight setups",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "faux-insight fails",
+        "input": "The part everyone misses: distribution is the real moat.",
+        "expect": "fail"
+      },
+      {
+        "label": "claim stands alone passes",
+        "input": "Distribution is the moat.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-011",
+    "domain": "prose",
+    "title": "Rhetorical setups",
+    "summary": "'What if I told you...', 'Think about it:', 'Plot twist:' and self-answered 'Question? Answer.' pairs manufacture drama; drop them and make the point.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "what if i told you",
+        "think about it",
+        "plot twist",
+        "believe it or not",
+        "you might be wondering",
+        "the answer may surprise you"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Rhetorical setups",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rhetorical colon abuse ('Here's the thing:', 'Think about it:')",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rhetorical setup fails",
+        "input": "What if I told you the fix is already merged?",
+        "expect": "fail"
+      },
+      {
+        "label": "plain statement passes",
+        "input": "The fix is already merged.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-012",
+    "domain": "prose",
+    "title": "Weasel attribution",
+    "summary": "'Experts agree', 'industry reports suggest', 'studies show' hide an unverifiable claim behind a nameless authority; name the source or cut the claim.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "experts agree",
+        "experts say",
+        "industry reports suggest",
+        "industry reports indicate",
+        "many argue",
+        "some argue",
+        "widely regarded as",
+        "studies show",
+        "studies suggest",
+        "observers note",
+        "some critics argue",
+        "modern researchers believe",
+        "it is widely acknowledged that",
+        "it's widely acknowledged that"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Weasel attribution",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No vague attributions",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vague attribution fails",
+        "input": "Experts agree that remote work is here to stay.",
+        "expect": "fail"
+      },
+      {
+        "label": "named source passes",
+        "input": "The 2025 Gallup survey found 61% of workers prefer remote days.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If the writer has no source, flag for them to find one instead of inventing an attribution (fabricated attributions are an integrity-domain rule)."
+  },
+  {
+    "id": "ZS-PROSE-013",
+    "domain": "prose",
+    "title": "Corporate and marketing cliches",
+    "summary": "'Unlock the power of', 'Elevate your', 'Bridge the gap', 'Move the needle' are promotional filler that reads as templated; no-slop bans hype tone outright.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "unlock the power of",
+        "unlocks the power of",
+        "elevate your",
+        "streamline your",
+        "supercharge your",
+        "bridge the gap",
+        "move the needle",
+        "take it to the next level",
+        "thought leadership",
+        "thought leader",
+        "synergy",
+        "synergies",
+        "pain points",
+        "value add",
+        "value proposition",
+        "touch base",
+        "circle back",
+        "rest assured",
+        "it goes without saying",
+        "buckle up",
+        "look no further",
+        "our team of experts",
+        "this is where"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 11: No filler phrases",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No promotional tone",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "marketing cliche fails",
+        "input": "Unlock the power of your data with our platform.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain claim passes",
+        "input": "Our platform queries a 40TB warehouse in under a second.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-014",
+    "domain": "prose",
+    "title": "Formulaic email openers and closers",
+    "summary": "'I hope this email finds you well', 'As per my last email', 'Please don't hesitate to reach out' are boilerplate; write the substance instead.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "i hope this email finds you well",
+        "i hope this finds you well",
+        "i hope this helps",
+        "as per my last email",
+        "please don't hesitate to reach out",
+        "please do not hesitate to reach out",
+        "don't hesitate to contact me",
+        "do not hesitate to contact me"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "email boilerplate fails",
+        "input": "I hope this email finds you well. Please don't hesitate to reach out.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct email passes",
+        "input": "The invoice is attached; payment is due Friday.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-015",
+    "domain": "prose",
+    "title": "Collaborative narrator language",
+    "summary": "'Let's explore', 'we will examine', 'as we can see' stage a guided tour instead of stating the fact; no-slop bans collaborative language outright.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "let's explore",
+        "let us explore",
+        "let's dive",
+        "let us delve into",
+        "we will examine",
+        "we'll examine",
+        "as we can see",
+        "in this article",
+        "going forward"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-slop",
+        "rule": "No collaborative language",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "no-ai-slop",
+        "rule": "Often-empty phrases",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "tour-guide opener fails",
+        "input": "Let's explore how the queue drains under load.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct statement passes",
+        "input": "The queue drains at 2,000 messages per second under load.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-016",
+    "domain": "prose",
+    "title": "'Whether you're' and 'By [gerund]' openers",
+    "summary": "'Whether you're a X, Y, or Z' and 'By understanding X, you can Y' are structural AI formulas that open with audience flattery or an empty promise.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(Whether you're|Whether you are|By [A-Za-z]+ing)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Structural patterns to avoid",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases ('Whether you're a [X] or a [Y]...', 'From X to Y')",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "whether-formula fails",
+        "input": "Whether you're a startup or a giant, this guide is for you.",
+        "expect": "fail"
+      },
+      {
+        "label": "gerund formula fails",
+        "input": "By understanding the queue, you can cut latency.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct sentence passes",
+        "input": "The queue drains faster when you batch writes.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-017",
+    "domain": "prose",
+    "title": "Inflated symbolism phrases",
+    "summary": "Multi-word phrases like 'provide a valuable insight', 'left an indelible mark', 'serves as a testament' appear hundreds of times more often in AI text than human baselines (isgpt.org corpus analysis, 2025).",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "provide a valuable insight",
+        "left an indelible mark",
+        "play a significant role in shaping",
+        "an unwavering commitment",
+        "open a new avenue",
+        "a stark reminder",
+        "gain a comprehensive understanding",
+        "serves as a testament",
+        "stands as a testament",
+        "watershed moment",
+        "deeply rooted",
+        "a beacon of",
+        "plays a crucial role",
+        "plays a vital role",
+        "the intersection of",
+        "sends a strong message",
+        "at the heart of",
+        "in an era where",
+        "rich history",
+        "natural beauty",
+        "nestled in",
+        "boasts a",
+        "a testament to"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Inflated symbolism phrases (2025-2026 AI tells)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Banned phrases",
+        "ref": "banned-vocabulary.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "inflated symbolism fails",
+        "input": "Her mentorship left an indelible mark on the team.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete claim passes",
+        "input": "Her mentorship cut the team's onboarding time in half.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-018",
+    "domain": "prose",
+    "title": "Banned response openers",
+    "summary": "'Certainly,', 'Great question!', 'As an AI...', 'Moreover,' at the start of a reply are model-first-word tells shared across ChatGPT, Claude, Grok, Gemini and DeepSeek fingerprints.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "certainly,",
+        "absolutely,",
+        "sure,",
+        "great question!",
+        "that's a great point!",
+        "i'd be happy to",
+        "as an ai",
+        "as a language model",
+        "moreover,",
+        "furthermore,",
+        "additionally,",
+        "interestingly,",
+        "notably,",
+        "importantly,",
+        "indeed,"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned sentence/paragraph openers and model-specific first-word tells",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "response opener fails",
+        "input": "Certainly, let me explain how caching works.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct answer passes",
+        "input": "Caching stores query results so repeat calls skip the database.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-019",
+    "domain": "prose",
+    "title": "Em dash cap: max 1 per 500 words",
+    "summary": "The em dash is the single most cited AI tell in existence; cap at one per 500 words, and prefer commas, colons, parentheses, or new sentences.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "—",
+      "params": {
+        "maxPerWords": 500,
+        "wordsWindow": 500
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Em dashes: Maximum ONE per 500 words",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "no-ai-slop",
+        "rule": "Em dashes (1-2 in longer drafts only)",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 1: No emdashes / Em Dashes: The Primary AI Tell",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Em dash discipline (max one per paragraph)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "over cap fails",
+        "input": "It's not X — it's Y — and never Z — period.",
+        "expect": "fail"
+      },
+      {
+        "label": "single dash passes",
+        "input": "One dash — only.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "In short copy use none; in longer drafts 1-2 are fine when they clearly beat commas or parentheses. Remove clusters and decorative dashes."
+  },
+  {
+    "id": "ZS-PROSE-020",
+    "domain": "prose",
+    "title": "Exclamation mark cap: max 1 per 1,000 words",
+    "summary": "Exclamation marks manufacture enthusiasm; cap at one per 1,000 words because enthusiasm should come from word choice.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "!",
+      "params": {
+        "maxPerWords": 1000,
+        "wordsWindow": 1000
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Exclamation marks: maximum one per 1,000 words",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 14: No synthetic enthusiasm",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "over cap fails",
+        "input": "Wow! Amazing! Incredible! Fantastic!",
+        "expect": "fail"
+      },
+      {
+        "label": "none passes",
+        "input": "The gate closed at 5pm and held.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Exclude exclamation marks inside code, URLs, and quoted material."
+  },
+  {
+    "id": "ZS-PROSE-021",
+    "domain": "prose",
+    "title": "Ellipsis cap: max 1 per piece",
+    "summary": "Ellipses only when genuinely trailing off, never as a transition; at most one per piece.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "…|\\.\\.\\.",
+      "params": {
+        "maxPerPiece": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Ellipses: Only when genuinely trailing off. Never as transition. Max one per piece",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "multiple ellipses fail",
+        "input": "I mean... it's fine... whatever...",
+        "expect": "fail"
+      },
+      {
+        "label": "none passes",
+        "input": "She paused, then answered the question.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-022",
+    "domain": "prose",
+    "title": "Colon reveals (dramatic colon)",
+    "summary": "A noun phrase, a colon, then a lowercase dramatic reveal ('The best part: it learns.') fakes drama; use colons for lists, labels, and quotes, not mic-drop reveals.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Colon reveals; sentence case after colon",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-ai-slop",
+        "rule": "Colon sentence-case check",
+        "ref": "skills/no-ai-slop/eval.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dramatic reveal fails",
+        "input": "The detail that makes it work: a separate agent grades it.",
+        "expect": "fail"
+      },
+      {
+        "label": "list colon passes",
+        "input": "The report covers three areas: security, performance, and cost.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Regex hint ':\\s[a-z]' false-positives on legitimate list colons; triage decides. Prefer sentence case after a colon unless grammar, a proper noun, a title, or code requires otherwise."
+  },
+  {
+    "id": "ZS-PROSE-023",
+    "domain": "prose",
+    "title": "Scare quotes on normal words",
+    "summary": "Quotation marks around ordinary words imply they are fake or contested; use quotes only for actual quotations from a named source.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\"'][a-z][a-zA-Z -]{1,20}[\"']",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 10: No scare quotes on normal words",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "scare quotes fail",
+        "input": "The 'revolutionary' feature shipped late.",
+        "expect": "fail"
+      },
+      {
+        "label": "no quotes passes",
+        "input": "The feature shipped late.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Do not flag text inside genuine quotations from cited sources (see ZS-PROSE-067)."
+  },
+  {
+    "id": "ZS-PROSE-024",
+    "domain": "prose",
+    "title": "Binary contrasts and contrasting parallelism",
+    "summary": "'It's not X. It's Y.' and 'The question isn't X, the issue is Y' simulate punchy emphasis; more than two contrasting parallelisms per 500 words is a high-confidence AI indicator.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(It's not (just )?[^.!?]{2,60}[.,] It's|The (question|issue) isn't [^.!?]{2,60}[.,] The (question|issue) is|not just [^.!?]{2,60}\\. It's)\\b",
+      "params": {
+        "maxPer500Words": 2,
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Binary contrasts",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Contrasting parallelism overuse (threshold: more than two per 500-word block)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "binary contrast fails",
+        "input": "It's not a tool problem, it's a process problem.",
+        "expect": "fail"
+      },
+      {
+        "label": "contrasting parallelism fails",
+        "input": "The question isn't the model, the question is the eval.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct claim passes",
+        "input": "The eval matters more than the model.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-025",
+    "domain": "prose",
+    "title": "Negative listing",
+    "summary": "'Not a X. Not a Y. A Z.' is a rhetorical ladder that delays the point; just say Z.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bNot (a|an) [a-z][^.!?]*[.!?] Not (a|an) [a-z]",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Negative listing",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "negative ladder fails",
+        "input": "Not a toy. Not a game. A tool.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain claim passes",
+        "input": "The device is a tool.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-026",
+    "domain": "prose",
+    "title": "Rule of Three overuse",
+    "summary": "AI defaults to triads; three-adjective or three-phrase lists as a rhetorical device signal AI even when vocabulary is clean.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No Rule of Three",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No rule of three",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "padded triad fails",
+        "input": "Fast, reliable, and affordable are what users want.",
+        "expect": "fail"
+      },
+      {
+        "label": "genuine two-item list passes",
+        "input": "Fast and reliable are what users want.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: three items are fine when the content genuinely has three items."
+  },
+  {
+    "id": "ZS-PROSE-027",
+    "domain": "prose",
+    "title": "'Not just X, but Y' constructions",
+    "summary": "'It's not just X, but Y' / 'not only X, but also Y' are banned structural formulas that stage a false escalation.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bnot just [^,.!?]{2,60} but (also )?\\b|\\bnot only [^,.!?]{2,60} but (also )?\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "Banned phrases ('Not just X, but Y', 'It's not just about X — it's about Y')",
+        "ref": "skills/anti-ai-slop-writing/references/banned-words.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No 'not just X, but Y'",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "not-just-but fails",
+        "input": "It's not just a tool but a platform.",
+        "expect": "fail"
+      },
+      {
+        "label": "not-only-but fails",
+        "input": "It's not only fast but also reliable.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain coordination passes",
+        "input": "It is a tool and a platform.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-028",
+    "domain": "prose",
+    "title": "Superficial -ing clauses",
+    "summary": "Trailing '-ing' clauses (highlighting, underscoring, reflecting, showcasing) pretend to explain meaning but add no information; replace with concrete consequences.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": ",\\s*(highlighting|underscoring|reflecting|showcasing|emphasizing|enhancing|cultivating|contributing to)\\s+\\w+",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Superficial analysis",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No present-participle chains",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "-ing gloss fails",
+        "input": "The launch adds file search, highlighting the team's commitment.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete result passes",
+        "input": "The launch adds file search, so users find old drafts.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-029",
+    "domain": "prose",
+    "title": "Importance puffery",
+    "summary": "'Stands as a testament', 'marks a pivotal moment', 'plays a vital role' announce importance instead of demonstrating it; state the fact and let the reader judge.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "stands as a testament",
+        "marks a pivotal moment",
+        "marks a turning point",
+        "plays a vital role",
+        "solidifies its position",
+        "underscores its significance",
+        "represents a significant shift",
+        "leaves an indelible mark",
+        "paradigm shift",
+        "game changer",
+        "this is huge",
+        "this changes everything",
+        "revolutionizes",
+        "revolutionises"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Importance puffery",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No overstating significance",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "puffery fails",
+        "input": "The launch marks a pivotal moment for the company.",
+        "expect": "fail"
+      },
+      {
+        "label": "fact stands alone passes",
+        "input": "The launch is the company's first paid product.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-030",
+    "domain": "prose",
+    "title": "Interpretive metadiscourse",
+    "summary": "Lines that step outside the subject to tell readers what to notice ('The key point is', 'As you can see', 'This distinction matters') are reader guidance the prose should do on its own.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "the key point is",
+        "as you can see",
+        "this distinction matters",
+        "in other words",
+        "that last part matters more than it sounds",
+        "it's worth remembering that",
+        "it is worth remembering that",
+        "note that"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Interpretive metadiscourse",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "reader guidance fails",
+        "input": "As you can see, the build failed.",
+        "expect": "fail"
+      },
+      {
+        "label": "support instead passes",
+        "input": "The build failed because the token expired.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: if the point is clear, delete the aside; otherwise replace it with support or facts already in the content."
+  },
+  {
+    "id": "ZS-PROSE-031",
+    "domain": "prose",
+    "title": "Fake-strong copulas",
+    "summary": "'Serves as', 'stands as', 'boasts', 'ventured into' substitute for plain 'is'/'has' and inflate the sentence; prefer the copula.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "serves as",
+        "stands as",
+        "boasts",
+        "ventured into",
+        "features",
+        "offers"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Fake-strong verbs",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Use simple copulas",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fake copula fails",
+        "input": "The library serves as a foundational component.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain copula passes",
+        "input": "The library is the base of the stack.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-032",
+    "domain": "prose",
+    "title": "Synonym cycling (elegant variation)",
+    "summary": "Rotating synonyms for the same referent ('the agent... the assistant... the tool') is a stylistic tic; repeat the clear word instead.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Synonym cycling",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No elegant variation",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rotating terms fails",
+        "input": "The agent reviews the draft. The assistant scores it. The tool suggests fixes.",
+        "expect": "fail"
+      },
+      {
+        "label": "consistent term passes",
+        "input": "The agent reviews the draft, scores it, and suggests fixes.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-033",
+    "domain": "prose",
+    "title": "Dramatic fragmentation",
+    "summary": "'X. And Y. And Z.' or 'That's it. That's the whole thing.' uses fragments for manufactured punch; use complete sentences.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\. And [A-Z][a-z]+\\.|\\. That's it\\. That's the whole thing\\.",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Dramatic fragmentation",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stacked fragments fail",
+        "input": "The gate jammed. And stuck. And broke.",
+        "expect": "fail"
+      },
+      {
+        "label": "complete sentence passes",
+        "input": "The gate jammed, stuck, and broke.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Human fragments used sparingly are fine; the stacked 'And'-chain pattern is the tell."
+  },
+  {
+    "id": "ZS-PROSE-034",
+    "domain": "prose",
+    "title": "Robotic rhythm",
+    "summary": "Repeated sentence shapes, identical paragraph structures, and stacked punchy fragments read mechanical; vary the shape when it helps the point.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Robotic rhythm",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 7: Vary structure",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "uniform shapes fail",
+        "input": "The gate opened. The gate closed. The gate jammed.",
+        "expect": "fail"
+      },
+      {
+        "label": "varied rhythm passes",
+        "input": "The gate opened at 9, then jammed at noon when the latch bent.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-035",
+    "domain": "prose",
+    "title": "Fake-profound kickers",
+    "summary": "A final 'deep' line that turns the point into a metaphor or mic-drop aphorism is a tell; delete it and end on the clearest concrete sentence.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Fake-profound kickers",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "mic-drop ending fails",
+        "input": "We fixed the bug. In the end, every bug is a lesson in humility.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete ending passes",
+        "input": "We fixed the bug by adding a null check.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Do not rewrite the kicker into a better metaphor; delete it and end on the last concrete point, takeaway, or next action."
+  },
+  {
+    "id": "ZS-PROSE-036",
+    "domain": "prose",
+    "title": "Performative urgency",
+    "summary": "'Act now', 'don't miss out' without a concrete consequence is synthetic urgency; it needs a real deadline or penalty in the same sentence.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(act now|don't miss out|do not miss out|limited time only|act fast|hurry)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 9: No performative urgency without a reason",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "baseless urgency fails",
+        "input": "Act now before it's too late.",
+        "expect": "fail"
+      },
+      {
+        "label": "grounded deadline passes",
+        "input": "Orders placed by Friday ship Monday.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-037",
+    "domain": "prose",
+    "title": "Research-process narration",
+    "summary": "'Could not be located', 'was not found', 'as of my last update' narrate the search instead of reporting facts; report what you can support and silently omit the rest.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "could not be located",
+        "was not found",
+        "is not available",
+        "no record was found",
+        "could not be verified",
+        "as of my last update",
+        "as of my knowledge cutoff",
+        "is not available in my",
+        "remains unclear"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 24: No research-process narration",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "No knowledge-cutoff disclaimers",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "search narration fails",
+        "input": "The document could not be located in the archive.",
+        "expect": "fail"
+      },
+      {
+        "label": "fact only passes",
+        "input": "The document is archived under 2024-Q3.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also covers 'as of [date]' qualifiers attached to an inability to find something, and sections enumerating documents the writer could not obtain."
+  },
+  {
+    "id": "ZS-PROSE-038",
+    "domain": "prose",
+    "title": "Reference narration",
+    "summary": "'As discussed above', 'as we will see' narrate the text's own structure; make the connection and move on.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "as discussed above",
+        "as we will see",
+        "as mentioned earlier",
+        "as noted previously",
+        "as previously discussed",
+        "we will discuss later"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 8: Reference without narrating the reference",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "self-reference fails",
+        "input": "As discussed above, the fix is shipped.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct statement passes",
+        "input": "The fix is shipped in v2.1.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-039",
+    "domain": "prose",
+    "title": "Parataxis (stacked short declaratives)",
+    "summary": "Three or more short declarative sentences in a row read like a poem and signal AI; connect related thoughts with clauses, conjunctions, or semicolons.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "shortSentenceRun",
+      "params": {
+        "maxRun": 2,
+        "maxWords": 8
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No parataxis (three or more short declarative sentences in a row)",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "staccato run fails",
+        "input": "Short sentence. Then another. Then another.",
+        "expect": "fail"
+      },
+      {
+        "label": "connected thought passes",
+        "input": "AI chains short sentences together because it is easier than constructing a thought.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-040",
+    "domain": "prose",
+    "title": "'As [role], I...' openers",
+    "summary": "'As a developer, I...' announces credentials instead of making the point; real people just say the thing.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^As (a|an) [A-Za-z-]{2,},\\s+I\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No 'As [role], I...' openers",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "credential opener fails",
+        "input": "As a developer, I recommend profiling first.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct claim passes",
+        "input": "Profile first, then optimize.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-041",
+    "domain": "prose",
+    "title": "Hedging seesaw",
+    "summary": "Giving a counterpoint equal weight and then not committing is the AI default; pick a side and acknowledge counterpoints in one sentence max.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No hedging seesaw",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "seesaw fails",
+        "input": "Option A is best. But option B has merit. Still, A might win.",
+        "expect": "fail"
+      },
+      {
+        "label": "committed claim passes",
+        "input": "Option A is best for three reasons.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-042",
+    "domain": "prose",
+    "title": "Passive voice",
+    "summary": "Passive constructions ('was killed', 'is being done') read dead; write-good flags them as 'may be passive voice'.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(was|were|is|are|been|being) \\w+ed\\b",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "passive check (passive-voice)",
+        "ref": "write-good.js"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No passive construction",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "passive fails",
+        "input": "The script was killed.",
+        "expect": "fail"
+      },
+      {
+        "label": "active passes",
+        "input": "The team shipped it Tuesday.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Style check, not hard ban: 'was killed' is flagged as possibly passive; rewrite active and direct."
+  },
+  {
+    "id": "ZS-PROSE-043",
+    "domain": "prose",
+    "title": "Weasel words and hedge qualifiers",
+    "summary": "'Helps ensure', 'may be able to', 'can potentially' and weak quantifiers ('remarkably', 'few') either commit or cut; write-good flags them as weasel words.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "helps ensure",
+        "help ensure",
+        "may be able to",
+        "can potentially",
+        "could potentially",
+        "remarkably",
+        "surprisingly",
+        "arguably",
+        "apparently",
+        "seems to"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 15: No weasel words",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "write-good",
+        "rule": "weasel check (weasel-words)",
+        "ref": "test/basic.spec.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "weasel qualifier fails",
+        "input": "The tool helps ensure uptime.",
+        "expect": "fail"
+      },
+      {
+        "label": "committed claim passes",
+        "input": "The tool keeps the service up.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-044",
+    "domain": "prose",
+    "title": "Weakening adverbs",
+    "summary": "'Very', 'really', 'extremely', 'simply', 'only' weaken the words they modify; write-good's adverb check flags them as 'can weaken meaning'.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "very",
+        "really",
+        "extremely",
+        "simply",
+        "only",
+        "quite",
+        "so"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "adverb check (adverb-where)",
+        "ref": "README.md"
+      },
+      {
+        "repo": "write-good",
+        "rule": "adverb tests",
+        "ref": "test/basic.spec.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "weakening adverb fails",
+        "input": "This sentence is simply terrible.",
+        "expect": "fail"
+      },
+      {
+        "label": "strong word passes",
+        "input": "This sentence is broken.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'Only' and 'just' are purpose-gated: keep when they carry genuine contrast or limitation (e.g. 'read-only')."
+  },
+  {
+    "id": "ZS-PROSE-045",
+    "domain": "prose",
+    "title": "Wordy phrases",
+    "summary": "'As a matter of fact', 'in order to', 'due to the fact that' are wordy or unneeded; write-good's too-wordy check flags them.",
+    "tier": "info",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "as a matter of fact",
+        "in order to",
+        "due to the fact that",
+        "at this point in time",
+        "a number of",
+        "in the event that",
+        "with regard to"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "tooWordy check (too-wordy)",
+        "ref": "test/basic.spec.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "wordy phrase fails",
+        "input": "As a matter of fact, this could be simpler.",
+        "expect": "fail"
+      },
+      {
+        "label": "concise phrasing passes",
+        "input": "This could be simpler.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-046",
+    "domain": "prose",
+    "title": "Cliches",
+    "summary": "Tired idioms ('at loose ends', 'avoid like the plague') are flagged as cliches by write-good; prefer plain wording.",
+    "tier": "info",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "at loose ends",
+        "avoid like the plague",
+        "back to square one",
+        "in the nick of time",
+        "tip of the iceberg",
+        "crystal clear"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "cliches check (no-cliches)",
+        "ref": "test/basic.spec.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "cliche fails",
+        "input": "Writing specs puts me at loose ends.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain wording passes",
+        "input": "Writing specs is tedious.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-047",
+    "domain": "prose",
+    "title": "Lexical illusions (repeated words)",
+    "summary": "An immediately repeated word ('the the') is a typo-level defect write-good flags as 'is repeated'.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(\\w+) \\1\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "illusion check (lexical-illusions)",
+        "ref": "lib/lexical-illusions.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "repeated word fails",
+        "input": "The the build failed.",
+        "expect": "fail"
+      },
+      {
+        "label": "single occurrence passes",
+        "input": "The build failed.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-048",
+    "domain": "prose",
+    "title": "'So' sentence openers",
+    "summary": "Starting a sentence with 'So' adds no meaning; write-good's so-check flags it except for 'So?' and mid-sentence uses.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(So|so)\\s|;\\s*so\\b",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "so check (starts-with-so)",
+        "ref": "lib/starts-with-so.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "so opener fails",
+        "input": "So the best thing to do is wait.",
+        "expect": "fail"
+      },
+      {
+        "label": "so? passes",
+        "input": "So?",
+        "expect": "pass"
+      },
+      {
+        "label": "mid-sentence so passes",
+        "input": "This changes the code so that it works.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-049",
+    "domain": "prose",
+    "title": "'There is' / 'There are' openers",
+    "summary": "Starting sentences with 'There is/are' is unnecessary verbiage; write-good flags it as 'unnecessary verbiage'.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^There (is|are)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "write-good",
+        "rule": "thereIs check (there-is)",
+        "ref": "lib/there-is.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "there-is opener fails",
+        "input": "There is a use for this construction.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct subject passes",
+        "input": "This construction has a use.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-050",
+    "domain": "prose",
+    "title": "No three consecutive same-length sentences",
+    "summary": "Uniform sentence length is the single most measurable AI detection signal; three consecutive sentences of the same length are forbidden.",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "uniformSentenceLength",
+      "params": {
+        "runLength": 3,
+        "toleranceWords": 0
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No uniform sentence length (no three consecutive same-length sentences)",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Sentence length uniformity / burstiness threshold",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "three same-length fails",
+        "input": "The gate opened. The gate closed. The gate jammed.",
+        "expect": "fail"
+      },
+      {
+        "label": "mixed lengths pass",
+        "input": "The gate opened. It jammed again at noon, after the latch bent in the heat.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-051",
+    "domain": "prose",
+    "title": "Burstiness: require short and long sentences",
+    "summary": "Human writing alternates short punchy and long clause-heavy sentences; a 500-word block with no sentence under 8 or over 30 words lacks human burstiness.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "burstiness",
+      "params": {
+        "windowWords": 500,
+        "minWords": 8,
+        "maxWords": 30
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Sentence length uniformity (burstiness) threshold",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rossmann voice: high sentence-length variance",
+        "ref": "skills/rossmann-voice/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "mid-range cluster fails",
+        "input": "The service handles about fifteen thousand requests every hour. Each request passes through four separate internal queues. The slowest queue occasionally waits over two full seconds. Operators see a clean dashboard with every metric visible.",
+        "expect": "fail"
+      },
+      {
+        "label": "short and long mix passes",
+        "input": "The service handles about fifteen thousand requests every hour, each passing through four internal queues before the slowest occasionally waits over two seconds. It works.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Human baseline: 3+ distinct syntactic patterns per 100 words; AI text shows 1.5 or fewer."
+  },
+  {
+    "id": "ZS-PROSE-052",
+    "domain": "prose",
+    "title": "Paragraph length uniformity",
+    "summary": "AI aims for visual symmetry with paragraphs of nearly identical length; if all paragraphs in a section are within 15% of each other in word count, the section is likely AI-generated.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "paragraphUniformity",
+      "params": {
+        "maxRelativeDeviation": 0.15
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Paragraph length uniformity threshold (15%)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "uniform paragraphs fail",
+        "input": "The queue drains at a steady two thousand messages per second once warm. Retries are handled by a separate worker that backs off on failure. Metrics are logged to the same store as the main pipeline. Alerts fire only when the lag exceeds ten seconds.",
+        "expect": "fail"
+      },
+      {
+        "label": "varied paragraphs pass",
+        "input": "The queue drains at a steady two thousand messages per second once warm. Retries back off on failure. The alert only fires when lag exceeds ten seconds.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Exception: bulleted lists, tables, and template fields are structurally uniform by design."
+  },
+  {
+    "id": "ZS-PROSE-053",
+    "domain": "prose",
+    "title": "Transition density",
+    "summary": "AI over-relies on transition words to maintain flow; if more than 30% of paragraphs begin with a transition word or adverbial clause, the text is structurally artificial.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "transitionDensity",
+      "params": {
+        "threshold": 0.3
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Transition density threshold (30%)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "transition-heavy fails",
+        "input": "However, the build is slow. Moreover, tests are flaky. Additionally, deploys stall. Thus the team avoids releases.",
+        "expect": "fail"
+      },
+      {
+        "label": "few transitions pass",
+        "input": "The build is slow, and tests are flaky. The team avoids releases until both improve.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-054",
+    "domain": "prose",
+    "title": "Opening-word repetition across paragraphs",
+    "summary": "Three or more consecutive paragraphs starting with the same word or phrase pattern indicates mechanical generation; vary opening words.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "openingWordRun",
+      "params": {
+        "runLength": 3
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Opening-word repetition",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "same opener three times fails",
+        "input": "The gate opens at nine. The gate closes at five. The gate alarms when forced.",
+        "expect": "fail"
+      },
+      {
+        "label": "varied openers pass",
+        "input": "The gate opens at nine. By five it closes for the night. An alarm trips when forced.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-055",
+    "domain": "prose",
+    "title": "Segmental entropy (flat pacing across sections)",
+    "summary": "AI keeps flat stylistic consistency from introduction through conclusion; if sentence-length variance differs by less than 10% across intro, body, and conclusion, the text was likely generated in a single pass.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "segmentalEntropy",
+      "params": {
+        "maxVarianceDiff": 0.1
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Segmental entropy threshold (10%)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "monotone sections fail",
+        "input": "The gate opens at nine and closes at five. It uses a latch that trips an alarm. The latch is replaced each spring. The alarm reports to a central panel.",
+        "expect": "fail"
+      },
+      {
+        "label": "register shift passes",
+        "input": "The gate opens at nine and closes at five. It uses a latch that trips an alarm, and the latch is replaced each spring so the alarm keeps reporting to the central panel. The gate works.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Human introductions are tighter and more declarative; body sections are denser; conclusions shift register."
+  },
+  {
+    "id": "ZS-PROSE-056",
+    "domain": "prose",
+    "title": "Hedging density",
+    "summary": "AI models hedge 4-7x more than human writers (ACL 2024, 12,000 documents); more than 3 hedging markers per paragraph or 8 per 1,000 words in declarative sections indicates generation.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "hedgingDensity",
+      "params": {
+        "perParagraph": 3,
+        "per1000Words": 8
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Hedging and epistemic modality overload (thresholds: 3/paragraph, 8 per 1,000 words)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hedge stack fails",
+        "input": "The fix may work, but it might introduce issues that could affect other systems, and it seems likely the tradeoffs are probably acceptable.",
+        "expect": "fail"
+      },
+      {
+        "label": "grounded hedge passes",
+        "input": "The FTC's 2024 enforcement data suggests a 12% increase.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Do not flag hedging in sections discussing pending legislation, ongoing litigation, or genuinely disputed facts. Markers: may, might, could, potentially, probably, generally, usually, arguably, likely, it seems, it appears, unclear, remains to be seen."
+  },
+  {
+    "id": "ZS-PROSE-057",
+    "domain": "prose",
+    "title": "Hallucinated markup artifacts",
+    "summary": "oaicite, contentReference, grok_card, attributableIndex, and turn0search0 are AI citation placeholders leaked from training data; any occurrence means unedited AI output. Zero tolerance.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(oaicite|contentReference|grok_card|attributableIndex|turn0search0)\\b",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Hallucinated markup artifacts (100% confidence indicators)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "leaked placeholder fails",
+        "input": "The bill passed [oaicite:1] with broad support.",
+        "expect": "fail"
+      },
+      {
+        "label": "clean citation passes",
+        "input": "The bill passed in July with broad support.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-058",
+    "domain": "prose",
+    "title": "Excessive bold / mid-sentence emphasis",
+    "summary": "Bold sprinkled mid-sentence or repeatedly is formatting slop; bold a term once at most when introducing it and let the words do the work.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\*\\*[^*]+\\*\\*",
+      "params": {
+        "maxPer1000Words": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Formatting slop: bold sprinkled mid-sentence",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Formatting restraint: do not bold excessively",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "repeated bold fails",
+        "input": "The **gate** is **broken** and **jammed**.",
+        "expect": "fail"
+      },
+      {
+        "label": "no bold passes",
+        "input": "The gate is broken and jammed.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-059",
+    "domain": "prose",
+    "title": "Emoji bullets, headings, and stacks",
+    "summary": "Every line starting with an emoji, emoji in headings, and emoji used as bullet points is slop; one or two emoji per post is the ceiling.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[✅🔥🚀💡✨🧵🎉👍❤️]",
+      "params": {
+        "maxPerPiece": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Formatting slop: emoji in headings",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No emoji as bullet points",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "no-slop",
+        "rule": "Formatting restraint: do not use emoji unless asked",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "emoji bullet stack fails",
+        "input": "✅ Fast ✅ Reliable ✅ Cheap",
+        "expect": "fail"
+      },
+      {
+        "label": "plain list passes",
+        "input": "Fast, reliable, and cheap.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-060",
+    "domain": "prose",
+    "title": "Bullet list overuse",
+    "summary": "Excessive bullet points are an AI formatting default; never more than 5-7 in a row, and if it fits in a sentence, use a sentence.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "bulletRun",
+      "params": {
+        "maxConsecutiveBullets": 7
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No excessive bullet points (never more than 5-7 in a row)",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      },
+      {
+        "repo": "no-ai-slop",
+        "rule": "Formatting slop: bullet lists where two sentences of prose would read better",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "ten bullets fail",
+        "input": "- one\n- two\n- three\n- four\n- five\n- six\n- seven\n- eight\n- nine\n- ten",
+        "expect": "fail"
+      },
+      {
+        "label": "three bullets pass",
+        "input": "- one\n- two\n- three",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-061",
+    "domain": "prose",
+    "title": "Markdown in plain-text contexts",
+    "summary": "Asterisks and headers rendering as symbols in emails, DMs, and SMS is an instant AI tell; no markdown in plain-text contexts.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No markdown in plain text contexts (emails, DMs, SMS)",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "markdown in DM fails",
+        "input": "Great work *so far*!",
+        "expect": "fail"
+      },
+      {
+        "label": "plain text passes",
+        "input": "Great work so far.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also: no markdown headers in social media, emails, or casual writing — an instant AI flag."
+  },
+  {
+    "id": "ZS-PROSE-062",
+    "domain": "prose",
+    "title": "'Thread:' and '🧵' openers",
+    "summary": "Opening a post with 'Thread:' or the thread emoji is a social-media AI tell; content should make people keep reading on its own.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(🧵\\s*|Thread:|THREAD:)",
+      "params": {
+        "flags": "u"
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No 'Thread:' or '🧵' openers",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "thread opener fails",
+        "input": "Thread: what I learned shipping v2",
+        "expect": "fail"
+      },
+      {
+        "label": "substance opener passes",
+        "input": "What I learned shipping v2",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-063",
+    "domain": "prose",
+    "title": "Hashtag stacks",
+    "summary": "A stack of hashtags is a social-media AI tell; zero to two, integrated naturally.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "#\\w+",
+      "params": {
+        "maxPerPiece": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No hashtag stacks (zero to two, integrated naturally)",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hashtag stack fails",
+        "input": "Shipping the dashboard today #build #dev #startup #ai #growth",
+        "expect": "fail"
+      },
+      {
+        "label": "no hashtags passes",
+        "input": "Shipping the dashboard today.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-064",
+    "domain": "prose",
+    "title": "Heading anti-patterns",
+    "summary": "Narrative, dramatic, or clickbait headings ('The [Concept] Trap', 'The Hidden Danger', 'Why X Destroys Y', vague analytical labels) read like thriller titles; headings must describe the section content.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^#{1,6} (The [A-Z][a-z]+ (Trap|Danger|Killer|Secret|Silent|Hidden)|Why [A-Z][a-z]+ (Destroys|Kills|Breaks|Fails)|Broader (pattern|implications)|Wider context|Larger trend|Industry-wide impact|The [A-Z][a-z]+ You [A-Z][a-z]+)",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 16: No narrative, dramatic, or AI-generic headings",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Heading anti-patterns (banned structures)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dramatic heading fails",
+        "input": "## The Hidden Danger",
+        "expect": "fail"
+      },
+      {
+        "label": "descriptive heading passes",
+        "input": "## Firmware Corruption After Sudden Power Loss",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A good heading reads like a technical manual index entry: specific, descriptive, and boring to non-specialists. Includes parenthetical-clarification ban (see ZS-PROSE-068)."
+  },
+  {
+    "id": "ZS-PROSE-065",
+    "domain": "prose",
+    "title": "Sentence case in headings",
+    "summary": "Title case in headings beyond the first word and proper nouns is formatting slop; use sentence case.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^#{1,6} [A-Z][a-z]+ [A-Z][a-z]+",
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "no-slop",
+        "rule": "Formatting restraint: no title case in headings beyond the first word and proper nouns",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "title case fails",
+        "input": "## This Is Title Case",
+        "expect": "fail"
+      },
+      {
+        "label": "sentence case passes",
+        "input": "## This is sentence case",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Proper nouns are exempt; triage should not flag '## Apple Vision Pro'."
+  },
+  {
+    "id": "ZS-PROSE-066",
+    "domain": "prose",
+    "title": "'Key takeaways' sections",
+    "summary": "'Key takeaways' and 'TL;DR' recap sections are banned structural formulas; end on the last concrete point instead.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^#{1,6} ?(Key [Tt]akeaways?|TL;DR|TLDR)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-slop",
+        "rule": "Formatting restraint: do not create 'key takeaways' sections",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "no-ai-slop",
+        "rule": "Summary-recap endings",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "takeaways section fails",
+        "input": "## Key Takeaways\nThe gate opens at nine.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete section passes",
+        "input": "## Hours\nThe gate opens at nine.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-067",
+    "domain": "prose",
+    "title": "Exclusion zones for lexical scans",
+    "summary": "Lexical scans must not flag text inside direct quotes from cited sources, titles, names, verbatim values, or code/markup shown as examples; severity drops when a banned word sits next to named entities.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "False positive prevention (exclusion zones, context-aware severity, metaphorical vs. literal)",
+        "ref": "skills/no-ai-slop/references/ai-writing-detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "quoted source excluded",
+        "input": "She said, \"let's delve into it\" in the meeting.",
+        "expect": "pass"
+      },
+      {
+        "label": "banned word outside quotes fails",
+        "input": "Let's delve into the archive.",
+        "expect": "fail"
+      }
+    ],
+    "notes": "Higher severity: 'a comprehensive examination of the issues' (abstract, no specifics). Lower severity: 'comprehensive audit by the FTC in 2024' (specific entity and date). Metaphorical-vs-literal bigram checks apply to ecosystem, landscape, navigate, tapestry, symphony, beacon, testament."
+  },
+  {
+    "id": "ZS-PROSE-068",
+    "domain": "prose",
+    "title": "Parenthetical clarifications in headings",
+    "summary": "Headings with parenthetical suffixes (counts, labels, dates) read as meta-commentary instead of naming the section subject.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^#{1,6} [^(\\n]+\\([^)]+\\)",
+      "params": {
+        "caseSensitive": false,
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 3: No parenthetical clarifications in headings",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "parenthetical heading fails",
+        "input": "## Migration (IMPORTANT)",
+        "expect": "fail"
+      },
+      {
+        "label": "plain heading passes",
+        "input": "## Migration",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Multiline + no-cross-line heading text: pattern must not swallow prose up to the first parenthesis."
+  },
+  {
+    "id": "ZS-PROSE-069",
+    "domain": "prose",
+    "title": "Repeated talking points",
+    "summary": "Saying the same point twice is padding; duplicates are filler.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 6: No repeated talking points",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "restated point fails",
+        "input": "The gate is slow. Again, the gate is slow.",
+        "expect": "fail"
+      },
+      {
+        "label": "single statement passes",
+        "input": "The gate is slow.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-070",
+    "domain": "prose",
+    "title": "Identical paragraph layout runs",
+    "summary": "Three consecutive sections or paragraphs with identical layout (topic sentence, explanation, example, transition) is a pattern; break it.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "paragraphLayoutRun",
+      "params": {
+        "runLength": 3
+      }
+    },
+    "source": [
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 7: Vary structure (three consecutive identical layouts is a pattern)",
+        "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "anti-ai-slop-writing",
+        "rule": "No identical paragraph structure / no parallel structure across sections",
+        "ref": "skills/anti-ai-slop-writing/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "identical layouts fail",
+        "input": "The queue drains fast. It uses four workers. For example, the log shows 2k/s. The queue drains fast. It uses four workers. For example, the log shows 2k/s. The queue drains fast. It uses four workers. For example, the log shows 2k/s.",
+        "expect": "fail"
+      },
+      {
+        "label": "varied layouts pass",
+        "input": "The queue drains fast. Four workers drain it at 2k/s. The log proves it.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-071",
+    "domain": "prose",
+    "title": "'Challenges and future prospects' endings",
+    "summary": "Ending a piece with a section about challenges faced and future outlook is a structural AI formula; weave challenges into the body instead.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "challenges and future prospects",
+        "challenges and future outlook",
+        "looking ahead",
+        "future outlook"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "no-slop",
+        "rule": "No 'challenges and future prospects' endings",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "outlook section fails",
+        "input": "## Challenges and Future Prospects\nWe face flaky tests.",
+        "expect": "fail"
+      },
+      {
+        "label": "body-integrated passes",
+        "input": "## Failures We Fixed\nFlaky tests now retry twice.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-072",
+    "domain": "prose",
+    "title": "Generic filler (portability test)",
+    "summary": "A sentence that could move unchanged to another person, company, country, or product is filler; every claim must end with a concrete, verifiable detail or be deleted.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "no-ai-slop",
+        "rule": "Use the portability test; be concrete and specific",
+        "ref": "skills/no-ai-slop/SKILL.md"
+      },
+      {
+        "repo": "no_ai_slop_writing_rules",
+        "rule": "Rule 5: No hollow statements; Rule 13: Write like a researcher, not a copywriter",
+        "ref": "CLAUDE.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "portable filler fails",
+        "input": "In today's competitive market, companies must innovate to stay ahead.",
+        "expect": "fail"
+      },
+      {
+        "label": "grounded claim passes",
+        "input": "Our queue depth hit 40,000 last Tuesday, so we added two workers.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-073",
+    "domain": "prose",
+    "title": "False agency: inanimate subject with human verb",
+    "summary": "Unslop and stop-slop flag handing rhetorical agency to inanimate things so the writer can assert significance without claiming it: 'the data tells a story', 'the market believes'. The data does not narrate; state the finding and the actor.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:the|this|our|their|these|those)?\\s*(?:data|numbers?|results?|findings?|metrics?|evidence|market|industry|economy|system|algorithm|platform|technology|framework|code|software|dashboard|report|analysis|design|survey|research|product)\\s+(?:tells?|decides?|believes?|thinks?|knows?|understands?|argues?|claims?|concludes?|hopes?|wants?|prefers?|recognizes?|realizes?|remembers?|forgets?|feels?|wonders?|assumes?|promises?|warns?)\\b"
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "False Agency",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "stop-slop",
+        "rule": "False Agency",
+        "ref": "references/structures.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "data tells a story fails",
+        "input": "The data tells a clear story of decline.",
+        "expect": "fail"
+      },
+      {
+        "label": "literal figure passes",
+        "input": "Revenue fell 12% in Q3.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Covers cognitive verbs (decides, believes, argues, hopes, warns...). Weaker verbs like 'shows/suggests/indicates' are left to ZS-PROSE-012 and legit usage ('the chart shows...')."
+  },
+  {
+    "id": "ZS-PROSE-074",
+    "domain": "prose",
+    "title": "Tool/system anthropomorphism",
+    "summary": "Unslop's tool-anthropomorphism tell: marketing hands an inanimate tool volitional agency — 'the bench decides', 'the scanner wants'. A tool does not decide, hunt, want, know, or judge; name the mechanism instead.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:the|this|our|its)?\\s*(?:scanner|linter|compiler|analyzer|parser|crawler|detector|bench|harness|pipeline|runner|plugin|extension|agent|bot|script|tool|engine|framework|library|api|server|client|gate|model)\\s+(?:decides?|hunts?|wants?|knows?|believes?|cares?|refuses?|judges?|thinks?|prefers?|understands?|hopes?|remembers?|insists?|notices?)\\b"
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Tool Anthropomorphism",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "stop-slop",
+        "rule": "False Agency",
+        "ref": "references/structures.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "scanner decides fails",
+        "input": "The scanner decides which files to flag.",
+        "expect": "fail"
+      },
+      {
+        "label": "mechanical verb passes",
+        "input": "The linter checks every file for style errors.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Ordinary technical register is spared: 'the parser reads the file', 'the gate fails the build'. Volitional verbs (decides, wants, knows, believes, judges) are the tell."
+  },
+  {
+    "id": "ZS-PROSE-075",
+    "domain": "prose",
+    "title": "'<abstract noun> is real' closers",
+    "summary": "Unslop's emphasis crutch: 'The struggle is real', 'The stakes are real' asserts stakes instead of naming the concrete consequence. The '<abstract noun> is/are real' frame inflates significance without evidence.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:the |that |this )?(?:struggle|stakes|pain|threat|risk|danger|fear|hype|magic|hustle|grind|stress|pressure|burnout|tension|mechanic)\\s+(?:is|are|was|were)\\s+(?:very |so |all too )?real\\b"
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Emphasis Crutches / The X is real",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "struggle is real fails",
+        "input": "The struggle is real.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific claim passes",
+        "input": "Three prototypes failed before the design held.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Spares the literal 'is it genuine?' sense; the rule is about the rhetorical closer, not factual claims about reality."
+  },
+  {
+    "id": "ZS-PROSE-076",
+    "domain": "prose",
+    "title": "Colon reveals ('The answer is:')",
+    "summary": "Unslop's colon-overuse pattern: 'The answer is: [reveal]', 'The key takeaway: [point]' — the setup-then-reveal colon performs drama instead of stating the point directly. Regex subset of the dramatic-colon tell.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bthe (?:answer|secret|key|trick|truth|reality|problem|solution|takeaway|lesson|difference|reason) (?:is|was|isn'?t|is not|remains)\\s*:"
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Colon reveals (detection regex)",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Em dashes and colon reveals",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "answer-is-colon fails",
+        "input": "The answer is: ship faster.",
+        "expect": "fail"
+      },
+      {
+        "label": "no colon passes",
+        "input": "The answer is that speed matters less than trust.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Complement to ZS-PROSE-022 (dramatic colon in general); this rule covers the specific 'The X is:' family that has a machine-checkable shape."
+  },
+  {
+    "id": "ZS-PROSE-077",
+    "domain": "prose",
+    "title": "Escape-hatch family ('less about X than Y', 'the real X is')",
+    "summary": "Deslopify's negative-parallelism regexes: 'less about X than Y', 'the question isn't whether...', and unslop's throat-clearer 'The real [X] is' all frame a point by rejecting a foil, implying prior deception without evidence.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:less about [^.!?;]{2,60} than (?:about )?|the (?:question|point|issue|problem|goal) is(n'?t| not) (?:whether|about|just|if)|the real (?:challenge|problem|issue|question|goal|story|test|battle|winner|enemy) is)\\b"
+    },
+    "source": [
+      {
+        "repo": "deslopify",
+        "rule": "Negative parallelism",
+        "ref": "references/tells.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Throat-Clearing Openers / The real [X] is",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "stop-slop",
+        "rule": "Binary Contrasts",
+        "ref": "references/structures.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "less about fails",
+        "input": "This is less about speed than about trust.",
+        "expect": "fail"
+      },
+      {
+        "label": "real X is fails",
+        "input": "The real problem is the onboarding flow.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct claim passes",
+        "input": "Onboarding takes two weeks, which blocks new users.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Distinct from ZS-PROSE-024 (period-separated 'The question is X. The question is Y') — this covers the comma/than-forms and the 'real X' opener."
+  },
+  {
+    "id": "ZS-PROSE-078",
+    "domain": "prose",
+    "title": "Copula-avoidance cluster (constitutes/functions/operates/acts as)",
+    "summary": "Unslop's copula avoidance: AI substitutes fancier verbs for 'is/are' — 'constitutes a', 'functions as', 'operates as'. Extends the fake-strong copula family (ZS-PROSE-031) with the nominalizing variants.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "constitutes a",
+        "constitutes an",
+        "functions as",
+        "operates as",
+        "acts as",
+        "remains a",
+        "represents a"
+      ]
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Copula Avoidance",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "deslop",
+        "rule": "The 'Serves As' Dodge",
+        "ref": "references/tropes.md"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "Copula avoidance",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Tier 1B clarity edits (serves as -> is)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "cluster fails",
+        "input": "The tool constitutes a complete solution. It functions as a dashboard and operates as a gateway.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain copula passes",
+        "input": "The tool is a complete solution with a dashboard and a gateway.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'serves as' / 'stands as' already banned by ZS-PROSE-031; this rule adds the remaining members of unslop's copula table. Warning tier: a single use in formal prose is normal."
+  },
+  {
+    "id": "ZS-PROSE-079",
+    "domain": "prose",
+    "title": "Future-narrative closers ('may become the most important story')",
+    "summary": "Avoid-ai-writing's future-narrative pattern: vague future significance with no falsifiable claim — 'may become one of the most important narratives', 'one of the most important stories of the coming decade'.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:may|could|will|is\\s+(?:poised|set)\\s+to)\\s+become\\s+(?:one\\s+of\\s+)?(?:the\\s+)?(?:most\\s+)?\\w+\\s+(?:narratives?|stories|developments?|trends?|movements?|chapters?|themes?|forces?)\\b|\\bone\\s+of\\s+the\\s+most\\s+important\\s+(?:narratives?|stories|trends?|themes?)\\s+of\\s+the\\s+(?:next|coming)\\s+\\w+\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Generic future-narrative closers",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "modal become narrative fails",
+        "input": "This may become one of the most important narratives of the next decade.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete outcome passes",
+        "input": "The feature shipped this week and early metrics look good.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-080",
+    "domain": "prose",
+    "title": "Hedge-stacked predictions ('could potentially', 'may eventually')",
+    "summary": "Avoid-ai-writing's hedge-stack: stacking a modal with a hedge adverb — 'could potentially create', 'may eventually unlock'. Either word alone is fine; the stack is the tell.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:could|may|might)\\s+(?:(?!not\\b|never\\b|hardly\\b|scarcely\\b|barely\\b)\\w+\\s+)?(?:potentially|eventually|ultimately|possibly|conceivably)\\b|\\b(?:potentially|eventually|ultimately)\\s+(?:could|may|might)\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Hedge-stacked predictions",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "humanize-writing",
+        "rule": "Hedging",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "could potentially fails",
+        "input": "The policy could potentially create new opportunities.",
+        "expect": "fail"
+      },
+      {
+        "label": "may eventually fails",
+        "input": "It may eventually unlock value.",
+        "expect": "fail"
+      },
+      {
+        "label": "single hedge passes",
+        "input": "The policy could create new opportunities, or it may not.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The negative lookahead spares plain negation ('could not possibly') and ordinary question inversion. Extends ZS-PROSE-043's single-term bans with the stacked-modal shape."
+  },
+  {
+    "id": "ZS-PROSE-081",
+    "domain": "prose",
+    "title": "Social endorsement closers ('worth your time', 'do yourself a favor')",
+    "summary": "Avoid-ai-writing's social-CTA closer and unslop's vague endorsements: 'worth your time', 'do yourself a favor and read this', 'thank me later' — a recommendation performed without a reason to click.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "worth your time",
+        "worth the read",
+        "worth a read",
+        "worth reading",
+        "worth watching",
+        "worth a listen",
+        "worth a look",
+        "worth exploring",
+        "worth checking out",
+        "worth paying attention to",
+        "do yourself a favor and read",
+        "do yourself a favour and read",
+        "you won't want to miss this",
+        "you will not want to miss this",
+        "don't want to miss this",
+        "bookmark this",
+        "trust me on this",
+        "can't recommend this enough",
+        "cannot recommend this enough",
+        "highly recommend this",
+        "strongly recommend this",
+        "a must-read",
+        "a must-read",
+        "must-watch",
+        "must-listen",
+        "thank me later",
+        "save this for later",
+        "don't sleep on this",
+        "do yourself a favor and watch",
+        "do yourself a favor and check out"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Social endorsement / CTA closers",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Reader-Steering Frames & Vague Endorsements",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "worth your time fails",
+        "input": "This one is worth your time: read the full report.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific reason passes",
+        "input": "The report explains why prices rose.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier: fine when the recommendation carries a specific reason; the bare curatorial sign-off is the tell."
+  },
+  {
+    "id": "ZS-PROSE-082",
+    "domain": "prose",
+    "title": "Infomercial hooks ('here's the kicker', 'the catch?')",
+    "summary": "Deslop's 'Here's the Kicker' and deslopify's hook regexes: false-suspense transitions ('here's the kicker', 'here's the catch', 'the twist?') that promise a revelation for a point that needed no buildup.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "here's the kicker",
+        "here is the kicker",
+        "here's the catch",
+        "here is the catch",
+        "here's the twist",
+        "here is the twist",
+        "here's where it gets interesting",
+        "here is where it gets interesting",
+        "the kicker?",
+        "the catch?",
+        "the twist?",
+        "wait for it"
+      ]
+    },
+    "source": [
+      {
+        "repo": "deslop",
+        "rule": "Here's the Kicker",
+        "ref": "references/tropes.md"
+      },
+      {
+        "repo": "deslopify",
+        "rule": "Negative parallelism / here's the kicker",
+        "ref": "references/tells.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "kicker fails",
+        "input": "Here's the kicker: the free tier is gone.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct statement passes",
+        "input": "The free tier is gone.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'here's the thing' is already covered by ZS-PROSE-009; this rule covers the kicker/catch/twist family."
+  },
+  {
+    "id": "ZS-PROSE-083",
+    "domain": "prose",
+    "title": "Vague declaratives ('the implications are significant')",
+    "summary": "Stop-slop's vague declaratives: sentences that announce importance without naming the specific thing — 'The implications are significant', 'The stakes are high', 'The consequences are real'.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:the|this|these|its|their)?\\s*(?:implications?|consequences?|stakes|reasons|effects?|impact|potential|possibilities?|opportunities?|challenges?|risks?|benefits?|value|significance|importance)\\s+(?:are|is|were|was|remain|remains)\\s+(?:significant|profound|deep|deepest|structural|far-reaching|wide-ranging|immense|vast|enormous|limitless|endless|high|low|clear|obvious|real|important|critical|huge|massive|considerable|substantial|notable|meaningful)\\b"
+    },
+    "source": [
+      {
+        "repo": "stop-slop",
+        "rule": "Vague Declaratives",
+        "ref": "references/phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "implications significant fails",
+        "input": "The implications are significant.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific outcome passes",
+        "input": "The change cut deployment time by 40%.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-084",
+    "domain": "prose",
+    "title": "Lazy extremes (everyone/nobody knows, always/never works)",
+    "summary": "Stop-slop's lazy extremes and unslop's absolute words: sweeping claims — 'everyone knows', 'nobody believes', 'this never works' — assert false authority where specifics would do.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:everyone|everybody|no one|nobody) (?:knows|agrees|believes|wants|thinks|says|understands|loves|hates|does|has)\\b|\\b(?:always|never) (?:fails?|works?|happens?|breaks?|succeeds?)\\b"
+    },
+    "source": [
+      {
+        "repo": "stop-slop",
+        "rule": "Lazy extremes",
+        "ref": "references/structures.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Absolute Words",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "everyone knows fails",
+        "input": "Everyone knows that shortcuts fail.",
+        "expect": "fail"
+      },
+      {
+        "label": "never works fails",
+        "input": "That never works in production.",
+        "expect": "fail"
+      },
+      {
+        "label": "scoped claim passes",
+        "input": "Our team never ships on Fridays.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier: purpose-gate — 'never'/'always' are legitimate in safety, security, legal, and technical rules (per unslop's core contract)."
+  },
+  {
+    "id": "ZS-PROSE-085",
+    "domain": "prose",
+    "title": "Meta-joiners ('in this section, we'll')",
+    "summary": "Stop-slop's meta-commentary: announcing structure instead of delivering it — 'In this section, we'll...', 'Let me walk you through...'. Extends ZS-PROSE-015's collaborative narrator list with the section/chapter forms.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "in this section",
+        "in the next section",
+        "in this chapter",
+        "in this guide",
+        "in this tutorial",
+        "in this post",
+        "we'll cover",
+        "we will cover",
+        "let's take a look at",
+        "let us take a look at"
+      ]
+    },
+    "source": [
+      {
+        "repo": "stop-slop",
+        "rule": "Meta-Commentary / In this section, we'll",
+        "ref": "references/phrases.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Meta-Commentary / Conclusion & Sequencing Scaffolding",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "section joiner fails",
+        "input": "In this section, we'll cover the basics.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct content passes",
+        "input": "The basics come first.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-086",
+    "domain": "prose",
+    "title": "Negative countdown ('Not X. Not Y. Just Z.')",
+    "summary": "Deslop's countdown and stop-slop's negative listing: 'Not ten. Not fifty. Just five hundred and twenty-three' builds false tension by negating before revealing. State the point directly.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bNot\\s+[A-Za-z][^.!?]{1,60}[.!?]\\s+Not\\s+[A-Za-z][^.!?]{1,60}[.!?](?=\\s)|\\bno\\s+[A-Za-z]+(?:\\s+[A-Za-z]+)*,[^.!?]{0,40}no\\s+[A-Za-z]+(?:\\s+[A-Za-z]+)*,[^.!?]{0,40}(?:just|only|simply)\\s+[A-Za-z]"
+    },
+    "source": [
+      {
+        "repo": "deslop",
+        "rule": "Not X. Not Y. Just Z.",
+        "ref": "references/tropes.md"
+      },
+      {
+        "repo": "stop-slop",
+        "rule": "Negative Listing",
+        "ref": "references/structures.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Negative Parallelisms / No X, no Y, just Z",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "countdown fails",
+        "input": "Not ten. Not fifty. Just five hundred and twenty-three.",
+        "expect": "fail"
+      },
+      {
+        "label": "lowercase countdown fails",
+        "input": "No fast fixes, no magic pills, just steady work.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain statement passes",
+        "input": "Ten failed, then fifty, then five hundred and twenty-three passed.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Extends ZS-PROSE-025 (article forms 'Not a X. Not a Y.') to article-free countdowns and the 'no X, no Y, just Z' payoff."
+  },
+  {
+    "id": "ZS-PROSE-087",
+    "domain": "prose",
+    "title": "Self-posed rhetorical reveal ('The result? Devastating.')",
+    "summary": "Deslop's 'The X? A Y.' pattern: the model asks a question nobody asked, then answers it for dramatic effect — 'The result? Devastating.', 'The worst part? Nobody saw it coming.'",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bThe\\s+[A-Za-z]+(?:\\s+[a-z]+)?\\s*\\?\\s+[A-Z][a-z]+\\b"
+    },
+    "source": [
+      {
+        "repo": "deslop",
+        "rule": "The X? A Y.",
+        "ref": "references/tropes.md"
+      },
+      {
+        "repo": "deslopify",
+        "rule": "Rhetorical-question variant",
+        "ref": "references/tells.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "result question fails",
+        "input": "The result? Devastating.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain statement passes",
+        "input": "The result of the test surprised everyone.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-088",
+    "domain": "prose",
+    "title": "Tricolon pattern-stacking (2+ triads per 150 words)",
+    "summary": "Deslopify's rule-of-three regex and deslop's tricolon abuse: LLMs default to 'X, Y, and Z' triplets to make thin analysis look thorough. One triad is voice; stacked triads are a pattern-recognition failure.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b[A-Za-z]+,\\s+[A-Za-z]+,\\s+and\\s+[A-Za-z]+[.!?]",
+      "params": {
+        "maxPerWords": 150,
+        "wordsWindow": 150
+      }
+    },
+    "source": [
+      {
+        "repo": "deslopify",
+        "rule": "Rule of three",
+        "ref": "references/tells.md"
+      },
+      {
+        "repo": "deslop",
+        "rule": "Tricolon Abuse",
+        "ref": "references/tropes.md"
+      },
+      {
+        "repo": "stop-slop",
+        "rule": "Three-item lists",
+        "ref": "references/structures.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stacked triads fail",
+        "input": "The tool is fast, reliable, and affordable. It stays simple, clean, and efficient.",
+        "expect": "fail"
+      },
+      {
+        "label": "single triad passes",
+        "input": "We offer fast, reliable, and affordable hosting.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Machine-checkable complement to ZS-PROSE-026 (rule-of-three overuse, semantic). Cap: at most one 'X, Y, and Z' triad per 150 words."
+  },
+  {
+    "id": "ZS-PROSE-089",
+    "domain": "prose",
+    "title": "Tier-1A AI frequency markers",
+    "summary": "Avoid-ai-writing's Tier 1A vocabulary: words that appear far more often in AI text ('embark', 'deep dive', 'unpack', 'holistic', 'impactful', 'meticulous', 'ever-evolving'). Always flag; replace on sight.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "embark",
+        "embarks",
+        "embarked",
+        "embarking",
+        "deep dive",
+        "deep-dive",
+        "dive into",
+        "dives into",
+        "unpack",
+        "unpacks",
+        "unpacking",
+        "complexities",
+        "thought leader",
+        "thought leaders",
+        "thought leadership",
+        "best practices",
+        "holistic",
+        "holistically",
+        "actionable",
+        "impactful",
+        "learnings",
+        "meticulous",
+        "meticulously",
+        "ever-evolving",
+        "enduring",
+        "daunting",
+        "vibrant",
+        "thriving",
+        "bustling",
+        "nestled",
+        "genuinely",
+        "showcase",
+        "paradigm",
+        "watershed moment",
+        "game changer",
+        "game-changing",
+        "hit differently",
+        "hits different"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Tier 1A - AI frequency markers",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "AI vocabulary words",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "ai-writing-detox",
+        "rule": "Banned words",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "humanize-writing",
+        "rule": "Tier 1 - immediate red flags",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1A stack fails",
+        "input": "We embark on a deep dive into the complexities of this market.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain language passes",
+        "input": "We looked at the problem for a week before shipping.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The tier's own caveat (from the source): the 5-20x ratio is inherited from brandonwise/humanizer and unverified here. Delve-class words already banned by ZS-PROSE-001/002/003; 'absolutely' by ZS-PROSE-004."
+  },
+  {
+    "id": "ZS-PROSE-090",
+    "domain": "prose",
+    "title": "Tier-1B clarity edits (commence, ascertain, wordy phrases)",
+    "summary": "Avoid-ai-writing's Tier 1B: wordiness and inflated formality — 'commence', 'ascertain', 'is able to', 'a large number of'. A 1B hit is a clarity edit, not evidence of machine authorship.",
+    "tier": "info",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "commence",
+        "commences",
+        "commenced",
+        "commencing",
+        "ascertain",
+        "ascertains",
+        "ascertained",
+        "ascertaining",
+        "is able to",
+        "has the ability to",
+        "a large number of",
+        "the vast majority of",
+        "in close proximity to"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Tier 1B - clarity edits",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Filler Adverbs & Phrases (is able to, a large number of)",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "wordy verbs fail",
+        "input": "We will commence the audit to ascertain compliance.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain verbs pass",
+        "input": "We will start the audit to check compliance.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'utilize', 'in order to', 'due to the fact that' already banned by ZS-PROSE-001/045."
+  },
+  {
+    "id": "ZS-PROSE-091",
+    "domain": "prose",
+    "title": "Tier-2 vocabulary cluster (2+ per paragraph)",
+    "summary": "Avoid-ai-writing's Tier 2: individually fine words ('harness', 'navigate', 'foster', 'empower') that signal AI when two or more appear in the same paragraph.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "harness",
+        "harnesses",
+        "harnessing",
+        "navigate",
+        "navigates",
+        "navigating",
+        "foster",
+        "fosters",
+        "fostering",
+        "elevate",
+        "elevates",
+        "elevated",
+        "elevating",
+        "unleash",
+        "unleashes",
+        "unleashing",
+        "empower",
+        "empowers",
+        "empowering",
+        "spearhead",
+        "spearheads",
+        "resonate",
+        "resonates",
+        "resonated",
+        "revolutionize",
+        "revolutionizes",
+        "revolutionise",
+        "revolutionises",
+        "underpin",
+        "underpins",
+        "underpinned",
+        "multifaceted",
+        "encompass",
+        "encompasses",
+        "catalyze",
+        "catalyzes",
+        "reimagine",
+        "reimagines",
+        "galvanize",
+        "galvanizes",
+        "augment",
+        "augments",
+        "cultivate",
+        "cultivates",
+        "illuminate",
+        "illuminates",
+        "elucidate",
+        "elucidates",
+        "juxtapose",
+        "juxtaposes",
+        "transformation",
+        "cornerstone",
+        "poised",
+        "burgeoning",
+        "nascent",
+        "quintessential",
+        "overarching",
+        "quietly",
+        "paradigm-shifting"
+      ],
+      "params": {
+        "maxPer40Words": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Tier 2 - flag when 2+ appear in the same paragraph",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "humanize-writing",
+        "rule": "Tier 2 - suspicious in clusters",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "content-humanizer",
+        "rule": "Red-flag verbs and adjectives",
+        "ref": "references/ai-tells-checklist.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "cluster fails",
+        "input": "We harness data to navigate complexity and empower every team.",
+        "expect": "fail"
+      },
+      {
+        "label": "sparse usage passes",
+        "input": "The build pipeline runs every commit through the test suite. Failures block the merge and the team fixes them within the hour. Release notes come from commit messages and the changelog stays current. Nobody owns the docs, so they drift.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Density cap approximates the source's '2+ per paragraph': at most one Tier-2 word per 40 words. Streamline/facilitate/bolster/foster etc. already banned outright by ZS-PROSE-001."
+  },
+  {
+    "id": "ZS-PROSE-092",
+    "domain": "prose",
+    "title": "Tier-3 vocabulary density (>=3% of words)",
+    "summary": "Avoid-ai-writing's Tier 3: normal words ('significant', 'innovative', 'effective', 'compelling') that AI overuses; flag only at high density (~3% of words) — vague praise instead of specifics.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "significant",
+        "innovative",
+        "innovation",
+        "effective",
+        "effectively",
+        "dynamic",
+        "dynamics",
+        "scalable",
+        "scalability",
+        "compelling",
+        "unprecedented",
+        "exceptional",
+        "exceptionally",
+        "remarkable",
+        "sophisticated",
+        "instrumental",
+        "world-class",
+        "state-of-the-art",
+        "best-in-class"
+      ],
+      "params": {
+        "maxPer100Words": 3
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Tier 3 - flag by density (~3%+)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dense praise fails",
+        "input": "The update is a significant change with an innovative approach to caching. The team calls it a compelling story: the system is more scalable and effective under load. Exceptional results follow and the improvement is remarkable. We measured throughput directly.",
+        "expect": "fail"
+      },
+      {
+        "label": "scattered usage passes",
+        "input": "The update changes how the cache stores hot keys. Throughput rose 34% under the load test, and the team kept the change behind a feature flag for a week. The changelog lists three fixes and one new endpoint. We measured the improvement with a benchmark run on the staging cluster before rolling it out to production. The cache stores hot keys in memory and evicts cold entries to disk.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Density cap: at most 3 Tier-3 words per 100 words (~3%). 'Significantly' and 'remarkably' already banned outright by ZS-PROSE-004/043."
+  },
+  {
+    "id": "ZS-PROSE-093",
+    "domain": "prose",
+    "title": "Unfilled placeholder slots ('[Your Name]', '[INSERT X]')",
+    "summary": "Avoid-ai-writing's AI-placeholder fingerprint: unfilled directive stubs — '[Your Name]', '[Insert source URL]', '[DESCRIBE...]' — left in published text; a near-definitive AI-tool signature.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\[(?:Your|Insert|Add|Enter|Describe|Specify|Choose|Pick)[^\\]\\n]{1,80}\\]|\\[(?:INSERT|FILL\\s+IN|ADD|TODO|TBD|PLACEHOLDER)[^\\]\\n]{0,80}\\]"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "AI-tool fingerprints / unfilled placeholders",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "your-name stub fails",
+        "input": "[Insert your company name here] delivers results.",
+        "expect": "fail"
+      },
+      {
+        "label": "no stub passes",
+        "input": "The company delivers results.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Integrity-adjacent (unpublished template), but kept in prose because the trigger is a plain-text pattern. Bracketed code identifiers and citation refs are excluded by the verb-led capture."
+  },
+  {
+    "id": "ZS-PROSE-094",
+    "domain": "prose",
+    "title": "False concession structures ('While X is impressive, Y remains a challenge')",
+    "summary": "Avoid-ai-writing's and unslop's false concession: simulated balance — 'While X is impressive, Y remains a challenge', 'it is not without its challenges' — that never names the actual tradeoff.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:while|although)\\s+[^,.!?]{2,50},\\s+[^.!?]{2,60}\\s+(?:remains|is still|still remains)\\s+(?:a\\s+|an\\s+)?(?:challenge|concern|open question|limitation|constraint)\\b|\\bit'?s\\s+not without its challenges\\b|\\bdespite\\s+(?:its|their|these)\\s+\\w+\\s+challenges?\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "False concession",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "False Concession Structures",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "Formulaic challenges sections",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "while-remains fails",
+        "input": "While the framework is impressive, adoption remains a challenge.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific tradeoff passes",
+        "input": "Adoption lags because the framework lacks examples.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-095",
+    "domain": "prose",
+    "title": "Rhetorical question openers ('So why should you care?', 'What's next?')",
+    "summary": "Avoid-ai-writing's and unslop's rhetorical-question openers: 'So why should you care?', 'But what does this mean for...', 'What's next?' — engagement bait that stalls instead of making the point.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bbut\\s+what\\s+does\\s+this\\s+mean\\s+for\\b|\\bso\\s+why\\s+should\\s+you\\s+care\\b|\\bwhat'?s\\s+next\\?"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Rhetorical question openers",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Rhetorical Question Openers",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "why should you care fails",
+        "input": "So why should you care? Because the numbers matter.",
+        "expect": "fail"
+      },
+      {
+        "label": "direct reason passes",
+        "input": "The numbers matter because they change the budget.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-096",
+    "domain": "prose",
+    "title": "Speculative scenario openers ('Imagine a world where')",
+    "summary": "Avoid-ai-writing's and deslop's speculative openers: 'Imagine a world where...', 'Picture a future in which...' — an argument opened with a hypothetical list of desirable outcomes instead of a claim.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:imagine|picture|envision)(?:\\s*,[^,\\n]{1,30},)?\\s+a\\s+(?:world|future|reality)\\s+(?:where|in\\s+which)\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Speculative scenario openers",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "deslop",
+        "rule": "Imagine a World Where...",
+        "ref": "references/tropes.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "imagine a world fails",
+        "input": "Imagine a world where every tool has a quiet intelligence behind it.",
+        "expect": "fail"
+      },
+      {
+        "label": "teaching example passes",
+        "input": "Imagine you have an array of ten items.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The source explicitly spares instructional 'imagine you have X' examples; the tell is the world/future/reality + where/whereby framing."
+  },
+  {
+    "id": "ZS-PROSE-097",
+    "domain": "prose",
+    "title": "Formulaic emergence claims ('has emerged as a key...', 'has become increasingly...')",
+    "summary": "Avoid-ai-writing's formulaic openers: 'has emerged as a leading/ key/ major...', 'has become increasingly important' — pseudo-significance that states nothing specific about the subject.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bhas\\s+emerged\\s+as\\s+(?:a|the|one\\s+of)\\s+(?:leading|key|major|critical|essential|fundamental|pivotal|prominent|dominant|important)\\s+\\w+\\b|\\bhas\\s+become\\s+increasingly\\s+(?:important|critical|popular|relevant|prominent|essential)\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Formulaic openers (has emerged as a leading...)",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "emerged as key fails",
+        "input": "Rust has emerged as a key player in systems programming.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific fact passes",
+        "input": "Rust is now used in the Linux kernel.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Gated to the inflated nouns (leading, key, major...) so bare 'has emerged as a' (ordinary English) stays clean, per the source's own gating."
+  },
+  {
+    "id": "ZS-PROSE-098",
+    "domain": "prose",
+    "title": "Confidence-calibration stacking (3+ per piece)",
+    "summary": "Avoid-ai-writing's confidence-calibration pattern: 'interestingly', 'surprisingly', 'importantly', 'undoubtedly' — sentence-level meta-commentary that performs thoughtfulness; only flagged when it stacks (3+ per piece).",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "interestingly",
+        "surprisingly",
+        "importantly",
+        "crucially",
+        "notably",
+        "undoubtedly",
+        "without a doubt"
+      ],
+      "params": {
+        "maxPerPiece": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Confidence calibration (stacks at 3+)",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stack of three fails",
+        "input": "Interestingly, the data holds. Importantly, the pattern repeats. Notably, it does so everywhere.",
+        "expect": "fail"
+      },
+      {
+        "label": "no commentary passes",
+        "input": "The data holds, and the pattern repeats everywhere.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-099",
+    "domain": "prose",
+    "title": "Parenthetical hedging asides ('(and increasingly, X)', '(though to be fair, Y)')",
+    "summary": "Avoid-ai-writing's and unslop's parenthetical hedging: pseudo-asides that add no information but perform thoughtfulness — '(and increasingly, cheaper)', '(or more precisely, Y)', '(though to be fair, Z)'.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\(\\s*(?:and\\s+)?(?:increasingly|notably|importantly|crucially|interestingly|perhaps)[,]?\\s+[^)]{3,60}\\)|\\(\\s*or\\s+more\\s+(?:precisely|accurately|specifically)[,]?\\s+[^)]{3,60}\\)|\\(\\s*though\\s+to\\s+be\\s+fair[,]?\\s+[^)]{3,60}\\)|\\(\\s*at\\s+least\\s+(?:in\\s+)?(?:theory|principle|part)[,]?\\s+[^)]{0,60}\\)"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Parenthetical hedging asides",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Parenthetical Hedging",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "parenthetical hedge fails",
+        "input": "The design is simpler (and increasingly, cheaper) to run.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain clause passes",
+        "input": "The design is simpler and cheaper to run.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-100",
+    "domain": "prose",
+    "title": "Slot-fill template phrases ('a [adjective] step forward for...')",
+    "summary": "Avoid-ai-writing's template phrases: slot-fill constructions where a blank could go and still sound the same — 'a significant step forward for', 'I recently had the pleasure of'. The 'Whether you're X or Y' member is already covered by ZS-PROSE-016.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\ba\\s+\\w+\\s+step\\s+(?:towards?|forward\\s+for)\\b|\\bi\\s+recently\\s+had\\s+the\\s+pleasure\\s+of\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Template phrases",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "step forward fails",
+        "input": "The release is a significant step forward for the platform.",
+        "expect": "fail"
+      },
+      {
+        "label": "specifics pass",
+        "input": "The release adds batch processing and keyboard shortcuts.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-101",
+    "domain": "prose",
+    "title": "Generic positive conclusions ('The future looks bright')",
+    "summary": "Unslop's, avoid-ai-writing's, and human-writing's generic conclusions: 'The future looks bright', 'Exciting times lie ahead', 'Only time will tell' — content-free optimism that ends the piece on a shrug.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "the future looks bright",
+        "only time will tell",
+        "one thing is certain",
+        "exciting times lie ahead",
+        "as we move forward",
+        "continues to evolve",
+        "poised for growth",
+        "remains to be seen",
+        "what remains clear is",
+        "continues to shape",
+        "a step in the right direction",
+        "holds great promise",
+        "holds promise"
+      ]
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Generic Positive Conclusions",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Generic conclusions",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "Generic positive conclusions",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "humanize-writing",
+        "rule": "Generic positive conclusions",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "future looks bright fails",
+        "input": "The future looks bright for the company.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete plan passes",
+        "input": "The company plans two more locations next year.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-102",
+    "domain": "prose",
+    "title": "False ranges ('from X to Y, from A to B')",
+    "summary": "Deslop's, unslop's, and human-writing's false ranges: 'from X to Y, from A to B' and 'spanning everything from...' where the endpoints aren't on a meaningful scale — a fancy way to list two loosely related things.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bfrom\\s+[^.!?,]{3,40}\\s+to\\s+[^.!?,]{3,40}[,.]\\s+from\\s+[^.!?,]{3,40}\\s+to\\b|\\bspanning\\s+everything\\s+from\\b"
+    },
+    "source": [
+      {
+        "repo": "deslop",
+        "rule": "False Ranges",
+        "ref": "references/tropes.md"
+      },
+      {
+        "repo": "unslop",
+        "rule": "False Ranges",
+        "ref": "references/taboo-phrases.md"
+      },
+      {
+        "repo": "human-writing",
+        "rule": "False ranges",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stacked range fails",
+        "input": "From the Big Bang to the cosmic web, from stars to dark matter.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain list passes",
+        "input": "The book covers the Big Bang and star formation.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Bare 'ranging from X to Y' is left alone (real ranges have meaningful midpoints, per the sources' own triage guidance)."
+  },
+  {
+    "id": "ZS-PROSE-103",
+    "domain": "prose",
+    "title": "Numbered list inflation ('Here are 7 reasons...')",
+    "summary": "Unslop's numbered-list inflation: 'Three key takeaways', 'Here are 7 reasons...', 'Top seven' — the number is chosen for format, not meaning; AI overuses counted lists because they're structurally safe.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:the\\s+|here are\\s+|these are\\s+|top\\s+)\\d+\\s+(?:reasons|things|takeaways|lessons|ways|steps|tips|signs)\\b"
+    },
+    "source": [
+      {
+        "repo": "unslop",
+        "rule": "Numbered List Inflation",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "seven reasons fails",
+        "input": "Here are 7 reasons why this matters.",
+        "expect": "fail"
+      },
+      {
+        "label": "word count passes",
+        "input": "There are two main reasons for the change.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-104",
+    "domain": "prose",
+    "title": "Emotional flatline ('What struck me was...', 'the most interesting part')",
+    "summary": "Avoid-ai-writing's emotional-flatline patterns: 'What surprised me most', 'What struck me was', 'the most interesting part/thing' — performative reactions that substitute for a specific observation.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bwhat\\s+surprised\\s+me\\s+most\\b|\\bi\\s+was\\s+fascinated\\s+to\\b|\\bwhat\\s+struck\\s+me\\s+was\\b|\\bi\\s+was\\s+excited\\s+to\\s+learn\\b|\\bthe\\s+most\\s+interesting\\s+(?:part|thing|aspect|piece)\\b|^\\s*interesting\\s+(?:part|thing|aspect|piece)(?:\\s+of\\s+(?:the\\s+)?\\w+)?\\s*:",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Emotional flatline",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "struck me fails",
+        "input": "What struck me was how quickly the team shipped.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain fact passes",
+        "input": "The team shipped in three weeks.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-105",
+    "domain": "prose",
+    "title": "Lingering-attention claims ('the line I keep coming back to')",
+    "summary": "Avoid-ai-writing's lingering-attention patterns: 'the line I keep coming back to', 'I can't stop thinking about' — share-post openers that claim duration of attention instead of saying anything about the thing.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:the|that|this)\\s+(?:one\\s+)?(?:line|quote|bit|part|idea|point|framing|comment|thing)\\s+(?:that\\s+)?i\\s+keep\\s+(?:coming\\s+back\\s+to|thinking\\s+about)\\b|\\bi\\s+can'?t\\s+stop\\s+thinking\\s+about\\b"
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Lingering-attention claims",
+        "ref": "detector/patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "keep coming back fails",
+        "input": "The line I keep coming back to is from her keynote.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific content passes",
+        "input": "Her keynote covered three case studies.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-106",
+    "domain": "prose",
+    "title": "Novelty inflation ('coined the phrase', 'a problem nobody talks about')",
+    "summary": "Avoid-ai-writing's and unslop's novelty inflation: 'introduced a term', 'coined the phrase', 'a problem nobody talks about' — framing routine ideas as secret discoveries. 'What nobody tells you' already covered by ZS-PROSE-010.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "introduced a term",
+        "coined the phrase",
+        "coined the term",
+        "a concept nobody's naming",
+        "a concept nobody is naming",
+        "a problem nobody talks about",
+        "a problem no one talks about",
+        "the insight everyone's missing",
+        "the insight everyone is missing",
+        "the failure mode nobody's naming"
+      ]
+    },
+    "source": [
+      {
+        "repo": "avoid-ai-writing",
+        "rule": "Novelty inflation",
+        "ref": "detector/patterns.js"
+      },
+      {
+        "repo": "unslop",
+        "rule": "Novelty Inflation",
+        "ref": "references/taboo-phrases.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "coined phrase fails",
+        "input": "He coined the phrase 'vibe coding'.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain attribution passes",
+        "input": "He described the practice in a 2025 blog post.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-107",
+    "domain": "prose",
+    "title": "CJK binary-contrast shell (不是A而是B / 不在于A而在于B)",
+    "summary": "De-ai-writing's 二分对照壳: the lecture-style correction frame '不是A而是B' / '不在于A而在于B' / '并非A而是B' that presents a reframe as a surprise reveal. Default to clearing; state the positive claim directly.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "不是[^。！？]{1,30}而是|不在于[^。！？]{1,30}而在于|并非[^。！？]{1,30}而是"
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "二分对照壳 (9.1)",
+        "ref": "references/ai-trace-detector.md"
+      },
+      {
+        "repo": "de-ai-writing",
+        "rule": "核心硬门槛 #1",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "not-but shell fails",
+        "input": "问题不在于速度，而在于信任。",
+        "expect": "fail"
+      },
+      {
+        "label": "direct claim passes",
+        "input": "问题出在信任上。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "List/regex only per CJK constraint. 逐字引文 or original natural usage may keep at most one occurrence (source threshold)."
+  },
+  {
+    "id": "ZS-PROSE-108",
+    "domain": "prose",
+    "title": "CJK signpost words (路标词)",
+    "summary": "De-ai-writing's 路标词: '更关键', '换句话说', '事实上', '值得注意', '与此同时', '不可否认', '毋庸置疑' — textbook connectors that announce structure instead of delivering content; max 2 total per piece per the source.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "更关键|更要命|换句话说|事实上|值得注意|与此同时|不可否认|毋庸置疑|总体而言|在某种意义上|需要指出的是|在此背景下"
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "路标词 (core hard gate #4 / 7)",
+        "ref": "references/ai-trace-detector.md"
+      },
+      {
+        "repo": "de-ai-writing",
+        "rule": "AI 痕迹轻量索引 - 高频优先项",
+        "ref": "references/ai-trace-index.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "signpost fails",
+        "input": "更关键的是，成本在上升。",
+        "expect": "fail"
+      },
+      {
+        "label": "direct statement passes",
+        "input": "成本在上升。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Chat-domain terms (首先我们需要/值得注意的是/综上所述) already covered by ZS-CHAT-002; excluded here to avoid double-firing."
+  },
+  {
+    "id": "ZS-PROSE-109",
+    "domain": "prose",
+    "title": "CJK lecture gestures (讲义动作)",
+    "summary": "De-ai-writing's 伪口语化 lecture gestures: '拆一拆', '盘一盘', '捋一捋', '聊一聊', '划重点', '敲黑板', '说白了', '本质上', '简单来说' — the 'analyst walks you through' voice that LLMs default to when faking approachable tone.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "拆一拆|盘一盘|捋一捋|聊一聊|划重点|敲黑板|说白了|本质上|归根结底|简单来说|换个角度看|不妨这样理解|拆开来看|掰开来看|盘点一下|一句话概括|摊开来看|摊开来说"
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "AI 伪口语化高频词 (7.1)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "lecture gesture fails",
+        "input": "我们不妨拆一拆这个问题。",
+        "expect": "fail"
+      },
+      {
+        "label": "direct statement passes",
+        "input": "这个问题值得单独讨论。",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-110",
+    "domain": "prose",
+    "title": "CJK high-frequency analysis verbs (拆解/梳理/剖析...)",
+    "summary": "De-ai-writing's 高频分析词: '拆解', '梳理', '剖析', '解构', '聚焦', '洞察', '赋能', '驱动' — near-signature verbs of AI Chinese analytical prose; do not stack.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "拆解|梳理|剖析|解构|聚焦|洞察|深耕|赋能|助力|践行|驱动|构建|打造",
+      "params": {
+        "maxPer40Words": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "高频分析词 (7.1)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stacked verbs fail",
+        "input": "本文拆解了三个案例，梳理了关键路径，并剖析了深层原因。",
+        "expect": "fail"
+      },
+      {
+        "label": "plain verbs pass",
+        "input": "本文分析了三个案例，给出了具体数据。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Density cap: at most one analysis verb per 40 words, approximating the source's '不要堆叠' rule."
+  },
+  {
+    "id": "ZS-PROSE-111",
+    "domain": "prose",
+    "title": "CJK correlative stacking (一旦…就 / 只有…才 / 无论…都 / 随着…的 / 通过…来)",
+    "summary": "De-ai-writing's 关联句式堆叠: over-marked conditionals, universals, and causation — '一旦……就……', '只有……才……', '无论……都……', '随着……的发展', '通过……来……'. Source threshold: max 2 total per piece.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "一旦[^。！？]{0,16}就|只有[^。！？]{0,16}才|无论[^。！？]{0,16}都|不管[^。！？]{0,16}都|正是因为[^。！？]{0,16}所以|随着[^。！？]{0,10}(发展|推进|深入)|通过[^。！？]{0,16}来",
+      "params": {
+        "maxPerPiece": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "AI 高频关联句式堆叠 (7.3)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stacked correlatives fail",
+        "input": "一旦数据打通，效率就会提升；只有坚持，才能见效；无论多难，都要继续。",
+        "expect": "fail"
+      },
+      {
+        "label": "plain connective passes",
+        "input": "数据打通后效率提升，坚持就能见效。",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-112",
+    "domain": "prose",
+    "title": "CJK dramatized reveal rhetoric (遮羞布/撕下面具/揭开真面目)",
+    "summary": "De-ai-writing's 戏剧化揭露: '遮羞布', '画皮', '幌子', '烟幕弹', '揭开真面目', '戳穿真相', '撕下面具' — violent-action-plus-concealment metaphors that announce a revelation instead of presenting evidence.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "遮羞布|最后一块遮羞布|画皮|幌子|烟幕弹|皇帝的新衣|揭开真面目|戳穿真相|戳穿谎言|撕下面具|剥开外衣|扯下遮羞布|撕开伪装"
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "戏剧化揭露修辞模板 (7.4)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "concealment metaphor fails",
+        "input": "这不过是给利益输送披了一层遮羞布。",
+        "expect": "fail"
+      },
+      {
+        "label": "mechanism statement passes",
+        "input": "利益输送的链条很清楚：A 给 B 拨款，B 给 A 的亲属发合同。",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-113",
+    "domain": "prose",
+    "title": "CJK extremum judgments (最X的地方在于 / 真正X的是 / …之处在于 / 更X的是)",
+    "summary": "De-ai-writing's 极值判断: '最残酷的地方在于', '真正可怕的是', '讽刺之处在于', '更可怕的是' — extremum markers that announce the author's insight instead of letting facts land. Source threshold: max 1 per piece.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "最[^。！？]{1,16}(地方在于|地方是|的是)|真正(可怕|残酷|讽刺|危险|荒谬|令人不安)的是|(残酷|讽刺|荒谬|吊诡|可怕|麻烦|棘手)之处在于|更(残酷|可怕|讽刺|荒谬|恐怖)的是",
+      "params": {
+        "maxPerPiece": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "AI 高频极值判断句式 (7.5)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "two extremums fail",
+        "input": "最残酷的地方在于，淘汰从不提前通知；更讽刺的是，这恰恰是默认流程。",
+        "expect": "fail"
+      },
+      {
+        "label": "single extremum passes",
+        "input": "最麻烦的是，数据还没迁移完。",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-PROSE-114",
+    "domain": "prose",
+    "title": "CJK pseudo-academic jargon (舆论场/宏大叙事/底层逻辑/抓手/闭环)",
+    "summary": "De-ai-writing's 伪学术腔: '舆论场', '宏大叙事', '底层逻辑', '认知升级', '降维打击', '抓手', '闭环', '话语权' — social-science and consulting terms used as universal labels, producing fake depth. Source threshold: max 1 total per piece.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "舆论场|宏大叙事|底层逻辑|认知升级|降维打击|抓手|闭环|话语权|权柄|顶层设计|路径依赖",
+      "params": {
+        "maxPerPiece": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "AI 伪学术腔高频词 (7.6)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "two terms fail",
+        "input": "这背后是舆论场与宏大叙事的博弈。",
+        "expect": "fail"
+      },
+      {
+        "label": "plain claim passes",
+        "input": "几家媒体在争论这件事。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier: 闭环/抓手/路径依赖 are legitimate in engineering and economics registers; the tell is stacking."
+  },
+  {
+    "id": "ZS-PROSE-115",
+    "domain": "prose",
+    "title": "CJK inanimate-subject negation ('血管不认这些词')",
+    "summary": "De-ai-writing's 无生命对象拟人化否定: '血管不认这些词', '数据不在乎你的立场', '市场不挑立场' — a short anthropomorphic negation used as a cold aphorism where a mechanism explanation belongs.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(血管|数据|历史|算法|市场|分子|病毒|现实|世界|舆论|规则|机制|代码|时间|系统)(不|不会|不肯|不愿|不在乎|不在意|不接受|不认|不挑|不分|不讲|不管|不理)"
+    },
+    "source": [
+      {
+        "repo": "de-ai-writing",
+        "rule": "无生命对象拟人化否定壳 (9.9)",
+        "ref": "references/ai-trace-detector.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vessel negation fails",
+        "input": "血管不认这些词。",
+        "expect": "fail"
+      },
+      {
+        "label": "mechanism passes",
+        "input": "马兜铃酸进入血液后直接结合肾小管上皮细胞的 DNA。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier: literal physical statements ('血管不接受过粗的针头') and quoted idioms ('时间不等人') are exempt per the source."
+  },
+  {
+    "id": "ZS-PROSE-116",
+    "domain": "prose",
+    "title": "CJK web-fiction template words (眼中闪过/嘴角勾起/心头一震...)",
+    "summary": "Story-deslop's 一级禁用词 for web fiction: '眼中闪过', '嘴角勾起', '眉头微皱', '心中一动', '心头一震', '不容置疑', '不由自主' — template facial/mental beats that replace shown behavior with stock phrases.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "眼中闪过|嘴角勾起|眉头微皱|瞳孔微缩|瞳孔收缩|指节泛白|心中一动|心头一震|心中暗道|心底泛起|神色一凛|不由得|不禁|深吸一口气|不容置疑|不容置喙|显而易见|毫无疑问|不由自主|情不自禁|话锋一转"
+    },
+    "source": [
+      {
+        "repo": "story-deslop",
+        "rule": "一级禁用词 (Gate A)",
+        "ref": "references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "template beat fails",
+        "input": "他眼中闪过一丝悲伤。",
+        "expect": "fail"
+      },
+      {
+        "label": "shown behavior passes",
+        "input": "他垂下眼，把药片放回口袋。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Genre-scoped: web-fiction narrative prose. Replace with concrete action/detail, not another adjective (the source's replacement rule)."
+  },
+  {
+    "id": "ZS-PROSE-117",
+    "domain": "prose",
+    "title": "CJK chapter-end summary beats (这一夜注定/这一切都结束了/新的篇章开始)",
+    "summary": "Story-deslop's 章末总结体 and trailer-summary patterns: '这一夜注定无人入眠', '这一切都结束了', '新的人生才刚刚开始', '命运的齿轮' — the outline's closing state written out as a summarizing sentence instead of a final action or line.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "这一(夜|天|刻|战|年|局|役)[，,]?[^。！？!?，,\\n]{0,6}注定|就这样[，,][^。！？!?，,\\n]{0,8}(一切|全部)[^。！？!?，,\\n]{0,4}(结束了|落幕|收场)|这一切[，,]?[^。！？!?，,\\n]{0,6}(都)?(说明|意味着|结束了)|(新的篇章|新的旅程|崭新的篇章|新的人生)[^。！？!?\\n]{0,6}(开始|拉开|展开)|这一刻[，,]?[^\\n。！？!?]{0,24}(终于|才)(明白|意识到)|从这一刻开始|(命运|宿命)[^\\n。！？!?]{0,28}(齿轮|棋局|獠牙|改写|安排)"
+    },
+    "source": [
+      {
+        "repo": "story-deslop",
+        "rule": "章末总结体 / trailer-summary",
+        "ref": "references/anti-ai-writing.md"
+      },
+      {
+        "repo": "story-deslop",
+        "rule": "总结句式 (banned-words)",
+        "ref": "references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "doomed night fails",
+        "input": "这一夜，注定无人入眠。",
+        "expect": "fail"
+      },
+      {
+        "label": "action ending passes",
+        "input": "她关上了那扇门。没回头。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The source scans only the final ~600 characters; this rule flags any occurrence (safe direction). 这一刻…终于明白 is a normal human cognitive beat in short fiction per the source's calibration — warning tier."
+  },
+  {
+    "id": "ZS-PROSE-118",
+    "domain": "prose",
+    "title": "CJK trailer endings (没人知道/才刚刚开始/即将来临)",
+    "summary": "Story-deslop's trailer-ending patterns: '没人知道，这才刚刚开头', '正朝着…压了过来', '拉开序幕', '即将来临' — the narrator previewing the next chapter instead of letting the scene end on a concrete beat.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "没人知道|谁也不知道|谁也没想到|殊不知|(这)?才刚刚开(始|头)|(?<!正式)拉开(序幕|帷幕)|即将(开始|来临|降临)|正(朝着|向着)[^。！？!?\\n]{0,24}(压|涌|袭|逼)(了?过去|了?过来|来)"
+    },
+    "source": [
+      {
+        "repo": "story-deslop",
+        "rule": "预告式总结收尾 (trailer-ending)",
+        "ref": "scripts/check-ai-patterns.js"
+      },
+      {
+        "repo": "story-deslop",
+        "rule": "章末预告 (banned-words)",
+        "ref": "references/banned-words.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "nobody knows fails",
+        "input": "没人知道，这才刚刚开头。",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete beat passes",
+        "input": "他在门口站了一会儿，推门走了。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Lookbehind (?<!正式) spares the standard phrase '正式拉开序幕'. The source restricts to the final 600 characters; this flags any occurrence (safe direction)."
+  },
+  {
+    "id": "ZS-PROSE-119",
+    "domain": "prose",
+    "title": "CJK voice-contrast template (声音不大…却…)",
+    "summary": "Story-deslop's 音量反差腔: '声音不大，却带着…', '声音不高，第一句却…' — the AI-favorite voice description that pads volume then pivots; delete the volume setup and write the actual sound or effect.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "声音(?:并)?不[大高响亮][^。！？!?\\n]{0,16}[却但偏]"
+    },
+    "source": [
+      {
+        "repo": "story-deslop",
+        "rule": "音量反差腔 (voice-contrast)",
+        "ref": "scripts/check-ai-patterns.js"
+      }
+    ],
+    "tests": [
+      {
+        "label": "voice contrast fails",
+        "input": "她的声音不大，却带着不容置疑的力量。",
+        "expect": "fail"
+      },
+      {
+        "label": "direct voice passes",
+        "input": "她压低声音说完了那句话。",
+        "expect": "pass"
+      }
+    ]
+  }
+]

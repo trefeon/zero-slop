@@ -1,0 +1,4994 @@
+[
+  {
+    "id": "ZS-UI-001",
+    "domain": "ui",
+    "title": "Indigo→violet gradient",
+    "summary": "The #6366f1→#a855f7 (indigo→purple/violet) diagonal on buttons, glows and hero backgrounds is the factory setting of Tailwind demos; it reads as an absence of a decision. Only a genuine brand in that hue escapes.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "from-(indigo|violet|purple|fuchsia)-[0-9]+\\s*.*to-(purple|violet|fuchsia|pink)-[0-9]+|(linear-gradient|bg-gradient)[^;]*(#6366f1|#8b5cf6|#a855f7|#7c3aed)|shadow-(purple|violet|indigo)-[0-9]+/[0-9]+",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "01 Indigo→violet gradient",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 01 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-01 Color & Gradients",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 2 purple-to-blue gradient",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 1 Gradients — flat or subtle",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "indigo-to-purple tailwind gradient fails",
+        "input": "<button class=\"bg-gradient-to-r from-indigo-500 to-purple-600\">Upgrade</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "single-hue brand gradient passes",
+        "input": "<button class=\"bg-gradient-to-r from-blue-600 to-blue-800\">Upgrade</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: a purple brand or a one-off illustration is fine; slop is the combination purple gradient + glow + pill button as the unchosen default."
+  },
+  {
+    "id": "ZS-UI-002",
+    "domain": "ui",
+    "title": "Gradient headline text",
+    "summary": "background-clip:text rainbow fills on headings trade legibility for an effect every AI page uses. Hallmark: no genre allows gradient text; solid ink for headings, hierarchy from size/weight/space.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "bg-clip-text.{0,80}text-transparent|text-transparent.{0,80}bg-clip-text|(-webkit-)?background-clip:\\s*text|(-webkit-)?text-fill-color:\\s*transparent",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "02 Gradient headline text",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 02 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 2 — No genre allows gradient text",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Bans — no gradient text on headings",
+        "ref": "skills/hallmark/references/typography.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 1 Gradients — flat or subtle",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "gradient-clip heading fails",
+        "input": "<h1 class=\"bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-cyan-500\">Launch</h1>",
+        "expect": "fail"
+      },
+      {
+        "label": "solid heading passes",
+        "input": "<h1 class=\"text-slate-900 font-bold\">Launch</h1>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A logo wordmark is the usual legitimate exception; a single deliberate hero treatment may be defended."
+  },
+  {
+    "id": "ZS-UI-003",
+    "domain": "ui",
+    "title": "Warm 'cozy' palette",
+    "summary": "An amber/stone/orange wash on soft beige is the model's laziest translation of 'warm and friendly' — Tailwind's warm ramp served raw so every 'human' product looks identical.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(amber|orange|stone)-(50|100|200|300)\\b|bg-\\[#(fdf6ec|fef3e2|faf3e8|fff7ed|fdf4e3)\\]|text-(gray|slate|zinc|neutral)-(400|500)[^\"]{0,60}bg-(amber|stone|orange|rose|blue|indigo|green)-",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "03 Warm 'cozy' palette",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 03 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 9 editorial-warm house style (#F4F1EA family)",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "amber-on-beige wash fails",
+        "input": "<main class=\"bg-amber-50 text-stone-700\">Welcome home</main>",
+        "expect": "fail"
+      },
+      {
+        "label": "warm accent used once passes",
+        "input": "<button class=\"bg-orange-600 text-white\">Order</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "False positives: food/coffee/craft brands where warm is the identity. The last pattern is the sibling tell — default gray text dropped onto a tinted surface was never toned to its background."
+  },
+  {
+    "id": "ZS-UI-004",
+    "domain": "ui",
+    "title": "Default semantic palette",
+    "summary": "Info in blue/indigo, tip in amber, success in green, error in red — the framework's stock -50 backgrounds with -600 text — is a bowl of unrelated rainbow candy when three or four pairs are used together with no brand link.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "bg-(blue|indigo)-50\\b|bg-amber-50\\b|bg-green-50\\b|bg-emerald-50\\b|bg-red-50\\b|text-(blue|indigo)-(600|700).{0,80}text-(green|emerald)-(600|700)|info.{0,30}blue|warning.{0,30}amber|success.{0,30}green|error.{0,30}red",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "04 The default semantic palette",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 04 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "three stock semantic pairs together fail",
+        "input": "<div class=\"bg-blue-50 text-blue-700\">Info</div><div class=\"bg-amber-50 text-amber-700\">Tip</div><div class=\"bg-green-50 text-green-700\">Done</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "single deliberate status color passes",
+        "input": "<span class=\"bg-emerald-600 text-white\">Paid</span>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Grow semantic colors out of one palette (tints of a hue plus neutrals); colour only the states that truly differ. A single deliberate status colour is fine."
+  },
+  {
+    "id": "ZS-UI-005",
+    "domain": "ui",
+    "title": "One-hue status box",
+    "summary": "An alert whose border, text and /10 background are all one hue (border-red-500 / text-red-500 / bg-red-500/10) is a traffic light, not a palette — one loud hue at three opacities, nothing toned to sit next to the UI.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "border-(red|amber|yellow|green|blue)-[0-9]+[^\"']{0,40}text-(red|amber|yellow|green|blue)-[0-9]+|bg-(red|amber|yellow|green)-[0-9]+/(5|10|15|20)|(error|warning|success)[^\\n]{0,40}(red|amber|yellow|green)-[0-9]+",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "05 The one-hue status box",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 05 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "red-on-red alert fails",
+        "input": "<div class=\"border border-red-500 bg-red-500/10 text-red-600 rounded-md p-3\">Error</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "muted accent on neutral passes",
+        "input": "<div class=\"border border-slate-200 bg-slate-50 text-red-700 rounded-md p-3\">Error</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Carry the state in words and weight first; if you colour, one muted accent from your own palette on a neutral surface."
+  },
+  {
+    "id": "ZS-UI-006",
+    "domain": "ui",
+    "title": "Gradients as atmosphere",
+    "summary": "Page-wide radial glows, card surfaces that are themselves top-to-bottom gradients, per-card accent-hue washes and repeating-gradient stripes carry no information — the default 'premium dark mode' move.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "radial-gradient|bg-\\[radial-gradient|repeating-(linear|radial)-gradient|linear-gradient[^;]*(to bottom|180deg|to top)|bg-gradient-to-(b|t)\\b.{0,40}from-|box-shadow:[^;]*(#(6366f1|8b5cf6|a855f7|22d3ee|06b6d4)|rgba?\\(139|rgba?\\(168)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "06 Gradients as atmosphere",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 06 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-01 Color & Gradients (colored glow backgrounds)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 29 abstract background (mesh/aurora)",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "radial glow behind everything fails",
+        "input": "body { background: radial-gradient(circle at 50% 0%, rgba(139,92,246,0.15), transparent 60%); }",
+        "expect": "fail"
+      },
+      {
+        "label": "flat surface passes",
+        "input": ".hero { background-color: #0f172a; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A gradient that points at something specific (responds to interaction, separates hierarchy) is a choice; build surface depth with a hairline and a restrained shadow instead."
+  },
+  {
+    "id": "ZS-UI-007",
+    "domain": "ui",
+    "title": "Pure #000 / #fff base",
+    "summary": "Exact #FFFFFF on exact #000000 is harsh, cold and reads as unfinished; toned whites and blacks (#FAFAFA / #1A1A1A) are softer and more professional.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "background(-color)?:\\s*#(000000|000|ffffff|fff)\\b|background(-color)?:\\s*(black|white)\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 7 pure #000/#fff base color",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 6 Color — subtly toned whites and blacks",
+        "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 6 Color discipline — toned whites/blacks",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "pure black on pure white fails",
+        "input": "body { background-color: #ffffff; color: #000000; }",
+        "expect": "fail"
+      },
+      {
+        "label": "toned pair passes",
+        "input": "body { background-color: #fafafa; color: #1a1a1a; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Genre note: modern-minimal allows pure #fff paper (Stripe / ElevenLabs school)."
+  },
+  {
+    "id": "ZS-UI-008",
+    "domain": "ui",
+    "title": "Zero-chroma neutrals",
+    "summary": "A neutral/surface color with zero chroma in oklch (oklch(... 0 ...)) reads flat; tint every neutral toward the anchor hue — minimum 0.005 chroma.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "oklch\\([^)]*?\\s+0(\\.0+)?\\s+[^)]*\\)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 22 zero-chroma neutrals",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "zero-chroma paper fails",
+        "input": ":root { --color-paper: oklch(96% 0 0); }",
+        "expect": "fail"
+      },
+      {
+        "label": "tinted neutral passes",
+        "input": ":root { --color-paper: oklch(96% 0.008 85); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Genre note: modern-minimal allows zero-chroma neutrals (the monochrome Stripe / ElevenLabs school)."
+  },
+  {
+    "id": "ZS-UI-009",
+    "domain": "ui",
+    "title": "Palette overflow (5+ colors)",
+    "summary": "A scattered palette has no hierarchy; cap the active palette at 2–3 core colors + 1 accent (neutrals excluded). When every element can be any color, nothing is distinguished.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "distinctColors",
+      "params": {
+        "max": 5,
+        "coreColors": "2-3 + 1 accent",
+        "window": "per-file"
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-29 Color Palette (2-3 core + 1 accent)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Too Many Colors in the Palette",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 9 Color system — 3-5 colors maximum",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "six unrelated hues fail",
+        "input": ".a{color:#2563eb}.b{color:#dc2626}.c{color:#16a34a}.d{color:#d97706}.e{color:#7c3aed}.f{color:#db2777}",
+        "expect": "fail"
+      },
+      {
+        "label": "three colors plus neutrals pass",
+        "input": ".a{color:#2563eb}.b{color:#0f172a}.c{color:#f8fafc}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Count distinct color values on one page; neutral greys/whites/blacks do not count toward the core palette."
+  },
+  {
+    "id": "ZS-UI-010",
+    "domain": "ui",
+    "title": "Mid-render token improvisation",
+    "summary": "Inline hex/oklch/rgb/hsl values or font-family declarations outside the token block mean the model picked a theme then freestyled — cohesion erodes into eight colors instead of three.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "#[0-9a-fA-F]{3,8}\\b|oklch\\([^)]*\\)|rgba?\\([^)]*\\)|hsla?\\([^)]*\\)",
+      "params": {
+        "scope": "values outside :root/[data-theme] token block",
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 48 mid-render token improvisation",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Mid-render token improvisation",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 7 Color values — trace to a token",
+        "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-31 Every decision must have a reason",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "inline hex outside tokens fails",
+        "input": "<div style=\"color:#5b6cff\">Pricing</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "named token reference passes",
+        "input": "<div style=\"color: var(--color-accent)\">Pricing</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Every color/font must reference a named token (var(--color-accent), font-family: var(--font-display)); lift needed values into the token block first. Flags hit only outside the token definitions."
+  },
+  {
+    "id": "ZS-UI-011",
+    "domain": "ui",
+    "title": "Off-scale spacing values",
+    "summary": "Padding/margin/gap values that are not multiples of 4 or 8 (padding: 17px, gap: 13px) feel chaotic; snap spacing to a named scale (multiples of 4px/8px).",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(padding|margin|gap|top|right|bottom|left):\\s*(7|9|11|13|14|17|18|19|21|22|23|26|27|29|31|33|34|37|38|39|41|43|46|47)px\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 8 Spacing — snap to a 4px/8px scale",
+        "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 7 Rhythm — spacing scale",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 24 named spacing scale",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "arbitrary padding fails",
+        "input": ".card { padding: 17px; gap: 13px; }",
+        "expect": "fail"
+      },
+      {
+        "label": "scale value passes",
+        "input": ".card { padding: 16px; gap: 12px; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Regex flags common off-scale values; engines may implement a divisibility check instead. A deliberate one-off (e.g. optical centering) may be defended."
+  },
+  {
+    "id": "ZS-UI-012",
+    "domain": "ui",
+    "title": "Excessive accent coverage",
+    "summary": "One accent color on buttons, icons, badges, links, lines, backgrounds and glows at once — or an accent covering more than ~5% of a viewport — stops being an accent; the design loses its focal point.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 23 accent coverage > 5% of viewport",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Excessive Accent Color",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Levers — one deliberate accent",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "accent on every element fails",
+        "input": "Hero title, all four buttons, all feature icons, badge and footer links all painted in the same brand accent.",
+        "expect": "fail"
+      },
+      {
+        "label": "accent on primary CTA only passes",
+        "input": "Accent appears once, on the primary CTA; everything else uses neutrals and one ink.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Zero accents is sterile; an accent everywhere is slop. Choose the one or two places it matters."
+  },
+  {
+    "id": "ZS-UI-013",
+    "domain": "ui",
+    "title": "Dark mode default without reason",
+    "summary": "An entire page is dark just because it looks 'tech', with no branding consideration; dark is a decision, not a default. Developer/creative tools have legitimate reasons; content-first products usually do not.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-21 Dark Mode",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Dark Mode Default for No Reason",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dark-only fintech landing fails",
+        "input": "Fintech consumer landing page ships dark-only because 'dark looks tech', with no brand or audience reason.",
+        "expect": "fail"
+      },
+      {
+        "label": "dev tool dark default passes",
+        "input": "Terminal/developer tool ships dark default and documents why (code-heavy UI, user preference).",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If the product has no strong reason for a fixed theme, build a working light/dark toggle — a theme toggle you ship must work in both modes."
+  },
+  {
+    "id": "ZS-UI-014",
+    "domain": "ui",
+    "title": "Background grid",
+    "summary": "Grid squares, blueprint lines and graph paper are the default way to make a flat page feel 'technical' without doing real work — texture without intent.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(repeating-)?linear-gradient\\([^)]*(0deg|90deg|to right|to left|to bottom|180deg)|background-image:\\s*(repeating-)?linear-gradient",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-07 Background (grid squares, blueprint lines)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Background Grid",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "blueprint grid behind hero fails",
+        "input": ".hero { background-image: repeating-linear-gradient(0deg, #f1f5f9 0 1px, transparent 1px 24px), repeating-linear-gradient(90deg, #f1f5f9 0 1px, transparent 1px 24px); }",
+        "expect": "fail"
+      },
+      {
+        "label": "flat surface passes",
+        "input": ".hero { background-color: #f8fafc; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Use texture or pattern only when it genuinely supports the product's identity, with the reason written down; a real identity motif beats a stock grid."
+  },
+  {
+    "id": "ZS-UI-015",
+    "domain": "ui",
+    "title": "Banned default typefaces (Inter & co.)",
+    "summary": "Inter, Roboto, Open Sans, Lato, Poppins, Manrope, Space Grotesk, Geist and friends are on-distribution for every LLM; a typeface is the loudest single signal of who made this, and defaulting to the training-data average dodges the identity decision.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "fonts\\.googleapis\\.com/css2\\?family=(Inter|Space\\+Grotesk|Manrope|Plus\\+Jakarta)|font-family:\\s*[^;]*(Inter|Roboto|Open Sans|Lato|Poppins|Montserrat|Raleway|Work Sans|DM Sans|Nunito|Manrope|Plus Jakarta Sans|Space Grotesk|Geist|Arial|Helvetica)|from [\"']next/font/google",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "33 Inter everywhere (evolved)",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 33 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Banned defaults (typography.md)",
+        "ref": "skills/hallmark/references/typography.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 5 Type — fonts chosen with intent",
+        "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Typeface Chosen Without Reason",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "Inter body stack fails",
+        "input": "body { font-family: \"Inter\", ui-sans-serif, sans-serif; }",
+        "expect": "fail"
+      },
+      {
+        "label": "deliberate non-default face passes",
+        "input": "body { font-family: \"Switzer\", ui-sans-serif, sans-serif; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: landing back on Inter after comparing alternatives is a choice; starting there isn't. A system stack picked for a reason is also a choice. Same family at different weights counts as one face."
+  },
+  {
+    "id": "ZS-UI-016",
+    "domain": "ui",
+    "title": "Serif-italic on one word in a heading",
+    "summary": "Swapping one word in a sans headline to serif italic is the most viral AI headline tic — cheap drama staging two voices in one sentence; headers are roman, emphasis comes from weight, accent colour, or a drawn underline.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<h[1-6][^>]*>[^<]{0,120}(<em>|<i>|font-style:\\s*italic)|font-serif[^\"]{0,60}italic",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "07 Serif-italic on one word",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 07 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 38a italic headers / italicised emphasis-word",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Italic headers anti-pattern",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 9 editorial-warm — italic word-accents",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "italic emphasis word inside sans h1 fails",
+        "input": "<h1>Build <em>smarter</em> teams</h1>",
+        "expect": "fail"
+      },
+      {
+        "label": "italic emphasis in body paragraph passes",
+        "input": "<p>Read <em>before</em> you sign.</p>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Emphasise with weight, position or a line break; keep one voice, and if italic is truly needed use the same family's italic. Italic is allowed only as body-copy emphasis inside running paragraphs."
+  },
+  {
+    "id": "ZS-UI-017",
+    "domain": "ui",
+    "title": "Serif where sans belongs",
+    "summary": "Playfair/Lora/Cormorant display serif on a dev tool or SaaS — as body/UI text or an oversized italic-serif hero — is a tuxedo on a terminal; display serifs are hard to read at UI sizes and tonally off.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "font-family:\\s*[^;]*(playfair|cormorant|lora|dm serif|libre baskerville|merriweather)|fontFamily.{0,60}(Playfair|Cormorant|Lora)|font-serif[^\"]{0,60}(italic|text-[4-9]xl)|(italic|text-[4-9]xl)[^\"]{0,60}font-serif",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "08 Serif where sans belongs",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 08 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Playfair Display banned as body",
+        "ref": "skills/hallmark/references/typography.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 9 editorial-warm — serif display faces as silent defaults",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "Playfair on a SaaS hero fails",
+        "input": ".hero h1 { font-family: \"Playfair Display\", serif; font-style: italic; }",
+        "expect": "fail"
+      },
+      {
+        "label": "serif on genuine editorial content passes",
+        "input": "article.essay { font-family: \"Newsreader\", serif; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "False positives: an editorial/publishing product that wants serif. Set the hero roman or use a non-serif display face; a genuinely editorial register may keep it."
+  },
+  {
+    "id": "ZS-UI-018",
+    "domain": "ui",
+    "title": "Decorative strikes & highlights",
+    "summary": "Striking out, underlining, or highlighter-swipe over words not to delete/annotate but as decorative 'emphasis' means the design doesn't trust the words; keep strike for real edits, underline for links, highlight for real annotation.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "line-through|text-decoration:\\s*underline|<(mark|s|u|del|strike)[\\s>]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "09 Decorative strikes & highlights",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 09 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 35 decorative text effects positioned correctly",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "decorative strikethrough on a keyword fails",
+        "input": "<h2>We are <span style=\"text-decoration: line-through\">not</span> another AI wrapper</h2>",
+        "expect": "fail"
+      },
+      {
+        "label": "plain sentence passes",
+        "input": "<p>The old price was $99; today it's $49.</p>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Real edits (<del> in a changelog), links (underline) and annotations (<mark>) are the confirmation pass; the regex fires on all strikes and the triage confirms the decoration-vs-annotation distinction. A highlighter band must sit behind the x-height, never at the baseline."
+  },
+  {
+    "id": "ZS-UI-019",
+    "domain": "ui",
+    "title": "Kicker above every heading",
+    "summary": "A tiny uppercase letter-spaced label restating the heading (FEATURES over features) is an editorial device worn as a reflex — zero information, a template's rhythm; a kicker earns its place only when it adds a real dimension (category, date, number in a sequence).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "uppercase[\\s\\S]{0,40}tracking-(wide|wider|widest)|tracking-(wide|wider|widest)[\\s\\S]{0,40}uppercase|text-transform:\\s*uppercase[\\s\\S]{0,80}letter-spacing:\\s*0?\\.[0-9]+em|(eyebrow|kicker|overline)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "10 The kicker above every heading",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 10 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Eyebrow on every section (default OFF)",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-06 Typography (uppercase labels with extreme letter-spacing)",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "kicker restating its heading fails",
+        "input": "<div class=\"uppercase tracking-widest text-xs\">FEATURES</div><h2>Features</h2>",
+        "expect": "fail"
+      },
+      {
+        "label": "kicker adding a real dimension passes",
+        "input": "<div class=\"text-xs font-medium text-slate-500\">Issue 12 · October</div><h2>The October Review</h2>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Delete any kicker that restates its heading; keep one only where it adds a real dimension, capped at 1–2 per page, heading directly underneath in the same column."
+  },
+  {
+    "id": "ZS-UI-020",
+    "domain": "ui",
+    "title": "Tag-left / header-right section heads",
+    "summary": "An eyebrow or ordinal in a narrow left column beside the section title (01 · THE TOUR | Features) is the single most reliable AI-templated tell for editorial-style SaaS pages; eyebrows stack vertically under the heading or not at all.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 54 tag-left/header-right section heads (auto-fail)",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Eyebrow on every section — hard ban",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "two-column section head fails",
+        "input": ".section__head { grid-template-columns: 120px 1fr; } — '01 / EXAMPLES' in the left column, the title to its right.",
+        "expect": "fail"
+      },
+      {
+        "label": "vertical stack passes",
+        "input": "Eyebrow sits directly above the heading in the same column; no two-column section-head grid.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Not bypassable by parity instructions: even when asked to 'match the existing structure', drop the pattern and flatten the head to single column."
+  },
+  {
+    "id": "ZS-UI-021",
+    "domain": "ui",
+    "title": "Full-sentence display headline",
+    "summary": "A whole marketing sentence set at display size (text-6xl font-extrabold tracking-tight) wraps to three or four lines and eats the viewport; display sizes are for the two or three words that can carry that scale. Cap display at 5.5rem (88px).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "text-(5|6|7|8|9)xl\\b|tracking-tighter?\\b[\\s\\S]{0,40}font-(extrabold|black)\\b|font-size:\\s*(clamp\\([^)]*[4-9](rem|\\.[0-9]+rem)|[5-9][0-9]px|[4-9]rem)|letter-spacing:\\s*-0?\\.0[5-9]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "11 The full-sentence display headline",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 11 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Hero headline sizing — 51+ chars step down; display ≤ 5.5rem",
+        "ref": "skills/hallmark/references/typography.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "sentence at display size fails",
+        "input": "<h1 class=\"text-6xl font-extrabold tracking-tight\">The complete platform for modern teams who ship faster every single day</h1>",
+        "expect": "fail"
+      },
+      {
+        "label": "short display headline passes",
+        "input": "<h1 class=\"text-4xl font-bold tracking-tight\">Ship faster</h1>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Compress the one thing into a few words and let those be big; say the rest in a normal-size subline. A 100-char headline at display size is the single most reliable AI tell. Single-word displays ≤ 12 ch may grow to 7rem."
+  },
+  {
+    "id": "ZS-UI-022",
+    "domain": "ui",
+    "title": "Flat type hierarchy",
+    "summary": "Every size crammed between 14 and 18px — headings barely bigger than body, hierarchy left to shades of gray — is the safe play of nobody deciding what matters; use a scale with few steps and real contrast (1.25× and up).",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<h[12][^>]*text-(sm|base|lg)\\b|font-size:\\s*1[4-8]px",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "12 The flat type hierarchy",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 12 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 7 Hierarchy — similar sizes flatten hierarchy",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "h1 at text-lg fails",
+        "input": "<h1 class=\"text-lg font-semibold text-gray-700\">Dashboard</h1>",
+        "expect": "fail"
+      },
+      {
+        "label": "heading with real contrast passes",
+        "input": "<h1 class=\"text-4xl font-bold\">Dashboard</h1>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If two sizes are within a pixel or two, merge them. A deliberately quiet single-size editorial layout with strong spacing is a choice; a dashboard where page title and table cell match is not."
+  },
+  {
+    "id": "ZS-UI-023",
+    "domain": "ui",
+    "title": "More than three font families (2+1 rule)",
+    "summary": "A page may use at most three distinct families: one display, one body, and an optional outlier for a single typographic moment. Four families is slop; mono counts as a face in any non-code context.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "distinctFontFamilies",
+      "params": {
+        "max": 3,
+        "note": "same family at different weights = 1; mono in non-code context = 1"
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "The 2+1 rule — three faces is the ceiling",
+        "ref": "skills/hallmark/references/typography.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 37 more than three font families",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "four families fail",
+        "input": "font-family: \"Fraunces\", serif; font-family: \"Geist\", sans-serif; font-family: \"Geist Mono\", monospace; font-family: \"Anton\", sans-serif;",
+        "expect": "fail"
+      },
+      {
+        "label": "two families pass",
+        "input": "font-family: \"Fraunces\", serif; font-family: \"Geist\", sans-serif;",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The outlier is a register, not a third surface: wordmark + hero stat is the canonical pair, never a fifth slot."
+  },
+  {
+    "id": "ZS-UI-024",
+    "domain": "ui",
+    "title": "Prose measure outside 45–75ch",
+    "summary": "Line length lives between 45 and 75 characters; under 45ch is choppy, over 75ch loses the eye. Default to max-width: 65ch.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "max-width:\\s*(([0-9]|[1-3][0-9]|4[0-4]|7[6-9]|[89][0-9]|[1-9][0-9]{2,})ch)\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 25 prose container max-width 45–75ch",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Measure — 45 to 75 characters",
+        "ref": "skills/hallmark/references/typography.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "32ch measure fails",
+        "input": ".prose { max-width: 32ch; }",
+        "expect": "fail"
+      },
+      {
+        "label": "65ch default passes",
+        "input": ".prose { max-width: 65ch; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Regex flags any ch value < 45 or > 75; a deliberate narrow measure for captions or pull quotes may be defended."
+  },
+  {
+    "id": "ZS-UI-025",
+    "domain": "ui",
+    "title": "Monospace as UI chrome ('tasteful terminal')",
+    "summary": "Mono everywhere, near-black background, one warm accent, ASCII art — the look of 'an AI that read one Vercel blog post'. Keep monospace for code, not UI chrome; terminal metaphors only where they serve the product.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "font-mono|font-family:\\s*[^;]*(mono|jetbrains|fira code|ibm plex mono|geist mono)|[╔╗╚╝║═▓▒░]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "34 The 'tasteful terminal' (evolved)",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 34 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-06 Typography (large monospace for terminal aesthetics)",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "mono on nav and hero copy fails",
+        "input": "<nav class=\"font-mono\">About · Pricing · Docs</nav><h1 class=\"font-mono\">Ship like a wizard</h1>",
+        "expect": "fail"
+      },
+      {
+        "label": "chrome in body face passes",
+        "input": "<nav>About · Pricing · Docs</nav>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Mono in code blocks and true terminal-aesthetic products are the confirmation pass; the tell is monospace on non-code UI chrome. Real taste is a choice you can explain, not this season's safest template."
+  },
+  {
+    "id": "ZS-UI-026",
+    "domain": "ui",
+    "title": "Editorial dashboard",
+    "summary": "An operational UI dressed as a magazine — giant serif 'Good evening' greeting, serif numerals in stat cards, cream paper, tracked-caps kickers — is the second-wave uniform; a console is scanned all day and needs legible sans with tabular lining numerals.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": ">\\s*Good (morning|afternoon|evening),|oldstyle-nums|font-variant-numeric:\\s*oldstyle|font-family:\\s*[^;]*(fraunces|canela|tiempos|didot|freight|reckless|newsreader)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "35 The editorial dashboard (evolved)",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 35 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 9 editorial-warm on dashboards/dev tools is the default-template look",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "serif greeting on dashboard fails",
+        "input": "<h1 class=\"font-serif text-5xl\">Good evening, Alex</h1>",
+        "expect": "fail"
+      },
+      {
+        "label": "scannable dashboard heading passes",
+        "input": "<h1 class=\"text-2xl font-semibold\">Revenue</h1>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Match the type to the job; display serif belongs to genuinely editorial surfaces (docs, essays, a magazine). For warmth, one material decision — a paper tint or an ink accent — not the full costume."
+  },
+  {
+    "id": "ZS-UI-027",
+    "domain": "ui",
+    "title": "Icon-tile feature grid",
+    "summary": "Three equal columns, each an icon-above-heading tile in a rounded-square chip — the shortest path to 'looks designed'; icons rarely relate to content, they just fill the grid. Break the grid, vary widths and heights, or drop the cards for typographic rhythm.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "grid-cols-3|rounded-(lg|xl|2xl) bg-(indigo|purple|blue|green|amber|pink)-(50|100)|\\b[wh]-(20|24|28|32)\\b.{0,40}(<svg|Icon)|<svg[^>]*(width|height)=\"(9[6-9]|[1-9][0-9]{2})\"",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 3 3-equal-column card grid with icon-above-heading tiles",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "The 3-column feature grid",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-14 Feature Cards (identical size/icon/layout)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "18 Rounded-square icon tiles",
+        "ref": "skill/references/taxonomy.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "3-column icon tile grid fails",
+        "input": "<div class=\"grid grid-cols-3 gap-6\"><div class=\"rounded-xl bg-indigo-100 p-4\"><Zap /><h3>Speed</h3><p>Go fast.</p></div><!-- x2 more --></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "content-led feature list passes",
+        "input": "<ul><li><strong>Speed</strong> — 1,847 CI runs yesterday</li></ul>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "An icon must carry meaning or go; a clear label + one sentence beats a row of glyphs. The giant decorative line icon (w-24 h-24) parked in a card is the same reflex at another size."
+  },
+  {
+    "id": "ZS-UI-028",
+    "domain": "ui",
+    "title": "Cards inside cards",
+    "summary": "A bordered rounded shadowed card holding another card holding another — three nested surfaces each with its own border/radius/shadow and shrinking padding — boxes because a box is the only grouping move the model trusts; one surface per region, group inside with spacing and hairlines.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(Card|Panel|Box)[^>]*>\\s*<\\1|rounded[^\"]*border[^\"]*\"[\\s\\S]{0,120}rounded[^\"]*border",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "31 Cards inside cards",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 31 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 4 card nested inside another card",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Card-in-card anti-pattern",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "three-deep nesting fails",
+        "input": "<div class=\"rounded-xl border p-4\"><div class=\"rounded-xl border p-4\"><div class=\"rounded-xl border p-4\">Content sliver</div></div></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "one surface with dividers passes",
+        "input": "<section class=\"rounded-xl border\"><h2>Group</h2><hr /><p>Item</p></section>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A child earns its own surface only when it is genuinely a separate object (a preview, an embed)."
+  },
+  {
+    "id": "ZS-UI-029",
+    "domain": "ui",
+    "title": "Rounded card with colored left border",
+    "summary": "A pale rounded box with a 4px colored bar down the left wrapped around every list item turns a docs admonition into universal decoration; the thick accent ring (border-2 in a loud color) is the sibling move. Callouts are scarce — one or two a page, only for a genuine aside.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "border-l-4.{0,40}rounded|rounded.{0,40}border-l-4|border-left:\\s*[0-9]+px[^;]*;.{0,60}border-radius|admonition|callout|note-box|border-2\\b[\\s\\S]{0,40}border-(indigo|purple|violet|blue|pink|green)-[0-9]+",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "17 Rounded card, colored left border",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 17 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 5 thick coloured side-stripe border",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "The side-stripe card",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 3 Cards — reserve border-left:4px for semantic emphasis",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "callout style on every feature row fails",
+        "input": "<div class=\"rounded-lg border-l-4 border-indigo-500 bg-slate-50 p-4\">Feature A</div><div class=\"rounded-lg border-l-4 border-indigo-500 bg-slate-50 p-4\">Feature B</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "one genuine tip callout passes",
+        "input": "<aside class=\"rounded-lg border border-amber-200 bg-amber-50 p-4\">Tip: export before you delete.</aside>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Let a list be a list — alignment, spacing, hierarchy. A hairline border all around, no border, or a small accent square beside the heading beats an asymmetric thick stripe."
+  },
+  {
+    "id": "ZS-UI-030",
+    "domain": "ui",
+    "title": "Icon in a tint of itself",
+    "summary": "Every icon wrapped in a rounded square filled with a 10% see-through tint of its own color (bg-blue-500/10 behind text-blue-600) turns the page into a grid of soft colored squares; let an icon just be an icon, inheriting the text color.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "bg-(indigo|blue|green|amber|red|purple|pink)-[0-9]+/(5|10|15|20)[\\s\\S]{0,60}text-(indigo|blue|green|amber|red|purple|pink)-[0-9]+|rounded-(md|lg|xl)\\s+bg-(indigo|blue|green|amber|red)-[0-9]+/(5|10|15|20)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "25 Icon in a tint of itself",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 25 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "tinted icon chip fails",
+        "input": "<span class=\"rounded-lg bg-blue-500/10 text-blue-600\"><Database /></span>",
+        "expect": "fail"
+      },
+      {
+        "label": "plain icon passes",
+        "input": "<span class=\"text-slate-600\"><Database /></span>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If something genuinely needs a container, give it a deliberate opaque surface from your palette, not a tint of the icon it holds."
+  },
+  {
+    "id": "ZS-UI-031",
+    "domain": "ui",
+    "title": "Glassmorphism as default surface",
+    "summary": "backdrop-blur panes on navbar, cards, modals and sidebar at once flatten every surface into the same frosted layer; glass is an accent that communicates depth over real content, not the character of the whole UI. Dose cap: 1–2 elements.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "backdrop-blur|backdrop-filter:\\s*blur|bg-white/(5|10|20|30)|bg-black/(5|10|20|30)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "19 Max radius + glassmorphism",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 19 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-10 Glassmorphism (dose cap 1-2 elements)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Glassmorphism without purpose",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "frosted navbar + cards + modal fails",
+        "input": "<nav class=\"backdrop-blur-md bg-white/20\"></nav><div class=\"backdrop-blur-xl bg-white/10 rounded-2xl\"></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "single solid overlay passes",
+        "input": ".overlay { background-color: rgba(0, 0, 0, 0.5); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Glass can work when it communicates depth (an overlay over content); it cannot work as decoration."
+  },
+  {
+    "id": "ZS-UI-032",
+    "domain": "ui",
+    "title": "Pill-everything radius",
+    "summary": "Every element max-radius — buttons, inputs, cards, badges, modals — erases the visual language of 'this is an input, this is a card'; radius becomes decoration instead of a hierarchy tool. Hold one small deliberate radius scale.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "rounded-full|border-radius:\\s*(9999px|50%|2rem|24px)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-11 Border Radius (not every element pill-shaped)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Excessive Border Radius",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "19 Max radius + glassmorphism",
+        "ref": "skill/references/taxonomy.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "pill card and pill input fail",
+        "input": "<input class=\"rounded-full px-6 py-3\" /><div class=\"rounded-full bg-slate-100 p-6\">Card</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "small-radius input passes",
+        "input": "<input class=\"rounded-md px-3 py-2\" />",
+        "expect": "pass"
+      }
+    ],
+    "notes": "One generous radius on the primary CTA reads as intentional; the same radius on every element reads as a default. rounded-full on avatars and genuine pills only."
+  },
+  {
+    "id": "ZS-UI-033",
+    "domain": "ui",
+    "title": "Oversized drop shadow",
+    "summary": "A small card or icon under a huge, faint, barely-offset blur (60px+) is a fog, not a drop — a shadow says how high a surface floats, and this maps to no real height. Keep a small elevation scale: tight blur, small offset, low opacity, never a shadow bigger than the thing casting it.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "box-shadow:[^;{}]*\\b([6-9][0-9]|[0-9]{3,})px|shadow-\\[[^\\]]*\\b([6-9][0-9]|[0-9]{3,})px|filter:[^;{}]*drop-shadow\\([^)]*\\b([6-9][0-9]|[0-9]{3,})px|\\bborder\\b[\\s\\S]{0,40}shadow-(xl|2xl)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "20 The oversized drop shadow",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 20 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-12 Shadow (not every element floating)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 3 Cards — subtle shadow",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "60px blur on a small card fails",
+        "input": ".card { box-shadow: 0 20px 60px rgba(0,0,0,0.15); }",
+        "expect": "fail"
+      },
+      {
+        "label": "tight elevation shadow passes",
+        "input": ".card { box-shadow: 0 1px 2px rgba(0,0,0,0.05); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The 'ghost card' variant — a hairline border plus a wide diffuse shadow on the same card — commits to two separators doing one job; pick an edge or an elevation, keep it colorless (a tinted glow is not depth)."
+  },
+  {
+    "id": "ZS-UI-034",
+    "domain": "ui",
+    "title": "Colored glow shadows / glow everywhere",
+    "summary": "Colored box-shadow glows (shadow-indigo-500/40, 0 0 glows) used as dark-mode accents or on every card/button/icon/badge/background at once amplify nothing; glow is an attention amplifier reserved for 1–2 important elements as a focus accent.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "shadow-(purple|violet|indigo|green|emerald|lime)-[0-9]+/[0-9]+|box-shadow:[^;]*(0 0|glow)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "06 Gradients as atmosphere (colored glow accents)",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 06 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-13 Glow (focus accent, max 1-2 elements)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Shadow-glow on dark",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "indigo glow on card fails",
+        "input": ".card { box-shadow: 0 0 40px 0 rgba(99,102,241,0.4); }",
+        "expect": "fail"
+      },
+      {
+        "label": "dark shadow on dark surface passes",
+        "input": ".card-dark { box-shadow: 0 2px 8px rgba(0,0,0,0.4); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "On dark surfaces, use elevation via lightness (brighter surface = higher), not shadow; if you must shadow, keep it tight and dark."
+  },
+  {
+    "id": "ZS-UI-035",
+    "domain": "ui",
+    "title": "Corner craft: non-nesting radii / border dying at corner",
+    "summary": "Two craft defects from radius-on-the-wrong-box: (a) an outer and inner box at the same big radius so corners don't sit concentrically (inner = outer − padding), and (b) a rounded overflow-hidden wrapper whose child owns the 1px border, erasing the stroke at every corner. Put radius and border on the same box.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "rounded-(xl|2xl|3xl)|border-radius:\\s*(1rem|1\\.5rem|24px|32px)|rounded-(lg|xl|2xl|3xl)[^\"]{0,60}overflow-(hidden|clip)|clip-path:\\s*inset\\([^)]*round|border-[trbl]\\b[^\"]{0,60}rounded-(lg|xl|2xl|3xl)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "21 Corners that don't nest",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "22 The border that dies at the corner",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tells 21/22 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "same big radius nested fails",
+        "input": "<div class=\"rounded-2xl bg-white p-6\"><div class=\"rounded-2xl bg-slate-50\">Inner</div></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "nested radius computed passes",
+        "input": "<div class=\"rounded-lg bg-white p-6\"><div class=\"rounded-md bg-slate-50\">Inner</div></div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Grep gives leads; the break is visual — confirm in the rendered DOM. Nested radius = outer − padding, or don't round the inner element at all; a single flat radius scale that nests correctly is fine."
+  },
+  {
+    "id": "ZS-UI-036",
+    "domain": "ui",
+    "title": "Badge & pill spam",
+    "summary": "'✨ New', 'β Beta', '🔥 Popular' decorative pills everywhere manufacture fake buzz; in bulk each stops meaning anything. A badge is for real status only — a version, a stock level — never the capsule + thin border + glow + dot + uppercase combination.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "rounded-full.{0,60}bg-(indigo|purple|green|amber|pink)-(50|100|200)|>\\s*(✨|🔥|🎉|🚀)?\\s*(new|beta|hot|popular|pro|coming soon|ai powered)\\s*<",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "23 Badge and pill spam",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 23 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-09 Badges (functionally needed only)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "AI Capsule Badges",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "three decorative pills fail",
+        "input": "<span class=\"rounded-full bg-emerald-100 px-3\">✨ New</span><span class=\"rounded-full bg-amber-100 px-3\">🔥 Popular</span><span class=\"rounded-full bg-indigo-100 px-3\">🚀 Launch</span>",
+        "expect": "fail"
+      },
+      {
+        "label": "real version tag passes",
+        "input": "<span class=\"rounded-full bg-slate-100 px-3 text-xs\">v2.4.1</span>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A badge that reports a real, changing state (version, stock) is information; a badge that performs excitement is decoration."
+  },
+  {
+    "id": "ZS-UI-037",
+    "domain": "ui",
+    "title": "Glowing status dot",
+    "summary": "A status indicator drawn as a saturated green dot in a pale pulsing halo (animate-ping/pulse) inflates a binary state into a glowing gem; a status is a tiny signal — a small flat single-color dot plus a word, no halo, no pulse, and no dot at all if nothing is live behind it.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "animate-ping|animate-pulse|shadow-(green|emerald|lime)-[0-9]+/[0-9]+|(ready|online|live)[\\s\\S]{0,40}(●|rounded-full)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "16 The glowing status dot",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 16 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "pulsing halo status fails",
+        "input": "<span class=\"relative flex h-3 w-3\"><span class=\"animate-ping absolute h-3 w-3 rounded-full bg-green-500\"></span></span> Live",
+        "expect": "fail"
+      },
+      {
+        "label": "flat dot plus word passes",
+        "input": "<span class=\"inline-flex items-center gap-1\"><span class=\"h-2 w-2 rounded-full bg-emerald-600\"></span>Online</span>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Colour only when the state actually matters or changes — and if nothing is live behind it, no dot at all."
+  },
+  {
+    "id": "ZS-UI-038",
+    "domain": "ui",
+    "title": "All-caps card grid",
+    "summary": "An ALL-CAPS label plus a number or icon copied into rows of interchangeable cards fakes structure while stuffing unrelated things into identical boxes; the ALL-CAPS micro-label is the default costume for 'looks designed'. Decide the single most important thing and show it fully.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "grid-cols-3|uppercase[\\s\\S]{0,30}(text-xs|tracking-wide|tracking-wider)|text-transform:\\s*uppercase|everything you need|why (you.?ll love|choose|teams)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "28 The all-caps card grid",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 28 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "ALL-CAPS label cards fail",
+        "input": "<div class=\"grid grid-cols-3\"><div><p class=\"text-xs uppercase tracking-wider\">SPEED</p><p class=\"text-3xl font-bold\">10x</p></div><!-- x2 --></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "real hierarchy list passes",
+        "input": "<ol><li><strong>1,847 runs yesterday</strong> — CI is green</li></ol>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If you must list, use real hierarchy and contrast, not a grid of equal-weight cards."
+  },
+  {
+    "id": "ZS-UI-039",
+    "domain": "ui",
+    "title": "01 / 02 / 03 section markers",
+    "summary": "A giant faint ordinal stapled to every unordered marketing section (01 Collaborate, 02 Innovate, 03 Scale) borrows costume from editorial design where an index means something; numbering is a claim of sequence, and feature sections have no order.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\"'`>]0[1-9][\"'`<]|text-(7|8|9)xl[\\s\\S]{0,50}(text-(gray|slate|zinc|neutral)-(100|200)|opacity-(5|10|20))|step[- ](one|two|three)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "30 The 01 / 02 / 03 section markers",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 30 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Eyebrow ordinals — only genuinely numbered sections",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "faint ordinal on feature section fails",
+        "input": "<section><span class=\"text-8xl font-bold text-slate-200\">01</span><h2>Collaborate</h2></section>",
+        "expect": "fail"
+      },
+      {
+        "label": "numbered install steps pass",
+        "input": "<ol><li>Install the CLI</li><li>Run sync</li></ol>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Number what is genuinely ordered — install steps, a changelog, a catalogue — and delete the ornamental ordinals everywhere else."
+  },
+  {
+    "id": "ZS-UI-040",
+    "domain": "ui",
+    "title": "How-It-Works always 3 steps",
+    "summary": "Round icon + number 1, 2, 3 + short text, always three steps, always the same shape: the template forces the product's real process into its shape. Present the process as it actually is — two steps or five, whatever the workflow takes.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-05 'How It Works' always in 3 steps",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "'How It Works' Always 3 Steps",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "forced three-step template fails",
+        "input": "Onboarding section presents exactly three numbered round-icon steps (1 Create, 2 Customize, 3 Launch) even though the product only has signup + dashboard.",
+        "expect": "fail"
+      },
+      {
+        "label": "genuine two-step process passes",
+        "input": "Docs present the real 2-step install because that is the actual process.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Three steps with round icons is fine if that is genuinely the process; otherwise use whatever shape the real workflow takes."
+  },
+  {
+    "id": "ZS-UI-041",
+    "domain": "ui",
+    "title": "'Trusted By' logo bar",
+    "summary": "A row of generic company logos directly below the hero is a trust claim with no evidence — no real customers named, no proof of use. Show only real, verifiable logos; if there are no such customers yet, do not fabricate a logo bar.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-05 'Trusted By' logo bar",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "'Trusted By' Logo Bar",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented logo row fails",
+        "input": "Hero footer row of six gray wordmark logos for companies that never used the product, no names in the copy.",
+        "expect": "fail"
+      },
+      {
+        "label": "named real customers pass",
+        "input": "Footer quote strip naming three real customers with permission.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Real social proof beats a generic one every time; R-18 forbids inventing it."
+  },
+  {
+    "id": "ZS-UI-042",
+    "domain": "ui",
+    "title": "'Most Popular' middle pricing card",
+    "summary": "The middle pricing tier always highlighted with a capsule badge is the default pattern, which means it is not a decision. Highlight the tier that actually serves the product's goals, or none.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "most popular|popular",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-05 'Most Popular' pricing card",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "'Most Popular' Pricing Card",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "capsule badge on middle tier fails",
+        "input": "<div class=\"rounded-full bg-indigo-600 text-white px-3 py-1 text-xs\">Most Popular</div><h3>Pro</h3>",
+        "expect": "fail"
+      },
+      {
+        "label": "unbadged tiers pass",
+        "input": "<h3>Starter</h3><h3>Pro</h3><h3>Enterprise</h3>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "When every pricing section does it, the highlighted tier stops meaning anything."
+  },
+  {
+    "id": "ZS-UI-043",
+    "domain": "ui",
+    "title": "4-column template footer",
+    "summary": "Product / Company / Resources / Legal columns plus a social-icon row and tiny copyright — with no variation — exist because templates have them, not because the site has that many link groups. Structure the footer around what the product actually links to.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-05 4-column template footer",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "4-Column Template Footer",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 43 footer fingerprint",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "The AI footer",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generic four columns fail",
+        "input": "Footer with Product / Company / Resources / Legal columns, social icons, copyright, on a bakery site.",
+        "expect": "fail"
+      },
+      {
+        "label": "content-driven footer passes",
+        "input": "Single-line footer: brand + two real links + copyright, no sitemap columns.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A bakery doesn't have a 'Resources' column; a single column of links can be more useful than four half-empty ones."
+  },
+  {
+    "id": "ZS-UI-044",
+    "domain": "ui",
+    "title": "AI nav fingerprint",
+    "summary": "Wordmark hard-left + 4–5 inline text links centred-or-right + CTA button hard-right + full-width + sticky + hairline border-bottom + white background is genre-blind — it lands the same on a portfolio, a bakery and a B2B SaaS. The nav should tell you what kind of site you're on.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 42 nav fingerprint",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "The AI nav",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "template nav fails",
+        "input": "Logo left, five centered text links (Features · Pricing · Docs · Blog · About), CTA button right, sticky with 1px bottom hairline on white.",
+        "expect": "fail"
+      },
+      {
+        "label": "distinctive nav passes",
+        "input": "Masthead nav with the brand voice: only two destinations, aligned to the layout's grid, no hairline.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Rotate among deliberate nav shapes (floating pill, newspaper masthead, terminal command, edge-aligned); reach for the template only when the page genuinely has 2 destinations."
+  },
+  {
+    "id": "ZS-UI-045",
+    "domain": "ui",
+    "title": "Monotonous template layout",
+    "summary": "Hero → subtitle → 2 CTAs → screenshot → feature grid → testimonials → FAQ → CTA → footer, in that order every time, is the training-data default rather than the product's narrative. Sections appear because the template has them; build structure around actual content needs.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-05 AI template layouts",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Monotonous Template Layout",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 8 generic AI template / structural fingerprint",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 5 unnecessary sections / redundant elements",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "template order fails",
+        "input": "Landing page ships hero, 3 features, testimonials, FAQ, final CTA, 4-col footer in the canonical order though the product has no testimonials or FAQ.",
+        "expect": "fail"
+      },
+      {
+        "label": "content-driven order passes",
+        "input": "Page sections follow the product's real story; no section exists only because landing pages usually have it.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If the product has no testimonials, there is no testimonials section. The same macrostructure repeated across outputs is the structural fingerprint of templating."
+  },
+  {
+    "id": "ZS-UI-046",
+    "domain": "ui",
+    "title": "Uniform rhythm & one-gap spacing",
+    "summary": "One spacing value (gap-4 / p-4 / space-y-4) stamped across the page, or every section the same centered-title + identical-card-grid composition, announces that nothing belongs to anything; proximity and rhythm stop carrying information. Space by relationship — tight inside groups, generous between them.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(space-y-4|gap-4).{0,80}(space-y-4|gap-4)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "32 One gap everywhere",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 32 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-05 Uniform Section Rhythm",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 9 sections separated only by equal whitespace",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "same gap inside and between groups fails",
+        "input": "<section class=\"flex flex-col gap-4\"><header class=\"flex gap-4\"><h2>Title</h2><p>Body</p></header><div class=\"flex gap-4\"><span>Row</span></div></section>",
+        "expect": "fail"
+      },
+      {
+        "label": "relationship-based spacing passes",
+        "input": "<section class=\"gap-4\"><h2>Title</h2></section><section class=\"mt-16\">Next group</section>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The regex flags two same-value tokens near each other; the real signal is the per-file count of one token (source detection: rg -c 'space-y-4|gap-4'). A small scale with real jumps (4/8/16/32/64), used unevenly on purpose. A deliberate uniform grid (a photo wall, a calendar) is a choice."
+  },
+  {
+    "id": "ZS-UI-047",
+    "domain": "ui",
+    "title": "Centered-everything hero",
+    "summary": "min-height:100vh with the eyebrow, title, lede and CTA all stacked on the same centred vertical axis is the default LLM landing page. Pick at most two centred elements and break alignment for the rest; let the hero be the height of its content.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "min-height:\\s*100(vh|dvh)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 6 hero shape — centred-everything (auto-fail)",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Full-viewport centred hero",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Centred everything",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "100vh centered stack fails",
+        "input": ".hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; } .hero * { text-align: center; }",
+        "expect": "fail"
+      },
+      {
+        "label": "content-height left-biased hero passes",
+        "input": ".hero { padding: 96px 0 128px; } .hero h1 { max-width: 60ch; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Atmospheric and playful genres may centre a hero when the canvas itself is the design; even then the eyebrow or CTA sits off-axis."
+  },
+  {
+    "id": "ZS-UI-048",
+    "domain": "ui",
+    "title": "Default dashboard shell",
+    "summary": "Left sidebar + top bar + four stat cards + a chart + a table, chosen before anyone asked what the screen is for, is the landing-page template problem in an app: swap the labels and it belongs to any product. Build the layout around the one decision the user makes on the screen.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "Default Dashboard Shell",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "C-3 Content-Driven Composition",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "template shell fails",
+        "input": "Invoices app screen ships sidebar + topbar + 4 stat cards + donut chart + generic table without asking what the user does here.",
+        "expect": "fail"
+      },
+      {
+        "label": "decision-first screen passes",
+        "input": "Incident screen leads with the failing jobs list and a retry action; the stat row is a footnote.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If the job is 'spot the failing job and retry it', the failing jobs are the page and the stat row is a footnote."
+  },
+  {
+    "id": "ZS-UI-049",
+    "domain": "ui",
+    "title": "Re-drawn UI chrome",
+    "summary": "A fake browser bar (URL pill + traffic-light dots), fake phone frame, fake code-block window or fake IDE chrome hand-built in HTML/CSS/SVG is one of the strongest 'looks AI-generated' tells — the model invented a UI that already exists in the user's environment. Use a real screenshot in a <figure>.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 47 re-drawn chrome",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Re-drawn UI chrome",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fake browser bar fails",
+        "input": "Hero mockup wraps a screenshot in a hand-built CSS browser frame with three colored dots and a URL pill.",
+        "expect": "fail"
+      },
+      {
+        "label": "real screenshot passes",
+        "input": "<figure><img src=\"app-screenshot.png\" alt=\"App\" /></figure> with a hairline border at most.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The page's job is to show content, not to imitate the OS; the fakery is also bad — the URL is wrong, the dots aren't macOS dots."
+  },
+  {
+    "id": "ZS-UI-050",
+    "domain": "ui",
+    "title": "No visual identity / sterile default",
+    "summary": "Swap the logo and the design still feels the same — or the page is flat white with thin grey borders, no texture, and a generic font: the 'safe' result of over-filtering without direction. A filter can remove slop; identity must be added deliberately.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-20 Visual Identity",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-30 Do Not Clone Popular Products",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Sterile Default",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Core principle — logo-swap test",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 8 structural fingerprint / Default-attractor sameness",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "logo-swap test fails",
+        "input": "Replace the wordmark and the layout, palette and type are indistinguishable from any other SaaS template.",
+        "expect": "fail"
+      },
+      {
+        "label": "distinctive result passes",
+        "input": "The page has a specific palette, a typeface chosen for a reason, and a composition that could belong only to this product.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Identity comes from deliberate, explained choices, not from decoration. Avoid cloning Linear/Vercel/Stripe/Notion visuals unless explicitly asked."
+  },
+  {
+    "id": "ZS-UI-051",
+    "domain": "ui",
+    "title": "transition-all / animating layout properties",
+    "summary": "transition-all animates every property including ones that should be instant (visibility, focus rings), and animating width/height/margin/padding is jank on top of the decoration. Transition only the properties that carry the state change — background, border, opacity — 120–200ms, standard ease.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\btransition-all\\b|transition:\\s*all\\b|transition:[^;]*\\b(width|height|margin|padding)\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "26 The springy hover (transition-all is the tell inside the tell)",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 26 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 10 transition-all",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 14 animating width/height/top/left/margin/padding",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 11 Transitions — 0.2–0.3s, specify properties",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "transition-all on card fails",
+        "input": ".card { transition: all 300ms ease; }",
+        "expect": "fail"
+      },
+      {
+        "label": "scoped property transition passes",
+        "input": ".btn { transition: background-color 200ms ease, transform 200ms ease; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Specify the properties; hover feedback is a surface shift, not growth."
+  },
+  {
+    "id": "ZS-UI-052",
+    "domain": "ui",
+    "title": "Springy hover / overshoot easing",
+    "summary": "hover:scale-105 and translate-y lift across every card, plus bouncy cubic-bezier overshoots on buttons/modals/tooltips, are a tasteless throwback; scaling a card on hover says nothing. Hover feedback is a surface shift (background, border, opacity); reserve springs for things that genuinely move through space.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "hover:(scale-1[01][0-9]|-translate-y-)|cubic-bezier\\([^)]*,\\s*1\\.[2-9][0-9]*|animate-bounce",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "26 The springy hover",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 26 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 11 hover:scale-105 across unrelated elements",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 12 bouncy/overshoot easings on UI state",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Bounce and elastic easing",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-19 Animations (Fade Up + Floating + Scale + Bounce)",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "scale-lift on every card fails",
+        "input": "<div class=\"hover:scale-105 transition-all duration-300\">Card</div><button class=\"hover:-translate-y-1\">CTA</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "surface-shift hover passes",
+        "input": ".btn:hover { background-color: var(--color-accent); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Pick one signal per element — a 1px translate, a colour shift, or an underline thickening — never all four at once; reserve overshoots for genuine physical interactions (drag-and-drop release)."
+  },
+  {
+    "id": "ZS-UI-053",
+    "domain": "ui",
+    "title": "Wobbling spinner",
+    "summary": "A loading spinner whose arc doesn't rotate around its own centre wobbles because the spin keyframe replaces the whole transform, clobbering the centering translate(-50%,-50%) — the most-watched element on the page limping at the worst moment, an admission nobody watched the interface move. Give the rotation a real centre; then watch one full revolution.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "translate\\(-50%, ?-50%\\)|@keyframes +[a-zA-Z-]*(spin|rotate|load)|animate-spin|transform-origin:\\s*[0-9]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "27 The wobbling spinner",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 27 detection patterns",
+        "ref": "skill/references/detection.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "keyframe clobbers centering fails",
+        "input": "@keyframes spin { to { transform: rotate(360deg); } } .spinner { transform: translate(-50%, -50%); animation: spin 1s linear infinite; }",
+        "expect": "fail"
+      },
+      {
+        "label": "rotate on standalone property passes",
+        "input": ".spinner { position: absolute; inset: 50% auto auto 50%; translate: -50% -50%; rotate: 0deg; animation: spin 1s linear infinite; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Centre the artwork in its own box, keep centering out of the animated transform (wrapper or the standalone rotate property), and watch one full revolution — code tells never replace the visual check."
+  },
+  {
+    "id": "ZS-UI-054",
+    "domain": "ui",
+    "title": "Endless pulses and loops",
+    "summary": "Elements that pulse, bounce or float forever with no user trigger are noise — perpetual motion competes with the content and never stops. Motion must have a clear UX purpose; animation guides attention to a moment, it does not run on a loop.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "animate-ping|animate-pulse|animation-iteration-count:\\s*infinite|animate-bounce",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-19 Animations — endless pulses and loops",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Endless Pulses and Loops",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "pulsing stat card fails",
+        "input": "<div class=\"animate-pulse\">Loading totals…</div> forever on a static page",
+        "expect": "fail"
+      },
+      {
+        "label": "finite spinner passes",
+        "input": ".spinner { animation: spin 1s linear infinite; } — a loading indicator whose loop is its function",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A genuine loading spinner is the legitimate infinite loop; if the MOTION dial is 1 (hover states only), an endless loop is a FAIL against the declared dial."
+  },
+  {
+    "id": "ZS-UI-055",
+    "domain": "ui",
+    "title": "Animate-on-scroll on everything",
+    "summary": "Every section fades in, every list staggers, the page never settles — a page where everything animates has no focal point. Pick one orchestrated entrance; let the rest just be there. Motion must match the declared MOTION dial.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Animate-on-scroll on everything",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-19 Template animations stacked",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Template Animations Stacked",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "scroll-reveal on every section fails",
+        "input": "Every section and list item has data-aos='fade-up' with stagger delays; the page never settles.",
+        "expect": "fail"
+      },
+      {
+        "label": "one hero entrance passes",
+        "input": "A single orchestrated hero entrance; all other sections render statically.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Not everything moves: the hero speaks, the supporting elements stay calm. A claimed 'cinematic' page must actually move; a claimed 'static' page must not."
+  },
+  {
+    "id": "ZS-UI-056",
+    "domain": "ui",
+    "title": "Missing prefers-reduced-motion fallback",
+    "summary": "Every transform/animation keyframe needs a @media (prefers-reduced-motion: reduce) fallback — motion without one is an accessibility defect and ships as slop to vestibular-sensitive users.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 27 reduced-motion fallback for every keyframe",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 10 Motion — respect prefers-reduced-motion",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "uncovered keyframes fail",
+        "input": "@keyframes float {…} with no prefers-reduced-motion media query anywhere in the file.",
+        "expect": "fail"
+      },
+      {
+        "label": "guarded motion passes",
+        "input": "@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also avoid content that flashes more than 3 times per second (photosensitive epilepsy)."
+  },
+  {
+    "id": "ZS-UI-057",
+    "domain": "ui",
+    "title": "Transition duration outside 0.2–0.3s",
+    "summary": "Smooth transitions on state changes run 0.2–0.3 seconds with an ease curve; faster than 0.15s feels jarring, slower than 0.4s feels laggy, no transition feels broken.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "transitionDuration",
+      "params": {
+        "min": 0.2,
+        "max": 0.3,
+        "unit": "s"
+      }
+    },
+    "source": [
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 11 Transitions — 0.2–0.3s ease",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "0.1s transition fails",
+        "input": ".btn { transition: background 0.1s ease; }",
+        "expect": "fail"
+      },
+      {
+        "label": "0.25s transition passes",
+        "input": ".btn { transition: background 0.25s ease; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Per-property durations are fine; the tell is a duration outside the band on a UI state change."
+  },
+  {
+    "id": "ZS-UI-058",
+    "domain": "ui",
+    "title": "Emoji everywhere",
+    "summary": "An emoji on every heading, button and bullet (🚀 launch, ⚡ fast, 🔒 secure) is borrowed warmth standing in for tone that copy and design should carry. Cut decorative emoji from the UI; keep one only where it genuinely carries information, like a real status.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\\u{1F000}-\\u{1FAFF}\\u{2600}-\\u{27BF}\\u{2190}-\\u{21FF}\\u{2B00}-\\u{2BFF}]|(🚀|✨|⚡|🔒|🎉).{0,40}(<|$)",
+      "params": {
+        "caseInsensitive": true,
+        "unicode": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "15 Emoji everywhere",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 15 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 30b emoji glyph as feature/step/pricing icon",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 2 Emoji — functional or brand-driven only",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "emoji-led bullets fail",
+        "input": "<h2>🚀 Launch</h2><ul><li>⚡ Blazing speed</li><li>🔒 Bank-grade security</li></ul>",
+        "expect": "fail"
+      },
+      {
+        "label": "plain copy passes",
+        "input": "<p>Payment details are encrypted.</p>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "False positives: emoji inside a documented code sample, an emoji-picker feature, user-generated content; a functional status emoji may be defended but still triggers the range. Regex needs the u flag for \\u{...} ranges."
+  },
+  {
+    "id": "ZS-UI-059",
+    "domain": "ui",
+    "title": "Generic AI icons",
+    "summary": "Sparkle, star, magic, lightning, diamond, cube, robot and AI-orb glyphs are the generic vocabulary of 'AI product' — they communicate nothing about the specific feature. Icons must be genuinely relevant to the content; if no appropriate icon exists, use none.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(Sparkles?|Sparkle|Star|Zap|Wand2?|Magic|Diamond|Cube|Bot|Robot|Orb|Gem|BrainCircuit|Cpu)[\\s/>]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-04 Icons (sparkle/star/magic/lightning/diamond/orb/robot)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Generic AI Icons",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "sparkle per feature fails",
+        "input": "<div class=\"feature\"><Sparkles className=\"h-6 w-6\" /><h3>Smart</h3></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "content-relevant icon passes",
+        "input": "<div class=\"feature\"><Database className=\"h-6 w-6\" /><h3>Postgres sync</h3></div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "False positives: a magic-wand action inside a real editing tool. The feature label does the work; relevance should be writable in one line."
+  },
+  {
+    "id": "ZS-UI-060",
+    "domain": "ui",
+    "title": "Arrow on every button",
+    "summary": "→ / ↗ placed on almost every button as pure decoration turns the arrow into a pattern, not a signal. Keep direction cues for the action that genuinely benefits from one, sized proportionally, with the purpose written down.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(→|↗)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-08 Button Arrows",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Small Arrows on Every Button",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "arrow on every CTA fails",
+        "input": "<button>Get Started →</button><button>Learn More →</button><button>Try Now →</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "arrow-free CTA passes",
+        "input": "<a href=\"/all\">View all</a>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Arrows are not the default identity for buttons; not every CTA needs one."
+  },
+  {
+    "id": "ZS-UI-061",
+    "domain": "ui",
+    "title": "Aurora blobs / floating orbs / decoration without purpose",
+    "summary": "Flowing mesh or conic gradients in purple-to-pink, blurred coloured circles drifting behind the hero, and random ornaments ('42' in a corner, a cursor with no command) are generic ambience with no semantic anchor — 'I needed something here, so I added something here'. Decoration must be motivated: a cursor inside a typed command, a numeral that names an issue or year, a gradient that responds to interaction.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "conic-gradient|mesh-gradient|radial-gradient\\([^)]*(purple|pink|cyan)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 45 decorative-without-purpose",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Aurora-blob background / Floating-orb decoration / Cursor follower dots",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "06 Gradients as atmosphere (per-card accent washes)",
+        "ref": "skill/references/taxonomy.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "aurora mesh behind hero fails",
+        "input": ".hero { background: conic-gradient(from 180deg, #c084fc, #f472b6, #22d3ee, #c084fc); }",
+        "expect": "fail"
+      },
+      {
+        "label": "flat section background passes",
+        "input": ".hero { background-color: var(--color-paper); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The hero doesn't need depth; it needs a strong typographic anchor. A deliberate two-stop gradient + feTurbulence grain at <0.1 opacity is the acceptable 'atmosphere' recipe."
+  },
+  {
+    "id": "ZS-UI-062",
+    "domain": "ui",
+    "title": "Stock / AI illustrations",
+    "summary": "Undraw/Storyset downloads, smooth mesh-blob characters, and 'AI-style' SVG people with identical posing fill space without serving the content — the audience pattern-matches them as AI in milliseconds. Illustrations must have a direct connection to the product; otherwise use real screenshots, or none.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic",
+      "params": {
+        "stock": [
+          "undraw",
+          "storyset",
+          "popsy",
+          "humaaans",
+          "blob characters"
+        ]
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-22 Illustrations (Undraw/Storyset/3D blob)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Illustrations With No Connection",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "AI-illustration look",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Rule 4 Imagery — real, licensed, or honest placeholder",
+        "ref": "claude/skills/ai-slop-check.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stock blob illustration fails",
+        "input": "Hero features an undraw.co 3D blob character with a laptop, unrelated to the logistics product being sold.",
+        "expect": "fail"
+      },
+      {
+        "label": "real screenshot passes",
+        "input": "Feature section uses an honest product screenshot instead of decoration.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "An honest placeholder — striped background with a monospace label like 'product shot (1200×800)' — beats a bad illustration: it signals 'asset needed' without pretending to be final. Skeleton-block previews used as the product shot are the same tell."
+  },
+  {
+    "id": "ZS-UI-063",
+    "domain": "ui",
+    "title": "Mismatched icon sets",
+    "summary": "Material Icons in the navbar, Heroicons in the feature cards, Lucide in the footer and an emoji in a hero badge mixes three stroke voices — icons are typography, and you wouldn't ship three body fonts. Pick one icon library per project and hold it.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(lucide|heroicons|@tabler/icons|react-icons|phosphor|material-icons)",
+      "params": {
+        "caseInsensitive": true,
+        "note": "flag when >1 distinct library import in one project"
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 30a mixing two or more icon libraries",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Mismatched icon sets",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "three libraries on one page fail",
+        "input": "import { Settings } from \"lucide-react\"; import { Cog } from \"@heroicons/react\"; import SettingsIcon from \"@mui/icons-material/Settings\";",
+        "expect": "fail"
+      },
+      {
+        "label": "single custom icon set passes",
+        "input": "import { Settings, Home, User } from \"./ui/icons\";",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Lucide is the default for SaaS, Phosphor when you need weight variants, Heroicons for Tailwind/shadcn projects — pick one per project."
+  },
+  {
+    "id": "ZS-UI-064",
+    "domain": "ui",
+    "title": "Animation-tech shortcuts (Lottie / Three.js for a still job)",
+    "summary": "Reaching for a LottieFiles community animation (spinner, checkmark draw) when CSS or hand-built SVG would do it in zero bytes, or a WebGL hero the user can't touch — 100–300 KB of Three.js for a thing that could be a static photograph — is a shortcut the audience reads as one. Lottie is Tier F, last resort; Three.js must earn its place by being interactive.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(lottie-react|@lottiefiles|from ['\"]three['\"]|three/examples|THREE\\.)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 31 Lottie is last resort, not the default",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Lottie shortcut / Three.js for a still object",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "lottie spinner fails",
+        "input": "import Lottie from \"lottie-react\"; <Lottie animationData={spinner} />",
+        "expect": "fail"
+      },
+      {
+        "label": "CSS spinner passes",
+        "input": ".spinner { border: 2px solid; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Spinning logo → CSS keyframes; checkmark → SVG stroke-dasharray; loading dots → CSS animation-delay. If the user can't manipulate the 3D, it doesn't justify Three.js."
+  },
+  {
+    "id": "ZS-UI-065",
+    "domain": "ui",
+    "title": "AI copywriting voice & banned openings",
+    "summary": "'It's not just X — it's Y', 'Say goodbye to X', three-word triads, and opening lines like 'Built for the modern team', 'Unleash your [X]', 'Where X meets Y', 'Supercharge your workflow' are the rhythmic fingerprint of generated copy — symmetrical, one notch too excited, specifics-free. Write something specific: real numbers, nouns, consequences.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "not just .{1,40}\\bit'?s\\b|say goodbye to|meet your new|supercharge|unlock the power|in seconds, not|\\b(blazing[- ]fast|effortless|seamless|game[- ]changer|next[- ]level)\\b|\\b(growth|security|process|privacy|productivity|compliance|feature|innovation) theater\\b|built for the modern (team|age)|unleash your|where [a-z]+ meets|empower (your|every)|reimagine the way|innovative solutions|seamless integration|in today'?s digital|next-?generation|revolutionary|cutting[- ]edge|ai[- ]powered",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "14 The AI copywriting voice",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 14 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Banned opening lines (10)",
+        "ref": "skills/hallmark/references/copy.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-16 Copywriting & Buzzwords",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "template voice fails",
+        "input": "It's not just a CRM — it's your revenue copilot. Say goodbye to spreadsheets forever.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific copy passes",
+        "input": "Track every deal from first touch to signature, with deadlines that follow the actual close date.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "False positives: a genuine quote, or a doc that discusses these phrases. 'We killed the X theater' framing is the same tic — say plainly what the thing does or doesn't do."
+  },
+  {
+    "id": "ZS-UI-066",
+    "domain": "ui",
+    "title": "Generic CTAs",
+    "summary": "'Get Started', 'Learn More', 'Try Now', 'Explore', 'Discover' as default CTAs are specific to nothing; CTAs must name the product context and the intended action ('Start Your Free Trial', 'Watch Live Demo', 'Create Free Account'). Use the verb for the action the button performs.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": ">\\s*(Get Started|Learn More|Try Now|Explore|Discover|Submit|Click Here|Continue)\\s*<",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-15 CTA (specific to product context)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Buttons — use the verb for the action",
+        "ref": "skills/hallmark/references/copy.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 12 one clear CTA / specific verbs",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty CTA label fails",
+        "input": "<button>Get Started</button><button>Learn More</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "action-naming CTA passes",
+        "input": "<button>Start your free trial</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'Continue' is acceptable only as the secondary button of a multi-step flow. A screen has one primary action; multiple competing CTAs dilute every action."
+  },
+  {
+    "id": "ZS-UI-067",
+    "domain": "ui",
+    "title": "Microcopy bans (click here / oops / filler)",
+    "summary": "'Click here', 'Oops!', 'Uh oh!', 'Something went wrong', 'Enter your email below' are empty or perform embarrassment for the user's input; errors are instructions — what broke, why, how to fix — and link text must stand alone. No exclamation marks in error states, no humour in frustration paths.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": ">\\s*Click here\\s*<|oops!|uh oh!|something went wrong|enter your (email|password) below|invalid input|error occurred",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Microcopy bans",
+        "ref": "skills/hallmark/references/copy.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 11 form feedback / errors name the thing",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty error fails",
+        "input": "Oops! Something went wrong.",
+        "expect": "fail"
+      },
+      {
+        "label": "instructional error passes",
+        "input": "That card was declined. Try another card, or contact your bank.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Link text must stand alone ('View pricing plans' beats 'Click here'); if the input is below, you don't need to say so."
+  },
+  {
+    "id": "ZS-UI-068",
+    "domain": "ui",
+    "title": "Placeholder names & startup clichés",
+    "summary": "'Jane Doe', 'John Smith', 'Acme', 'Nexus', 'Lorem Ipsum' and the startup-cliché vocabulary (Seamless, Unleash, Elevate, Empower, Delight, Magical) are stock filler that marks the page as generated — name real people and real things.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(Jane Doe|John Smith|Acme|Nexus|Lorem Ipsum|Seamless|Unleash|Elevate|Empower|Delight|Magical)\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Gate 19 placeholder names / startup clichés",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Microcopy bans — stock placeholder names",
+        "ref": "skills/hallmark/references/copy.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stock testimonial name fails",
+        "input": "\"Jane Doe, Head of Growth at Acme\"",
+        "expect": "fail"
+      },
+      {
+        "label": "real attribution passes",
+        "input": "\"Priya Nair, VP Engineering at Northwind Logistics\"",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Lorem Ipsum is allowed only on a lorem-ipsum tool; 'Acme' on a demo page is fine only as an explicitly labeled placeholder."
+  },
+  {
+    "id": "ZS-UI-069",
+    "domain": "ui",
+    "title": "Empty states without a next action",
+    "summary": "'No data available' with an illustration or a bare spinner tells the user nothing — no cause, no next action, no idea whether this is normal. An empty state names what's empty, why it matters, and the one action that fills it.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "hallmark",
+        "rule": "Empty states — three beats (name, why, one button)",
+        "ref": "skills/hallmark/references/copy.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Placeholder Empty and Loading States",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dead empty state fails",
+        "input": "Empty inbox screen shows 'No data available' next to a decorative illustration and nothing else.",
+        "expect": "fail"
+      },
+      {
+        "label": "actionable empty state passes",
+        "input": "'No projects yet. Projects group your tasks and team.' + Create project button.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "First run, filtered-to-nothing, and permission-denied are different screens and should read differently."
+  },
+  {
+    "id": "ZS-UI-070",
+    "domain": "ui",
+    "title": "Invented stat row / fake metrics",
+    "summary": "Three big round numbers — 10k+ developers, 99.9% uptime, 24/7 support — on a product that launched yesterday are social proof turned into a layout, filled whether or not the proof exists; one invented figure poisons every true one beside it. Show a number only if you measured it and say where it came from.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b[0-9]+[km]+\\b|99\\.9%|24/7|(10k|50k|99\\.9|24/7)[\\s\\S]{0,60}(developers|users|teams|uptime|support|countries)|\\d+% faster|\\d+[x×] faster|\\d{2,}\\+%",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "kill-ai-slop",
+        "rule": "29 The invented stat row",
+        "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "kill-ai-slop",
+        "rule": "Tell 29 detection patterns",
+        "ref": "skill/references/detection.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 46 invented metric",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Invented metrics",
+        "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-17 Data & Numbers (no source = no numbers)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-36 No Fabricated Claims",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "claude-design-system-prompt",
+        "rule": "Chapter 5 made-up stats ('47% of users')",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "round invented figures fail",
+        "input": "10k+ developers · 99.9% uptime · 24/7 support",
+        "expect": "fail"
+      },
+      {
+        "label": "odd sourced figure passes",
+        "input": "1,847 CI runs yesterday, down from 2,031 the week before",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A stat is also never the hero's sole headline. Real numbers are odd and specific; fix by replacing with '—' and a labelled grey block, asking the user for the figure, or rebuilding the section without the proof slot. Also covers dashboard stat cards with invented deltas ('+12% this week')."
+  },
+  {
+    "id": "ZS-UI-071",
+    "domain": "ui",
+    "title": "Fake testimonials & invented people",
+    "summary": "AI avatars, random names and job titles, fictional reviews — and the dashboard variant, a filler activity feed of invented people and events ('Sarah Chen updated a document, 2 hours ago') — are fabricated social proof; a page that lies on its proof bar can't be trusted on its claims. No real testimonials → no testimonials section.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-18 Testimonials (no fake avatars/names/reviews)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Filler Activity Feed",
+        "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-38 Real Content or Honest Placeholder",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "hallmark",
+        "rule": "Gate 46 family — fabricated content",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented quote fails",
+        "input": "Testimonial section ships five quotes from made-up people with AI-generated avatar photos and no source.",
+        "expect": "fail"
+      },
+      {
+        "label": "sourced quote passes",
+        "input": "One quote from a named customer with permission, linked to their public profile.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "An honest empty state beats a fabricated feed. Real social proof must be verifiable (R-18, C-5)."
+  },
+  {
+    "id": "ZS-UI-072",
+    "domain": "ui",
+    "title": "Fabricated trust & compliance claims",
+    "summary": "Inventing security, compliance or performance claims — 'SOC 2 compliant', 'ISO 27001', 'Enterprise-grade security', '300% faster' — for a product with no such evidence is a Hard Gate failure. If there is no real data, show no claim.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "SOC\\s*2|ISO\\s*27001|SOC\\s*2\\s*Type\\s*II|enterprise-?grade security|\\d+% faster|\\d+[x×] faster|bank-grade encryption",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-36 No Fabricated Claims",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Fabricated Trust Claims",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unbacked compliance badge fails",
+        "input": "Hero badge claims 'SOC 2 compliant' with no audit, no report, no evidence.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific real capability passes",
+        "input": "Data is encrypted in transit with TLS 1.3; backups are stored in EU regions.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Same family as fake statistics and fake testimonials — evidence over claims (C-5): anything presented as fact is real and verifiable, or it is not shown at all."
+  },
+  {
+    "id": "ZS-UI-073",
+    "domain": "ui",
+    "title": "Assumed logos, avatars & profile photos",
+    "summary": "Creating app logos, avatars, profile photos, or a 'Trusted By' logo row without explicit instructions — purely on assumption — is fabricating assets as if final; use clear placeholders ([LOGO], initial-based avatar, 'Coming soon') and never disguise them as final.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic",
+      "params": {
+        "placeholderMarkers": [
+          "[LOGO]",
+          "[REAL DATA]",
+          "Coming soon"
+        ]
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-23 Clarification & Visual Assets",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-38 Real Content or Honest Placeholder",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Assumed Logo & Profile Photos",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented logo fails",
+        "input": "Product ships a designed logo mark, six customer logos and three team avatars the model invented because the brief didn't provide them.",
+        "expect": "fail"
+      },
+      {
+        "label": "honest placeholder passes",
+        "input": "Header uses the product name in a clean typeface plus a [LOGO] marker pending the real asset.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If asking is not possible, placeholders must be visible as placeholders: logo → text or [LOGO]; profile photo → initial-based avatar; statistics → not displayed or marked [REAL DATA]."
+  },
+  {
+    "id": "ZS-UI-074",
+    "domain": "ui",
+    "title": "Dead interactive elements (nav links & controls to nowhere)",
+    "summary": "Navbar links to pages or sections that do not exist, buttons that do nothing, dropdowns that won't open, forms that can't submit — the visual is finished but the behavior is not. Every interactive element has a real destination/behavior, or it is removed; if a feature isn't built, leave it out or label it 'Coming soon'.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-24 Navigation (no links to nowhere)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "R-26 Interactive Elements (real behavior or removed)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Dead Navigation / Non-Functional Controls",
+        "ref": "skills/antislop-ui/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dead nav fails",
+        "input": "Navbar lists Features, Pricing, About — none of which exist as sections or pages on the site.",
+        "expect": "fail"
+      },
+      {
+        "label": "real destinations pass",
+        "input": "Every nav item has a real href to an existing section; a not-yet-built feature is labelled 'Coming soon'.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A placeholder is acceptable only with a clear // TODO comment AND a visible label to the user (e.g. 'Coming soon'); a link or button must scroll to an existing section, open a real modal (Escape-closable), or perform a real action."
+  },
+  {
+    "id": "ZS-UI-075",
+    "domain": "ui",
+    "title": "Irrelevant FAQ",
+    "summary": "An FAQ of template questions ('Is my data secure?', 'Can I cancel anytime?') with no real relevance to the product does more damage to trust than having no FAQ at all. Every question must address a real concern of that product's users, or the section doesn't ship.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anti-slop",
+        "rule": "R-28 FAQ (product-specific questions only)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "anti-slop",
+        "rule": "Irrelevant FAQ",
+        "ref": "antislop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generic FAQ fails",
+        "input": "A chat-widget startup ships an FAQ with 'Is my data secure?' and 'Can I cancel anytime?' — questions no user of this product asks.",
+        "expect": "fail"
+      },
+      {
+        "label": "specific FAQ passes",
+        "input": "FAQ answers 'Which model runs the summarizer?' and 'How are transcripts stored?' — the questions this product's users actually ask.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If you do not know what questions are actually asked, do not create an FAQ section."
+  },
+  {
+    "id": "ZS-UI-076",
+    "domain": "ui",
+    "title": "Premium-consumer warm-craft palette (beige+brass+espresso)",
+    "summary": "For premium-consumer briefs (cookware, wellness, artisan, luxury, DTC home goods) the LLM default is warm beige/cream backgrounds, brass/clay/oxblood/ochre accents, and espresso near-black text — the same hex families on every generated site, making the brand invisible. The beige+brass+espresso family is banned as the default reach; it is acceptable only when the brand brief names those colors or the brand is genuinely vintage/artisan with a documented palette.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "#f5f1ea",
+        "#f7f5f1",
+        "#fbf8f1",
+        "#efeae0",
+        "#ece6db",
+        "#faf7f1",
+        "#e8dfcb",
+        "#b08947",
+        "#b6553a",
+        "#9a2436",
+        "#9c6e2a",
+        "#bc7c3a",
+        "#7d5621",
+        "#1a1714",
+        "#1a1814",
+        "#1b1814"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "PREMIUM-CONSUMER PALETTE BAN (mandatory, second-most-recurring AI-tell)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "warm-craft hexes fail",
+        "input": "<main class=\"bg-[#f5f1ea] text-[#1a1714]\"><button class=\"bg-[#9a2436]\">Order now</button></main>",
+        "expect": "fail"
+      },
+      {
+        "label": "rotated palette passes",
+        "input": "<main class=\"bg-[#101f17] text-[#eef3ee]\"><button class=\"bg-[#d9a441]\">Order now</button></main>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-003 covers the Tailwind amber/stone warm ramp; this targets the exact hex families above. Palette-rotation rule: do not ship the same warm-craft family twice in a row across projects."
+  },
+  {
+    "id": "ZS-UI-077",
+    "domain": "ui",
+    "title": "Eyebrow rationing: max 1 per 3 sections",
+    "summary": "An 'eyebrow' — the small uppercase wide-tracked label above a section headline (text-[11px] uppercase tracking-[0.18em]) — appears above EVERY section on AI-built sites, producing the same templated rhythm. Hard rule: maximum 1 eyebrow per 3 sections (hero counts as 1); if section A has one, the next two cannot.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "eyebrowDensity",
+      "params": {
+        "maxPerSections": 3
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "EYEBROW RESTRAINT (mandatory, the #1 violated rule in production tests)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "eyebrow on every section fails",
+        "input": "A 9-section page with an `uppercase tracking-[0.18em]` label above all nine headlines — count 9 > ceil(9/3).",
+        "expect": "fail"
+      },
+      {
+        "label": "rationed eyebrows pass",
+        "input": "A 9-section page with exactly 3 `uppercase tracking` eyebrows, spaced one per three sections.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hero counts as one section. Section location on the page already categorizes; the headline alone is enough — when in doubt, drop the eyebrow entirely."
+  },
+  {
+    "id": "ZS-UI-078",
+    "domain": "ui",
+    "title": "Hero budget: headline ≤2 lines, subtext ≤20 words / ≤4 lines, top padding ≤pt-24",
+    "summary": "The hero must fit in the initial viewport: headline max 2 lines at desktop, subtext max 20 words AND max 4 lines, CTAs visible without scroll, and hero top padding max pt-24 (~6rem). A 4-line hero headline is a font-size error, never a copy-length error; if the value-prop cannot be said in 20 words, the value-prop is unclear.",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "heroBudget",
+      "params": {
+        "headlineLinesMax": 2,
+        "subtextWordsMax": 20,
+        "subtextLinesMax": 4,
+        "heroTopPaddingMaxRem": 6
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Hero MUST fit in the initial viewport (Headline max 2 lines, subtext max 20 words AND max 3-4 lines)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "HERO TOP PADDING CAP (mandatory)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "oversized hero fails",
+        "input": "Hero at text-7xl: the headline wraps to 4 lines, the subtext runs 41 words across 6 lines, and pt-32 floats the CTA below the fold.",
+        "expect": "fail"
+      },
+      {
+        "label": "budgeted hero passes",
+        "input": "Hero at text-5xl: headline fits 2 lines, subtext is 18 words across 3 lines, pt-16 keeps the CTA above the fold.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also enforces hero stack discipline: max 4 text elements (eyebrow OR brand strip, headline, subtext, CTAs) — no tagline below the CTAs, no trust micro-strip, no pricing teaser, no feature bullets, no avatar row inside the hero; those move to dedicated sections below."
+  },
+  {
+    "id": "ZS-UI-079",
+    "domain": "ui",
+    "title": "Duplicate CTA intent",
+    "summary": "Two CTAs with the same intent on one page is a Pre-Flight Fail: 'Get in touch' + 'Contact us' + 'Let's talk' are all contact intent; 'Try free' + 'Get started' + 'Sign up free' are all signup intent. Pick ONE label per intent and use it everywhere (nav, hero, footer).",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO DUPLICATE CTA INTENT (mandatory)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "same intent multiple labels fails",
+        "input": "Nav says 'Get in touch', the hero says 'Contact us', the footer says 'Let's talk' — three labels, one contact intent.",
+        "expect": "fail"
+      },
+      {
+        "label": "one label per intent passes",
+        "input": "'Start a project' is the single contact CTA in nav, hero, and footer; a separate 'See selected work' links to the portfolio.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-080",
+    "domain": "ui",
+    "title": "Section layout repetition (≥4 families per 8 sections; zigzag cap 2)",
+    "summary": "A layout family (3-column image cards, full-width quote, split image+text) may appear at most ONCE per page; a landing page with 8 sections must use at least 4 different families. Consecutive left/right image+text zigzag alternation is capped at 2 — the 3rd consecutive image+text split is a Pre-Flight Fail.",
+    "tier": "error",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "layoutFamilyDiversity",
+      "params": {
+        "minFamilies": 4,
+        "minSections": 8,
+        "maxConsecutiveImageTextSplits": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Section-Layout-Repetition Ban",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "ZIGZAG ALTERNATION CAP (mandatory)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "repeated families fail",
+        "input": "An 8-section page built from 2 families: five 3-column image-card grids plus three consecutive image+text split rows alternating left and right.",
+        "expect": "fail"
+      },
+      {
+        "label": "diverse families pass",
+        "input": "8 sections using 4 families: one split, one bento, one full-width quote, one stats band — and never 3 image+text splits in a row.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-081",
+    "domain": "ui",
+    "title": "Bento grid cell-count mismatch (N items must fill N cells)",
+    "summary": "A bento grid has exactly as many cells as content items: 3 items → 3 cells, 5 items → 5 cells (2+3, 3+2, hero+4...). An empty tile in the middle or at the end means the grid was planned wrong — reshape the grid, never paste a blank tile.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "BENTO CELL COUNT RULE (mandatory)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty bento cell fails",
+        "input": "A 6-cell bento grid with only 4 real cards and one empty white tile at the end.",
+        "expect": "fail"
+      },
+      {
+        "label": "exact cell count passes",
+        "input": "5 content items fill exactly 5 cells in a 2+3 bento split.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Companion to ZS-UI-045 (monotonous template layout): this is the mechanical cell-count check."
+  },
+  {
+    "id": "ZS-UI-082",
+    "domain": "ui",
+    "title": "Split-header / floating sub-text section heads",
+    "summary": "The split-header pattern — big headline in a left col-span-7/8 with a small explainer paragraph floating in a right col-span-4/5 — is banned as default; sections should have ONE focused message, stacked vertically (headline on top, body ≤65ch below). A tiny corner paragraph with no alignment to anything is the same tell.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "SPLIT-HEADER BAN (mandatory)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO floating top-right sub-text in section headings",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "floating explainer fails",
+        "input": "Section header: left col-span-8 headline, right col-span-4 explainer paragraph floating with no alignment to anything else in the column.",
+        "expect": "fail"
+      },
+      {
+        "label": "stacked header passes",
+        "input": "Headline on top, 65ch body paragraph stacked directly below it.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Reach for the split only with a real compositional reason — the right column carrying a visual or interactive element, not filler text. Related to ZS-UI-020 (eyebrow-left variant of the same column-split device)."
+  },
+  {
+    "id": "ZS-UI-083",
+    "domain": "ui",
+    "title": "Navigation single-line ≤80px at desktop",
+    "summary": "Navigation must render on a single line at desktop (lg 1024px) and cap at 80px height (default 64-72px). A two-line nav or a giant 'agency' bar eating 15% of the viewport is broken design — condense labels, drop secondary items, or move to a hamburger.",
+    "tier": "warning",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "navFit",
+      "params": {
+        "maxHeightPx": 80,
+        "maxLines": 1,
+        "breakpointPx": 1024
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Navigation MUST render on a single line on desktop",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Navigation height cap: 80px max desktop, default 64-72px",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "oversized nav fails",
+        "input": "A 96px nav with logo, 7 links, a CTA and a phone number wrapping to a second line at lg.",
+        "expect": "fail"
+      },
+      {
+        "label": "compact nav passes",
+        "input": "A 64px single-line nav; secondary items collapse into a hamburger below 1024px.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-084",
+    "domain": "ui",
+    "title": "Scroll cues",
+    "summary": "Scroll cues — 'Scroll', '↓ scroll', 'Scroll to explore', animated mouse-wheel icons, bouncing chevrons — label the obvious: users at the top of a page know what scroll is. The bottom of the viewport does not need a caption.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:Scroll to (?:explore|walk through|discover|learn)|Scroll down|scroll to explore|Swipe (?:down|up)|scroll indicator|mouse-wheel)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Scroll cues are banned",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "stitch-design-taste",
+        "rule": "No Filler Text: 'Scroll to explore', 'Swipe down', scroll arrow icons, bouncing chevrons are BANNED",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "scroll cue fails",
+        "input": "<div class=\"mt-12 flex justify-center\"><span class=\"animate-bounce\">↓ Scroll to explore</span></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "clean hero passes",
+        "input": "<section class=\"min-h-[100dvh] flex items-center\"><h1>Ship it</h1></section>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A plain arrow glyph is acceptable; a section-numbered 'Scroll · 001 Capabilities' cue is the same tell with an ordinal bolted on."
+  },
+  {
+    "id": "ZS-UI-085",
+    "domain": "ui",
+    "title": "Decorative status dots on nav / list rows",
+    "summary": "A plain colored dot before every nav link, list row, badge, or status label is decoration with no signal — the visual of 'status' without any status. Dots are acceptable only when they convey real semantic state (live server status, availability flag) and are used sparingly — one per page section max.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "class=\"[^\"]*\\b(?:h-1\\.5|h-2|w-1\\.5|w-2)\\b[^\"]*\\brounded-full\\b[^\"]*\\bbg-(?:rose|red|amber|orange|blue|indigo|violet|purple|cyan|teal|yellow)-(?:400|500|600)\\b\"",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO decorative colored status dots on every list/nav/badge",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "ZERO decorative status dots by default",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dots on nav rows fail",
+        "input": "<nav><a href=\"/work\"><span class=\"h-1.5 w-1.5 rounded-full bg-rose-500\"></span>Work</a><a href=\"/about\"><span class=\"h-1.5 w-1.5 rounded-full bg-amber-500\"></span>About</a></nav>",
+        "expect": "fail"
+      },
+      {
+        "label": "real status dot passes",
+        "input": "<span class=\"h-1.5 w-1.5 rounded-full bg-emerald-500\"></span> All systems operational",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-037 covers the glowing/pulsing halo variant; this covers plain decorative dots. A dot without a label word next to it is decoration, not status — the emerald-hue dot with a real label is the allowed form."
+  },
+  {
+    "id": "ZS-UI-086",
+    "domain": "ui",
+    "title": "Locale / time / weather strips",
+    "summary": "Locale, city, time, and weather strips ('LIS 14:23 · 18°C', 'Lisbon, working with founders', '1200-690 Lisbon, Portugal' as atmosphere) in headers, heroes, or footers are agency-portfolio decoration for 99% of briefs. Allowed only for genuinely place-distributed studios, travel brands, or real venues; a single contact address in the footer is fine.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:LIS|BER|LDN|NYC|TYO|PAR|AMS|LAX|SFO)\\s+[0-9]{1,2}:[0-9]{2}|[0-9]{1,2}:[0-9]{2}\\s*·\\s*[0-9]{1,2}°[CF]|(?:Lisbon|Berlin|London|Porto)[^<]{0,40}(?:working with|based in|°C)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Locale / city-name / time / weather strips are banned for 99% of briefs",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "atmospheric strip fails",
+        "input": "<header><span class=\"meta\">LIS 14:23 · 18°C</span></header>",
+        "expect": "fail"
+      },
+      {
+        "label": "contact address passes",
+        "input": "<footer>Rua do Comércio 1200-690, Lisboa</footer>",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-087",
+    "domain": "ui",
+    "title": "Version stamps & build footers",
+    "summary": "Version stamps ('V0.6', 'BETA', 'INVITE-ONLY PREVIEW', 'EARLY ACCESS') as hero eyebrows, and version footers ('v1.4.2', 'Build 0048', 'last sync 4s ago · main') on marketing/landing/portfolio pages, are CLI/devtool fixtures, not landing-page content — they scream generated.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bv?[0-9]+\\.[0-9]+(\\.[0-9]+)?(-[a-z0-9.]+)?\\b|\\b(?:BETA|ALPHA|INVITE-ONLY PREVIEW|EARLY ACCESS)\\b|Build [0-9]{3,}|last sync [0-9]+s ago",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO version labels in the hero",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO version footers on marketing pages",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "footer stamp fails",
+        "input": "<footer>© 2026 Studio · v1.4.2 · Build 0048</footer>",
+        "expect": "fail"
+      },
+      {
+        "label": "plain footer passes",
+        "input": "<footer>© 2026 Studio Name</footer>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Exempt when the brief is explicitly a product launch/preview (a real beta program) or a devtool/docs site where build info is real content."
+  },
+  {
+    "id": "ZS-UI-088",
+    "domain": "ui",
+    "title": "Div-based fake screenshots",
+    "summary": "A 'product preview' hand-built from styled <div> rectangles — fake browser chrome with traffic-light dots, a fake task list, a fake terminal, a fake dashboard — is the #1 LLM-design tell. If you need to show a product, use a real screenshot, a generated image, a real component preview, or none at all.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Div-based fake screenshots are banned",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO div-based fake product UI in the hero",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "div mock fails",
+        "input": "Hero shows a 'product preview' assembled from styled divs: three dots for browser chrome, a fake task list, and a fake terminal window — no real screenshot anywhere.",
+        "expect": "fail"
+      },
+      {
+        "label": "real screenshot passes",
+        "input": "Hero shows the product UI as a real screenshot with next/image priority, or a genuine interactive component preview.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-089",
+    "domain": "ui",
+    "title": "AI-invented spec precision",
+    "summary": "Numbers with fake engineering precision — '5.8 mm case', '13.4 lb', '4.1× faster', '0.6 ctx-switches/day' — invent a spec aesthetic the brand never measured. Precision figures must come from real data (brief, brand guidelines, public metrics) or be explicitly labeled mock.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b[0-9]+\\.\\d\\s?(?:mm|cm|kg|lb|oz|in|ml|gb|tb|ms|s)\\b|\\b[0-9]+\\.\\d+×\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Fake-precise numbers are flagged",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "invented spec fails",
+        "input": "Hero spec strip: '5.8 mm case · 13.4 lb · 4.1× faster' — precision the brand never claimed.",
+        "expect": "fail"
+      },
+      {
+        "label": "no invented decimals passes",
+        "input": "The spec sheet lists '10-year warranty' and 'hand-polished brass', with no invented decimals.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Complements ZS-UI-070 (invented stat rows): 070 targets dashboard stat rows and round social-proof figures; this targets decimal-precision measurements on consumer/spec content."
+  },
+  {
+    "id": "ZS-UI-090",
+    "domain": "ui",
+    "title": "Generic step labels",
+    "summary": "Generic progression labels — 'Step 1 / Step 2 / Step 3', 'Stage 1', 'Phase 01', 'Pass One' — label the container, not the content. The actual step content is the label; use the verb-noun directly ('Install', 'Configure', 'Ship').",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:Step|Stage|Phase|Pass|Level)\\s+[0-9IVX]+\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO generic step labels",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generic steps fail",
+        "input": "\"Step 1: Install — Step 2: Configure — Step 3: Ship\"",
+        "expect": "fail"
+      },
+      {
+        "label": "verb-noun labels pass",
+        "input": "\"Install → Configure → Ship\"",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-040 covers the always-3-steps template; this covers the ordinal label itself."
+  },
+  {
+    "id": "ZS-UI-091",
+    "domain": "ui",
+    "title": "Poetic / performative section labels",
+    "summary": "Poetic, performative-craftsman labels — 'From the field', 'Field notes', 'On our desks', 'Loose plates', 'Currently on the bench' — on quote, blog, or sidebar sections read as fake authenticity. Use plain functional labels ('Testimonials', 'Latest writing', 'Now working on') or skip the label.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "From the field",
+        "Field notes",
+        "On our desks",
+        "Loose plates",
+        "Currently on the bench",
+        "In the studio",
+        "Field study",
+        "The honest table",
+        "Where ambition meets",
+        "Quietly in use at",
+        "Quietly trusted by"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO 'From the field' / 'Field notes' / 'Currently on the bench' / 'On our desks' / 'Loose plates' style poetic labels",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO 'Quietly in use at' / 'Quietly trusted by' social-proof headers",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "poetic label fails",
+        "input": "<section aria-labelledby=\"notes\"><h2>Field notes</h2></section>",
+        "expect": "fail"
+      },
+      {
+        "label": "functional label passes",
+        "input": "<section aria-labelledby=\"latest\"><h2>Latest writing</h2></section>",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-092",
+    "domain": "ui",
+    "title": "LLM-favorite display serifs (Fraunces / Instrument Serif)",
+    "summary": "Fraunces and Instrument Serif are the two LLM-favorite display serifs — they appear in nearly every generated 'editorial' hero and are now themselves convergence tells. Use them only with explicit brand justification, or rotate from a broader pool (PP Editorial New, GT Sectra, Recoleta, Canela, Cormorant...).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:Fraunces|Instrument[_%20\\s]?Serif)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Specifically BANNED as defaults: Fraunces and Instrument_Serif (the two LLM-favorite display serifs)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Use only with clear intent (now themselves tells): Space Grotesk, Geist, Instrument Serif",
+        "ref": "references/typography.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "instrument serif hero fails",
+        "input": ".hero h1 { font-family: \"Instrument Serif\", serif; }",
+        "expect": "fail"
+      },
+      {
+        "label": "rotated serif passes",
+        "input": ".hero h1 { font-family: \"PP Editorial New\", serif; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Space Grotesk and Geist are already banned as defaults by ZS-UI-015; this closes the display-serif gap. Purpose-gate: a brand brief that literally names these faces is exempt."
+  },
+  {
+    "id": "ZS-UI-093",
+    "domain": "ui",
+    "title": "Accent hue in the AI band (OKLCH H 250–320)",
+    "summary": "OKLCH hue ~250-320 — indigo, violet, purple — is the reddest ocean in AI UI: the literal default accent band. Unless the brief demands it, pick an uncontested hue (orange, brick, crimson, grass, teal, amber) for the accent. A brand that genuinely IS purple is exempt.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:bg|text|border|ring|from|to|via|fill|stroke)-(?:indigo|violet|purple)-[0-9]{2,3}\\b|oklch\\([^)]*(?:2[5-9][0-9]|3[01][0-9]|320)\\)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Avoid OKLCH hue ~250 to 320 for accents unless the brief demands it",
+        "ref": "references/color-oklch.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "THE LILA RULE: the AI Purple/Blue glow aesthetic is discouraged as a default",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "indigo accent fails",
+        "input": "<button class=\"bg-indigo-600 text-white\">Start</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "orange accent passes",
+        "input": "<button class=\"bg-orange-600 text-white\">Start</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Distinct from ZS-UI-001 (indigo→violet gradient) and ZS-UI-004 (stock semantic status palette): this is the accent-hue band rule. LILA override: a brand that is genuinely purple stays purple — execute with intent, not gradient slop."
+  },
+  {
+    "id": "ZS-UI-094",
+    "domain": "ui",
+    "title": "Gray text on colored backgrounds",
+    "summary": "Gray text dropped onto a colored/tinted surface was never toned to its background — the safest AI move and a readability failure. On colored backgrounds use the same hue, darker and desaturated, never gray.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:(?:text|color)[^\"}]{0,60}\\b(?:gray|slate|zinc|neutral)-[0-9]{2,3}\\b[^\"}]{0,60}bg-(?!white|gray|slate|zinc|neutral|transparent|black)[a-z-]+|bg-(?!white|gray|slate|zinc|neutral|transparent|black)[a-z-]+[^\"}]{0,60}(?:text|color)[^\"}]{0,40}\\b(?:gray|slate|zinc|neutral)-[0-9]{2,3}\\b|color:\\s*(?:gray|#6b7280|#64748b|#71717a|#737373|#9ca3af|#94a3b8)\\b[^;}]*;[\\s\\S]{0,80}background(?:-color)?:\\s*#(?!fff|ffffff|e5e7eb|f3f4f6|f1f5f9|f8fafc|fafafa|f9fafb)[0-9a-fA-F]{6})",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "No gray text on colored backgrounds. Use the same hue, darker and desaturated",
+        "ref": "references/slop-checklist.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "On colored backgrounds use the same hue darker and desaturated, never gray",
+        "ref": "references/color-oklch.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "gray on tinted fails",
+        "input": "<div class=\"bg-emerald-50 text-gray-500\">A muted note</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "same-hue passes",
+        "input": "<div class=\"bg-emerald-50 text-emerald-800\">A muted note</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-003 already catches gray-400/500 on a few warm tints; this is the generalized rule for any gray step on any colored surface, plus the CSS color/background form."
+  },
+  {
+    "id": "ZS-UI-095",
+    "domain": "ui",
+    "title": "Blob-rounding on small cards (radius >16px)",
+    "summary": "Small cards are capped at ~16px radius; rounded-3xl (24px) and above on small cards is 'blob-rounding' — blob geometry that reads as generic. Radius above 16px belongs to hero imagery and large panels, not to small cards.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\brounded-3xl\\b|rounded-\\[(?:1\\.5rem|2rem|2[4-9]px|3[0-9]px)\\]|border-radius:\\s*(?:1\\.5rem|2rem|2[4-9]px|3[0-9]px)\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "blob-rounding (radius > 16px on small cards)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Radius <= 16px on small cards. No blob-rounding (24px+)",
+        "ref": "references/slop-checklist.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "blob card fails",
+        "input": "<div class=\"rounded-3xl p-4 bg-white\">Small metric card</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "measured radius passes",
+        "input": "<div class=\"rounded-xl p-4 bg-white\">Small metric card</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Distinct from ZS-UI-032 (pill-everything, uniform max radius across element kinds): this caps small-card radius specifically. Avatars and genuine pills are exempt."
+  },
+  {
+    "id": "ZS-UI-096",
+    "domain": "ui",
+    "title": "Hairline border + wide diffuse shadow on the same element",
+    "summary": "A hairline border AND a wide diffuse shadow on the same element commits to two separators doing one job. Pick one: a defined edge or a soft elevation — never both.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:border[^;{}]*:\\s*1px\\s+solid[^;{}]*;[\\s\\S]{0,160}(?:box-shadow|shadow-))|(?:box-shadow:[^;{}]*;[\\s\\S]{0,160}border[^;{}]*:\\s*1px\\s+solid)|(?:border[^\"}\\s]*\\s+shadow-(?:md|lg|xl|2xl))|(?:shadow-(?:md|lg|xl|2xl)[^\"}]{0,80}\\bborder\\b(?!-0))",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "hairline border and diffuse drop shadow stacked on the same element",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "No hairline border AND wide diffuse shadow on the same element. Commit to one: a defined edge or a soft elevation",
+        "ref": "references/slop-checklist.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stacked separators fail",
+        "input": "<div class=\"rounded-lg border shadow-lg\">Pricing card</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "one separator passes",
+        "input": ".card { border: 1px solid #e5e7eb; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-033 mentions the 'ghost card' variant in its notes; this is the dedicated rule with its own matcher."
+  },
+  {
+    "id": "ZS-UI-097",
+    "domain": "ui",
+    "title": "Canonical AI-authored easing curves",
+    "summary": "cubic-bezier(0.23, 1, 0.32, 1) and cubic-bezier(0.77, 0, 0.175, 1) are the two 'authored' curves documented in the standard motion references and now recur in nearly every generated stylesheet — they have become the new default. Pick a curve from the wider documented range (Material, Carbon, iOS sheet) or author your own.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "cubic-bezier\\(\\s*0\\.23,\\s*1,\\s*0\\.32,\\s*1\\s*\\)|cubic-bezier\\(\\s*0\\.77,\\s*0,\\s*0\\.175,\\s*1\\s*\\)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Useful authored curves: a strong ease-out cubic-bezier(0.23, 1, 0.32, 1), a strong ease-in-out cubic-bezier(0.77, 0, 0.175, 1)",
+        "ref": "references/motion.md"
+      },
+      {
+        "repo": "emil-design-eng",
+        "rule": "--ease-out: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "canonical curve fails",
+        "input": "transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);",
+        "expect": "fail"
+      },
+      {
+        "label": "varied curve passes",
+        "input": "transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The fingerprint shifts: a curve documented as the standard authored default in every motion reference becomes the statistical median of generated UI. Purpose-gate: using them via a documented token is a choice; defaulting to them is the tell."
+  },
+  {
+    "id": "ZS-UI-098",
+    "domain": "ui",
+    "title": "Animating from scale(0)",
+    "summary": "Nothing in the real world appears from nothing: elements animating from scale(0) look like they materialize out of nowhere. Start from scale(0.9-0.97) combined with opacity so the element already has a shape and grows into place.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "transform:\\s*scale\\(0\\)|scale\\(0\\)|initial=\\{\\{\\s*scale:\\s*0\\s*\\}\\}|animate=\\{\\{\\s*scale:\\s*0\\s*\\}\\}",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "emil-design-eng",
+        "rule": "Never animate from scale(0)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Never animate from scale(0). Start from about 0.9 to 0.97 so the element already has a shape",
+        "ref": "references/motion.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "scale0 css fails",
+        "input": ".menu { transform: scale(0); opacity: 0; }",
+        "expect": "fail"
+      },
+      {
+        "label": "near-scale passes",
+        "input": ".menu { transform: scale(0.95); opacity: 0; }",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-099",
+    "domain": "ui",
+    "title": "Dark-mode elevation via lightness, not shadows (base 8–12% L)",
+    "summary": "Dark mode is not an inversion: pure-black backgrounds vibrate, shadows barely register, and saturated accents glare. Base the darkest surface at 8-12% lightness (Material's #121212 is the reference), express elevation by making raised surfaces LIGHTER (cards ~L14-16, popovers ~L18-20) — never with drop shadows — and keep body text off-white.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Backgrounds: never pure black... A common base sits around 8 to 12 percent lightness",
+        "ref": "references/dark-mode.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Elevation via lightness, not shadow",
+        "ref": "references/dark-mode.md"
+      },
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Pure #000000 background. Replace with off-black, dark charcoal, or tinted dark (#0a0a0a, #121212, or a dark navy)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "shadowed dark surfaces fail",
+        "input": "Dark mode: base #000000, every card the same #121212 separated only by a drop shadow, pure #FFF body text.",
+        "expect": "fail"
+      },
+      {
+        "label": "lightness ramp passes",
+        "input": "Dark mode: base #121212, cards #1a1a1a, popovers #222; elevation by lightness, off-white #EDEDED text.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-007 covers the literal pure #000/#FFF regex; this is the elevation model — the closer a surface is to the user, the lighter it is, and drop shadows do not read on dark."
+  },
+  {
+    "id": "ZS-UI-100",
+    "domain": "ui",
+    "title": "Default icon library tell (Lucide / Heroicons / Feather)",
+    "summary": "Lucide (the shadcn default), Heroicons, and Feather are baked into starter kits and generated components — they signal 'generic template' even though they are well made. The unmodified default set defining the look is the tell; switch sets (Phosphor, Tabler, Iconoir, Hugeicons) or at minimum customize stroke width and corner radius.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:lucide-react|@heroicons/react|feather-icons|react-icons/fa)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Lucide is the shadcn default and is now baked into countless templates and generated components, so it signals 'generic template' even though it is well made",
+        "ref": "references/iconography.md"
+      },
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Lucide or Feather icons exclusively. These are the 'default' AI icon choice",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "lucide default fails",
+        "input": "import { Rocket } from \"lucide-react\";",
+        "expect": "fail"
+      },
+      {
+        "label": "distinct set passes",
+        "input": "import { Rocket } from \"@phosphor-icons/react\";",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-063 flags mixing sets; this flags defaulting to the starter-kit set alone. Customizing stroke/radius of the default set is an acceptable escape."
+  },
+  {
+    "id": "ZS-UI-101",
+    "domain": "ui",
+    "title": "ease-in on UI transitions",
+    "summary": "ease-in starts slow and speeds up — it delays the exact moment the user is watching, so a dropdown at 300ms ease-in feels slower than the same duration ease-out. Never use ease-in for UI animations; reserve it for exit-to-nowhere.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bease-in\\b(?!-out)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "emil-design-eng",
+        "rule": "Never use ease-in for UI animations",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "ease-in for exit only... never for things the user is waiting on (it speeds up at the end and feels laggy)",
+        "ref": "references/motion.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "ease-in fails",
+        "input": ".dropdown { transition: opacity 300ms ease-in; }",
+        "expect": "fail"
+      },
+      {
+        "label": "ease-out passes",
+        "input": ".dropdown { transition: opacity 200ms ease-out; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ease-in-out is not flagged; the ban is the plain ease-in keyword on enter/state-change transitions."
+  },
+  {
+    "id": "ZS-UI-102",
+    "domain": "ui",
+    "title": "Popover / menu transform-origin",
+    "summary": "A popover, menu, or dropdown should scale from its trigger, not from its own center — center-origin scaling on a corner-anchored menu is a tell. Wire the origin to the trigger position (Radix/Base UI expose --transform-origin). Modals are the exception: they stay centered.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:popover|dropdown|menu|tooltip)[\\s\\S]{0,200}transform-origin:\\s*(?:center|50%\\s+50%)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "emil-design-eng",
+        "rule": "Make popovers origin-aware",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "A popover or menu should scale from its trigger, not from its own center; wire the origin to the trigger position",
+        "ref": "references/motion.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "center-origin popover fails",
+        "input": ".popover { transform-origin: center; transform: scale(0.95); }",
+        "expect": "fail"
+      },
+      {
+        "label": "trigger-origin passes",
+        "input": ".popover { transform-origin: var(--transform-origin); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Modals keep transform-origin center — they are not anchored to a trigger."
+  },
+  {
+    "id": "ZS-UI-103",
+    "domain": "ui",
+    "title": "Hover states gated behind @media (hover:hover) (pointer:fine)",
+    "summary": "Touch devices fire hover on tap, causing false positives: gate hover-triggered animation behind `@media (hover: hover) and (pointer: fine)` so touch users never get a phantom hover state.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "emil-design-eng",
+        "rule": "Touch device hover states",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Gate hover-triggered animation behind @media (hover: hover)",
+        "ref": "references/motion.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "ungated hover fails",
+        "input": "Card hover lifts with translate-y and scale, with no `@media (hover: hover)` gate — the hover fires on every tap on a touch device.",
+        "expect": "fail"
+      },
+      {
+        "label": "gated hover passes",
+        "input": "The hover lift sits inside `@media (hover: hover) and (pointer: fine)`; base styles are unchanged on touch.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-104",
+    "domain": "ui",
+    "title": "Keyboard-initiated actions never animated",
+    "summary": "Animation on high-frequency, keyboard-initiated actions — a command palette toggled with ⌘K, menu navigation — is friction: it makes a power user's repeated action feel slow and disconnected. Frequency gates animation: 100+ times/day → no animation, ever; occasional (modals, toasts) → standard animation.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "emil-design-eng",
+        "rule": "Never animate keyboard-initiated actions",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "do not animate frequent, utilitarian ones",
+        "ref": "references/motion.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "animated palette fails",
+        "input": "Opening the command palette via ⌘K — used a hundred times a day — plays a 400ms scale-and-fade every single time.",
+        "expect": "fail"
+      },
+      {
+        "label": "instant palette passes",
+        "input": "The command palette appears instantly with no open animation; only first-time onboarding uses motion.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-105",
+    "domain": "ui",
+    "title": "Transition duration by element size",
+    "summary": "Duration scales with the element's size and travel: button press 100-160ms, tooltips/small popovers 125-200ms, dropdowns/selects 150-250ms, modals/drawers 200-500ms — and most UI stays under 300ms. A 450ms dropdown feels sluggish next to an 180ms one.",
+    "tier": "info",
+    "kind": "statistical",
+    "matcher": {
+      "type": "statistical",
+      "metric": "elementDuration",
+      "params": {
+        "buttonMs": [
+          100,
+          160
+        ],
+        "tooltipMs": [
+          125,
+          200
+        ],
+        "dropdownMs": [
+          150,
+          250
+        ],
+        "modalMs": [
+          200,
+          500
+        ],
+        "uiMaxMs": 300
+      }
+    },
+    "source": [
+      {
+        "repo": "emil-design-eng",
+        "rule": "Duration table: Button press 100-160ms, Tooltips 125-200ms, Dropdowns 150-250ms, Modals 200-500ms; UI animations should stay under 300ms",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "frontend-design-deslop",
+        "rule": "Most UI animations should stay under 300ms. Micro feedback 100-150ms; standard transitions 150-250ms; larger surfaces 250-500ms",
+        "ref": "references/motion.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "slow dropdown fails",
+        "input": ".dropdown { transition: opacity 450ms ease; }",
+        "expect": "fail"
+      },
+      {
+        "label": "snappy dropdown passes",
+        "input": ".dropdown { transition: opacity 180ms ease; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Refines ZS-UI-057 (generic 0.2-0.3s band): sheets and drawers may legitimately run to 500ms with an iOS-like curve; a 450ms dropdown cannot."
+  },
+  {
+    "id": "ZS-UI-106",
+    "domain": "ui",
+    "title": "Generic card boundary (1px gray border / harsh dark shadow)",
+    "summary": "The generic AI card look: a 1px solid gray border (gray-200/#e5e7eb family) or a harsh dark drop shadow (Tailwind shadow-md, rgba(0,0,0,0.3)) as the universal card boundary. Prefer a defined edge, tinted low-alpha shadows tight to the surface, or spacing alone.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:border(?:-color)?:\\s*1px\\s+solid\\s+(?:#(?:e5e7eb|e2e8f0|d1d5db|cbd5e1|f3f4f6|f1f5f9)|gray)\\b)|\\bborder-(?:gray|slate|zinc|neutral)-[0-9]{2,3}\\b|\\bshadow-md\\b|rgba\\(\\s*0,\\s*0,\\s*0,\\s*0?\\.3\\s*\\)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "high-end-visual-design",
+        "rule": "Banned Borders & Shadows: Generic 1px solid gray borders. Harsh, dark drop shadows (shadow-md, rgba(0,0,0,0.3))",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Generic card look (border + shadow + white background)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "gray border card fails",
+        "input": "<div class=\"rounded-lg border border-gray-200 bg-white\">Plan</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "harsh dark shadow fails",
+        "input": ".card { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }",
+        "expect": "fail"
+      },
+      {
+        "label": "tinted shadow passes",
+        "input": ".card { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate: a hairline border is fine when it separates genuinely distinct content; the tell is it as the universal card boundary. ZS-UI-033 covers oversized 60px+ blur shadows; this covers the harsh default band (shadow-md / 30% black)."
+  },
+  {
+    "id": "ZS-UI-107",
+    "domain": "ui",
+    "title": "h-screen / 100vh full-height sections",
+    "summary": "height: 100vh / h-screen for full-height sections causes catastrophic layout jumping on mobile browsers (the iOS Safari address-bar viewport bug). Always use min-h-[100dvh] so the section grows with the dynamic viewport.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bh-screen\\b|height:\\s*100vh\\b|min-height:\\s*100vh\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NEVER use h-screen for full-height Hero sections. ALWAYS use min-h-[100dvh]",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "high-end-visual-design",
+        "rule": "Never use h-screen for full-height sections — always use min-h-[100dvh] to prevent iOS Safari viewport jumping",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "stitch-design-taste",
+        "rule": "Full-height sections must use min-h-[100dvh] — never h-screen (iOS Safari catastrophic jump)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "h-screen fails",
+        "input": "<section class=\"h-screen flex items-center\">Hero</section>",
+        "expect": "fail"
+      },
+      {
+        "label": "dvh passes",
+        "input": "<section class=\"min-h-[100dvh] flex items-center\">Hero</section>",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-108",
+    "domain": "ui",
+    "title": "Arbitrary z-index (z-50 / z-[9999])",
+    "summary": "Arbitrary z-index values (z-50, z-[9999], z-index: 9999) sprinkle magic numbers through components until a modal fights a toast. Use z-index strictly for systemic layer contexts (sticky nav, modals, overlays, tooltips) and document the scale in a constants file.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bz-50\\b|\\bz-\\[[0-9]{2,}\\]|z-index:\\s*[0-9]{3,}\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "high-end-visual-design",
+        "rule": "Do not use arbitrary z-50 or z-[9999]",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Z-Index Restraint: NEVER spam arbitrary z-50 or z-10",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Arbitrary z-index values like 9999. Establish a clean z-index scale in the theme/variables",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "9999 overlay fails",
+        "input": "<div className=\"fixed inset-0 z-[9999]\">Overlay</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "tokenized layer passes",
+        "input": ".modal { z-index: var(--z-modal); }",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-109",
+    "domain": "ui",
+    "title": "Symmetric vertical padding without optical adjustment",
+    "summary": "Top and bottom padding that are always identical (py-24, padding: 6rem 0 on every section) read as mechanical; adjust optically — the bottom padding often needs to be slightly larger because a page's visual weight settles downward.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "padding:\\s*[0-9.]+(?:rem|em|px)\\s+0\\s*;",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Symmetrical vertical padding. Top and bottom padding are always identical. Adjust optically — bottom padding often needs to be slightly larger",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "identical padding fails",
+        "input": ".section { padding: 6rem 0; }",
+        "expect": "fail"
+      },
+      {
+        "label": "optically adjusted passes",
+        "input": ".section { padding: 6rem 0 7rem; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The Tailwind variant — the same py-N utility on every section — is the same tell; check by counting identical py-* values across sections."
+  },
+  {
+    "id": "ZS-UI-110",
+    "domain": "ui",
+    "title": "Random dark section in a light page",
+    "summary": "A single dark-background section breaking an otherwise light page (or vice versa) reads as a copy-paste accident. Either commit to a full dark mode or keep one background tone throughout; for contrast, use a slightly darker shade of the same palette, not a sudden jump to #111.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Random dark sections in a light mode page (or vice versa)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "Page Theme Lock (Light / Dark Mode Consistency)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stray dark band fails",
+        "input": "A light #f7f5f1 page with one `bg-[#111]` CTA band in the middle — the dark section reads as an accident.",
+        "expect": "fail"
+      },
+      {
+        "label": "consistent theme passes",
+        "input": "The page stays light throughout; the CTA band uses a slightly darker shade of the page's own cream.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-111",
+    "domain": "ui",
+    "title": "Rocketship-for-Launch / shield-for-Security cliché icons",
+    "summary": "The cliché metaphor icons — a rocketship for 'Launch', a shield for 'Security' — are the default AI icon choice. Replace clichés with less obvious metaphors (bolt, fingerprint, spark, vault) that actually match the feature.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:Rocket|RocketIcon|Shield|ShieldCheck|ShieldIcon|FaRocket|FaShield)[\\s/>]"
+    },
+    "source": [
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Rocketship for 'Launch', shield for 'Security'. Replace cliche metaphors with less obvious icons (bolt, fingerprint, spark, vault)",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rocket for launch fails",
+        "input": "{/* launch section */}<Rocket className=\"w-6 h-6\" /> Launch",
+        "expect": "fail"
+      },
+      {
+        "label": "bolt for launch passes",
+        "input": "{/* launch section */}<Bolt className=\"w-6 h-6\" /> Launch",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Related to ZS-UI-059 (generic AI glyphs): 059 covers sparkle/star/zap glyphs; this covers the metaphor clichés."
+  },
+  {
+    "id": "ZS-UI-112",
+    "domain": "ui",
+    "title": "Missing favicon",
+    "summary": "Shipping without a favicon leaves a default globe in the tab and a blank bookmark — a finish-gate failure that reads as unfinished. Always include a branded favicon (SVG or ICO) referenced from the document head.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Missing favicon. Always include a branded favicon.",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "no favicon fails",
+        "input": "The app ships with no `<link rel=\"icon\">` — the browser tab shows the default globe and the bookmark has no icon.",
+        "expect": "fail"
+      },
+      {
+        "label": "favicon present passes",
+        "input": "<link rel=\"icon\" href=\"/favicon.svg\" /> renders a branded mark in the tab.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-113",
+    "domain": "ui",
+    "title": "Fake system-metric sections & 'LABEL // YEAR' stamps",
+    "summary": "'SYSTEM PERFORMANCE METRICS', 'KEY STATISTICS', 'BY THE NUMBERS' sections filled with invented data, and 'LABEL // YEAR' micro-formatting ('SYSTEM // 2024', 'METRICS // 2025'), are lazy AI conventions. Never fabricate metrics; when real data is missing use an explicit placeholder like [metric], not invented numbers.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "BY THE NUMBERS|KEY STATISTICS|SYSTEM PERFORMANCE METRICS|METRICS //|SYSTEM //|[A-Z][A-Z ]{3,} // [0-9]{4}",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "stitch-design-taste",
+        "rule": "No fake system/metric sections... If real data is not available, use clear placeholder labels like [metric] instead of making up numbers",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "stitch-design-taste",
+        "rule": "No LABEL // YEAR formatting — 'SYSTEM // 2024', 'METRICS // 2025' is a lazy AI convention",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fabricated metrics fail",
+        "input": "<h2>BY THE NUMBERS</h2><dl><dt>Uptime</dt><dd>99.98%</dd></dl>",
+        "expect": "fail"
+      },
+      {
+        "label": "placeholder convention passes",
+        "input": "The stat card shows a labelled `[metric]` placeholder until real numbers arrive.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-070 covers invented stat rows generally; this targets the metric-section trope and the double-slash micro-format. The [metric] placeholder convention is the allowed alternative to fabrication."
+  },
+  {
+    "id": "ZS-UI-114",
+    "domain": "ui",
+    "title": "Custom mouse cursors",
+    "summary": "Custom mouse cursors (cursor: url(...)) are outdated, accessibility-hostile, and perf-hostile — they break pointer affordances and add zero information. Use native cursors or none.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "cursor:\\s*url\\(",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "stitch-design-taste",
+        "rule": "No custom mouse cursors",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "taste-design",
+        "rule": "No custom mouse cursors",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "design-taste-frontend",
+        "rule": "NO custom mouse cursors. Outdated, accessibility-hostile, perf-hostile.",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "custom cursor fails",
+        "input": ".draggable { cursor: url(\"/cursor.png\") 4 4, grab; }",
+        "expect": "fail"
+      },
+      {
+        "label": "native cursor passes",
+        "input": ".draggable { cursor: grab; }",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-115",
+    "domain": "ui",
+    "title": "Figures without tabular numerals (data columns / density >7)",
+    "summary": "Numbers in proportional type jitter as they change — columns shift, totals wobble. Data columns and stat-heavy dashboards (density > 7) must use tabular figures (font-variant-numeric: tabular-nums) or monospace so digits stay aligned.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "stitch-design-taste",
+        "rule": "High-Density Override: When density exceeds 7, all numbers must use Monospace",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "redesign-existing-projects",
+        "rule": "Numbers in proportional font. Use a monospace font or enable tabular figures (font-variant-numeric: tabular-nums) for data-heavy interfaces",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "proportional figures fail",
+        "input": "A table of prices and counts renders `1,234.50` in a proportional font — the digits shift column as they update.",
+        "expect": "fail"
+      },
+      {
+        "label": "tabular figures pass",
+        "input": "Stat columns use `font-variant-numeric: tabular-nums`; the density-9 dashboard renders all numbers in mono.",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-UI-116",
+    "domain": "ui",
+    "title": "Vague labels (Overview / Insights) where specific language is possible",
+    "summary": "Vague labels — 'Overview', 'Insights', 'Analytics' — where specific language is possible mark the UI as template-built. Name nav items and sections for their contents ('Progress', 'Library', 'Refunds', 'Market fit'), not generic umbrellas.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": ">(?:Overview|Insights|Analytics)<|(?:href|to)=\"[^\"]*(?:/overview|/insights|/analytics)\"",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "anti-ui-slop",
+        "rule": "Vague labels such as 'Overview,' 'Insights,' or 'Learn more' where specific language is possible",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "apple-design",
+        "rule": "Direct, specific labels beat safe generic ones. Name nav items for their contents ('Progress', 'Library'), not vague umbrellas ('Home')",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vague label fails",
+        "input": "<aside><h2>Overview</h2></aside>",
+        "expect": "fail"
+      },
+      {
+        "label": "specific label passes",
+        "input": "<aside><h2>Refunds</h2></aside>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'Learn more' is already covered by ZS-UI-066 (generic CTAs)."
+  },
+  {
+    "id": "ZS-UI-117",
+    "domain": "ui",
+    "title": "Letter-spacing: one value for all sizes",
+    "summary": "Tracking is size-specific, never one value: large display text wants negative tracking (letters read too far apart as they grow), small text wants slightly positive tracking for legibility. A single letter-spacing applied to every size is wrong somewhere; tighten headings, leave body near 0.",
+    "tier": "info",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "apple-design",
+        "rule": "Tracking (letter-spacing) is size-specific — never one value for all sizes",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fixed tracking fails",
+        "input": "A global `letter-spacing: 0.02em` on every heading size — display text reads airy, small labels cramped.",
+        "expect": "fail"
+      },
+      {
+        "label": "size-specific tracking passes",
+        "input": "Display uses `-0.02em` at clamp(2rem, 5vw, 4rem); body stays near 0; captions get +0.02em.",
+        "expect": "pass"
+      }
+    ]
+  }
+]
