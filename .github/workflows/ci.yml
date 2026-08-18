@@ -23,14 +23,19 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # CLI resolves @zero-slop/core via its dist entry, so core must be
+      # built before CLI tests run (dist/ is gitignored in CI).
+      - name: Build core
+        run: pnpm --filter @zero-slop/core build
+
       - name: Core engine tests
         run: pnpm --filter @zero-slop/core test
 
+      - name: Build CLI
+        run: pnpm --filter @zero-slop/cli build
+
       - name: CLI tests
         run: pnpm --filter @zero-slop/cli test
-
-      - name: Build
-        run: pnpm --filter @zero-slop/core build && pnpm --filter @zero-slop/cli build
 
       # Dogfood: zero-slop gates its own docs. The repo passes at 0 error-tier
       # findings; this gate keeps it there. `gate` takes a single path, so run
