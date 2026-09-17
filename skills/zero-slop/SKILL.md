@@ -1,6 +1,6 @@
 ---
 name: zero-slop
-description: Audit AI-generated copy, UI, code, commits, accessibility, or credibility for generic slop tells. Use when reviewing docs, pages, diffs, commit messages, PRs, or landing pages for unchosen defaults, or when unsure which slop domain applies.
+description: Audit AI-generated copy, UI, code, commits, accessibility, or credibility for generic slop tells. Use when reviewing docs, pages, diffs, commit messages, PRs, or landing pages for unchosen defaults, when asking whether a diff is sloppy, before committing, when gating a merge on slop, or when unsure which slop domain applies.
 ---
 
 # Zero-slop (universal router)
@@ -12,6 +12,10 @@ Decide whether a draft reads as an unchosen model default and route to the one d
 ## Deterministic layer
 
 Run `zero-slop scan` against the canonical rules DB in `rules/*.json` first; treat every hit as a candidate, never a verdict. Every finding cites `rules/<domain>.json#<rule-id>`; any prescription without such a citation is out of scope. Quote the source's own threshold or pattern when one exists; never tighten or loosen a matcher from opinion.
+
+## Without the CLI
+
+When `zero-slop scan` is not installed in the current harness, work the routing table manually: load the one matching `references/<domain>.md`, apply its checks by quoting each threshold verbatim, and cite `rules/<domain>.json#<rule-id>` exactly as the output template demands. A manual pass judges the same way — the CLI only automates candidate flagging, never the verdict. Install the runner with `npx -y zero-slop@latest scan .` when the harness allows npm execution.
 
 ## Tier discipline
 
