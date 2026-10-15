@@ -42,9 +42,9 @@ const rules = await loadCodeRules();
 const implemented = rules.filter((r) => !DEFERRED.has(r.id));
 
 describe("code rules coverage", () => {
-  it("implements 20 of 36 code rules, plus 15 skill-folded rules (rest deferred)", () => {
-    expect(rules).toHaveLength(51);
-    expect(implemented).toHaveLength(35);
+  it("implements 58 of 74 code rules (rest deferred)", () => {
+    expect(rules).toHaveLength(74);
+    expect(implemented).toHaveLength(58);
   });
 
   it("every implemented rule's fail fixture flags and pass fixture stays clean", () => {

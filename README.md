@@ -9,7 +9,7 @@ A CLI that scans prose, UI, and code for the generic, repetitive patterns of AI-
   <img src="https://img.shields.io/github/actions/workflow/status/trefeon/zero-slop/ci.yml?branch=main" alt=CI>
 </p>
 
-zero-slop applies 389 rules across 7 domains and reports each hit with a severity tier. It needs no configuration to start.
+zero-slop applies 520 rules across 7 domains and reports each hit with a severity tier. It needs no configuration to start.
 
 ## Install
 
@@ -28,17 +28,17 @@ npx -y zero-slop@latest scan .
 
 ## What it catches
 
-The rule database holds 389 rules in 7 domains. Every rule has a tier (error, warning, info), a source attribution, and pass/fail fixtures.
+The rule database holds 520 rules in 7 domains. Every rule has a tier (error, warning, info), a source attribution, and pass/fail fixtures.
 
 | Domain | Rules | What it checks |
 | --- | --- | --- |
-| prose | 119 | banned AI vocabulary, punctuation caps, sentence rhythm, hedging, markdown hygiene |
-| ui | 117 | gradient defaults, palette cliches, typography, motion and layout budgets |
-| code | 51 | swallowed exceptions, type escapes, comment bloat, generic error envelopes |
-| commit | 24 | conventional commit format, subject casing, header length, body layout |
-| integrity | 27 | invented stats, unsourced percentages, fake social proof, unlabeled placeholders |
-| a11y | 28 | contrast thresholds, focus visibility, keyboard support, hit targets |
-| chat | 23 | negation framing, filler openers, summary-stamp closings, answer-first shape |
+| prose | 155 | banned AI vocabulary, punctuation caps, sentence rhythm, hedging, markdown hygiene |
+| ui | 141 | gradient defaults, palette cliches, typography, motion and layout budgets |
+| code | 74 | swallowed exceptions, type escapes, comment bloat, generic error envelopes |
+| commit | 34 | conventional commit format, subject casing, header length, body layout |
+| integrity | 33 | invented stats, unsourced percentages, fake social proof, unlabeled placeholders |
+| a11y | 49 | contrast thresholds, focus visibility, keyboard support, hit targets |
+| chat | 34 | negation framing, filler openers, summary-stamp closings, answer-first shape |
 
 Example hits per domain:
 
@@ -215,6 +215,7 @@ The workspace is a pnpm monorepo with three parts:
 - `rules/`: the rule database, one JSON file per domain
 - `packages/core`: the check engines for prose, ui, code, and commit
 - `packages/cli`: the commander-based CLI
+- `scripts/`: rule bundling, plus `sync-reference.mjs`, which refreshes the gitignored research corpus listed in `scripts/reference-corpus.json`
 
 From the repo root:
 

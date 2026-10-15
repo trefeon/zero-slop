@@ -38,6 +38,16 @@
         "repo": "claude-design-system-prompt",
         "rule": "Rule 1 Gradients — flat or subtle",
         "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "Purple→blue gradients (both stops hue 250–290)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "This is the \"Purple Paradox\": Tailwind ships indigo-500 (#6366f1) as a default, tutorial authors use it, tutorials enter training data, AI generates more purple, which creates more tutorials.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -93,6 +103,11 @@
         "repo": "claude-design-system-prompt",
         "rule": "Rule 1 Gradients — flat or subtle",
         "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "lcsxu/zero-slop",
+        "rule": "Gradient text used as personality.",
+        "ref": "skills/no-slop/references/ai-slop-patterns.md"
       }
     ],
     "tests": [
@@ -268,6 +283,11 @@
         "repo": "hallmark",
         "rule": "Gate 29 abstract background (mesh/aurora)",
         "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Detect & replace: rainbow / 3+ color gradients; saturated purple-to-pink, orange-to-pink, or other \"trendy\" blends on heroes, buttons, or large surfaces",
+        "ref": "claude/skills/ai-slop-check.md"
       }
     ],
     "tests": [
@@ -313,6 +333,16 @@
         "repo": "claude-design-system-prompt",
         "rule": "Chapter 6 Color discipline — toned whites/blacks",
         "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "google-labs-code/stitch-skills",
+        "rule": "No pure black (`#000000`) - Off-Black or Zinc-950 only",
+        "ref": "plugins/stitch-utilities/skills/taste-design/resources/DESIGN.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Pure black on pure white produces a 21:1 contrast ratio — far beyond the 4.5:1 WCAG requirement — and causes visual fatigue on extended reading.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -446,6 +476,16 @@
         "repo": "anti-slop",
         "rule": "R-31 Every decision must have a reason",
         "ref": "antislop.md"
+      },
+      {
+        "repo": "evalstate/fast-agent",
+        "rule": "Raw hex color - use a design-system color token via var(). (no-restricted-syntax: Literal[value=/#[0-9a-fA-F]{3,8}\\b/])",
+        "ref": "design/fast-agent-system/_adherence.oxlintrc.json"
+      },
+      {
+        "repo": "lcsxu/zero-slop",
+        "rule": "Components bypass established tokens with raw hex, arbitrary Tailwind values, or local shadow/radius/color scales.",
+        "ref": "skills/no-slop/references/ai-slop-patterns.md"
       }
     ],
     "tests": [
@@ -491,6 +531,11 @@
         "repo": "hallmark",
         "rule": "Gate 24 named spacing scale",
         "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "evalstate/fast-agent",
+        "rule": "Raw px value - use a design-system spacing token via var(). (no-restricted-syntax: Literal[value=/\\b\\d+px\\b/])",
+        "ref": "design/fast-agent-system/_adherence.oxlintrc.json"
       }
     ],
     "tests": [
@@ -663,6 +708,11 @@
         "repo": "anti-slop",
         "rule": "Typeface Chosen Without Reason",
         "ref": "skills/antislop-ui/SKILL.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Inter is the default in Figma, most component libraries, and a majority of modern web projects. Every AI SaaS page looks identical because they all use Inter at the same weights.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -863,6 +913,16 @@
         "repo": "anti-slop",
         "rule": "R-06 Typography (uppercase labels with extreme letter-spacing)",
         "ref": "antislop.md"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "['FAIL', 'eyebrow', /class(Name)?\\s*=\\s*[\"'`{][^\"'`}]*\\b(eyebrow|kicker|overline|pretitle|pre-title|suptitle|sup-title|tagline-label|section-label|section-tag)\\b|\\.(eyebrow|kicker|overline|pretitle|section-label|section-tag)\\b\\s*[{,]/, 'Eyebrow / kicker label above a heading.']",
+        "ref": "skills/taste-skill/scripts/lint.mjs"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "Eyebrow kickers (tiny uppercase tracked label) above every section",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -1210,6 +1270,11 @@
         "repo": "kill-ai-slop",
         "rule": "18 Rounded-square icon tiles",
         "ref": "skill/references/taxonomy.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Repeated icon-above-heading pattern with all icons the same size, same colored circle background, same spacing. Three to six instances in a row.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -1260,6 +1325,11 @@
         "repo": "hallmark",
         "rule": "Card-in-card anti-pattern",
         "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Count nesting levels of bordered/shadowed containers. More than two levels of visible \"card-ness\" is always wrong.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -1314,6 +1384,11 @@
       {
         "repo": "claude-design-system-prompt",
         "rule": "Rule 3 Cards — reserve border-left:4px for semantic emphasis",
+        "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "`border-radius: 12px` + `border-left: 4px solid` used as the *default* card style — this combination reads as \"default SaaS template.\"",
         "ref": "claude/skills/ai-slop-check.md"
       }
     ],
@@ -1405,6 +1480,11 @@
         "repo": "hallmark",
         "rule": "Glassmorphism without purpose",
         "ref": "skills/hallmark/references/anti-patterns.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "Glassmorphism as default (decorative `backdrop-filter` cards)",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -1500,6 +1580,16 @@
         "repo": "claude-design-system-prompt",
         "rule": "Rule 3 Cards — subtle shadow",
         "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "nghiahsgs/skills-slides",
+        "rule": "Do not apply a single `box-shadow` value uniformly to every card, button, and container on a slide.",
+        "ref": "references/anti-slop-checklist.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Every container has `rounded-xl shadow-lg` or `rounded-2xl shadow-md`. Border-radius always 12-16px. Shadow is always Tailwind's default multi-layer neutral shadow. Nothing has sharp corners, nothing has custom shadow values.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -2060,6 +2150,11 @@
         "repo": "hallmark",
         "rule": "Gate 9 sections separated only by equal whitespace",
         "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Check if more than 3 element types share identical padding/gap values. Measure section spacing — if every section has identical vertical padding, it is uniform slop.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -2283,6 +2378,11 @@
         "repo": "claude-design-system-prompt",
         "rule": "Chapter 11 Transitions — 0.2–0.3s, specify properties",
         "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "`transition: all` | list the animated properties",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -2588,6 +2688,11 @@
         "repo": "claude-design-system-prompt",
         "rule": "Rule 2 Emoji — functional or brand-driven only",
         "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Detect & remove: emoji prepending headlines, buttons, or list items (`🚀 Get Started`)",
+        "ref": "claude/skills/ai-slop-check.md"
       }
     ],
     "tests": [
@@ -2768,6 +2873,11 @@
         "repo": "claude-design-system-prompt",
         "rule": "Rule 4 Imagery — real, licensed, or honest placeholder",
         "ref": "claude/skills/ai-slop-check.md"
+      },
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Or overfamiliar stock photos: the open-plan office high-five, the headset-wearing support agent, the laptop-on-a-cafe-table hero shot.",
+        "ref": "skills/svvarm/references/slop.md"
       }
     ],
     "tests": [
@@ -2984,6 +3094,11 @@
         "repo": "claude-design-system-prompt",
         "rule": "Chapter 11 form feedback / errors name the thing",
         "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Never use \"Uh oh,\" \"Oh no,\" or \"There seems to be a problem.\" State cause and fix.",
+        "ref": "skills/i-have-adhd/SKILL.md §8 (Matter-of-fact tone for errors)"
       }
     ],
     "tests": [
@@ -3125,6 +3240,11 @@
         "repo": "claude-design-system-prompt",
         "rule": "Chapter 5 made-up stats ('47% of users')",
         "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "The hero-metric template (big number, small label, stat row, gradient accent)",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -3387,6 +3507,11 @@
       {
         "repo": "design-taste-frontend",
         "rule": "PREMIUM-CONSUMER PALETTE BAN (mandatory, second-most-recurring AI-tell)",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "Cream/warm-beige body background as a \"warmth\" reflex (OKLCH L 0.84–0.97, C <0.06, hue 40–100)",
         "ref": "SKILL.md"
       }
     ],
@@ -4035,6 +4160,11 @@
         "repo": "design-taste-frontend",
         "rule": "THE LILA RULE: the AI Purple/Blue glow aesthetic is discouraged as a default",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "lcsxu/zero-slop",
+        "rule": "Dark neon backgrounds with cyan/violet orbs.",
+        "ref": "skills/no-slop/references/ai-slop-patterns.md"
       }
     ],
     "tests": [
@@ -4235,6 +4365,11 @@
         "repo": "frontend-design-deslop",
         "rule": "Never animate from scale(0). Start from about 0.9 to 0.97 so the element already has a shape",
         "ref": "references/motion.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "`scale(0)` entrances | start at `scale(0.95)` + opacity",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -4561,6 +4696,11 @@
         "repo": "redesign-existing-projects",
         "rule": "Generic card look (border + shadow + white background)",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "['FAIL', 'shadow', /box-shadow\\s*:\\s*(?!none|0 0 #0000|var\\(--tw)|\\bshadow(-(sm|md|lg|xl|2xl|inner|\\[[^\\]]+\\]))?(?=[\"'\\s`])(?<!-shadow)|drop-shadow\\(|\\bdrop-shadow(-|\\b)|text-shadow\\s*:\\s*(?!none)/, 'Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may.']",
+        "ref": "skills/taste-skill/scripts/lint.mjs"
       }
     ],
     "tests": [
@@ -4611,6 +4751,11 @@
         "repo": "stitch-design-taste",
         "rule": "Full-height sections must use min-h-[100dvh] — never h-screen (iOS Safari catastrophic jump)",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "lcsxu/zero-slop",
+        "rule": "Full viewport hero traps the page.",
+        "ref": "skills/no-slop/references/ai-slop-patterns.md"
       }
     ],
     "tests": [
@@ -4655,6 +4800,11 @@
         "repo": "redesign-existing-projects",
         "rule": "Arbitrary z-index values like 9999. Establish a clean z-index scale in the theme/variables",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "TheOrcDev/shadscan",
+        "rule": "`Dialog`, `Sheet`, `Drawer`, `AlertDialog`, `DropdownMenu`, `Popover`, `Tooltip`, `HoverCard` handle their own stacking. Never add `z-50` or `z-[999]`.",
+        "ref": ".agents/skills/shadcn/rules/styling.md"
       }
     ],
     "tests": [
@@ -4945,6 +5095,11 @@
         "repo": "apple-design",
         "rule": "Direct, specific labels beat safe generic ones. Name nav items for their contents ('Progress', 'Library'), not vague umbrellas ('Home')",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Charts Without a Question — a line or donut chart with a generic title (\"Overview\", \"Performance\") and no axis the reader can act on; put the question the chart answers in the title",
+        "ref": "skills/antislop-ui/SKILL.md#charts-without-a-question"
       }
     ],
     "tests": [
@@ -4990,5 +5145,1098 @@
         "expect": "pass"
       }
     ]
+  },
+  {
+    "id": "ZS-UI-118",
+    "domain": "ui",
+    "title": "Semantic token named by appearance, component or number",
+    "summary": "A semantic token names a job. `--color-blue-button`, `--color-sidebar-gray`, `--color-light-gray`, `--color-text-2` and `--color-gray-hover` name a value, a screen or a position instead, so they lie the first time the brand or the theme changes.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "--color-(?:(?:light|dark|pale|bright|deep)-[a-z-]+|(?:red|blue|green|gray|grey|amber|orange|purple|pink|indigo|violet|yellow|teal|cyan|slate|zinc|neutral|stone|white|black)-[a-z-]*(?:button|sidebar|navbar|header|footer|card|modal|panel|badge|chip|tooltip)\\b|(?:sidebar|navbar|header|footer|card|modal|panel|hero|toolbar|nav)-(?:light|dark|gray|grey|red|blue|green|amber|orange|purple|pink|indigo|violet|teal|cyan|slate|zinc|neutral|stone|white|black)\\b|[a-z-]+-[1-9]\\b|(?:red|blue|green|gray|grey|amber|orange|purple|pink|indigo|violet|yellow|teal|cyan|slate|zinc|neutral|stone)-(?:hover|active|focus|disabled)\\b)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`--color-blue-button` | Appearance at the semantic tier; lies the moment the brand changes | Instead: `--color-accent-solid`",
+        "ref": "skills/better-colors/token-naming.md#anti-patterns"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`--color-sidebar-gray` | Named for where it was used first; the second usage makes it nonsense",
+        "ref": "skills/better-colors/token-naming.md#anti-patterns"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`--color-light-gray` | Lies in dark mode, where it is the dark one",
+        "ref": "skills/better-colors/token-naming.md#anti-patterns"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`--color-text-2` | Numbered semantics carry no meaning; nobody can guess what `3` would be",
+        "ref": "skills/better-colors/token-naming.md#anti-patterns"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`--color-gray-hover` | Mixes a hue with a state and belongs to no tier",
+        "ref": "skills/better-colors/token-naming.md#anti-patterns"
+      }
+    ],
+    "tests": [
+      {
+        "label": "appearance at the semantic tier fails",
+        "input": "--color-blue-button: var(--blue-600);",
+        "expect": "fail"
+      },
+      {
+        "label": "appearance-word token fails",
+        "input": "--color-light-gray: #e5e7eb;",
+        "expect": "fail"
+      },
+      {
+        "label": "numbered semantics fail",
+        "input": "--color-text-2: var(--neutral-700);",
+        "expect": "fail"
+      },
+      {
+        "label": "hue plus state fails",
+        "input": "--color-gray-hover: #f3f4f6;",
+        "expect": "fail"
+      },
+      {
+        "label": "role-named semantics pass",
+        "input": "--color-accent-solid: var(--blue-600); --color-text-secondary: var(--neutral-700); --color-border-subtle: var(--neutral-200);",
+        "expect": "pass"
+      },
+      {
+        "label": "ramp primitives and component-tier tokens pass",
+        "input": "--color-blue-600: #2563eb; --color-button-danger-bg: var(--red-600);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Ramp primitives (--blue-600, --color-blue-600) and component-level tokens that lead with the component (--color-button-danger-bg) stay clean; the pattern targets appearance-first, component-embedded, numbered and hue-plus-state names."
+  },
+  {
+    "id": "ZS-UI-119",
+    "domain": "ui",
+    "title": "A token used outside its role",
+    "summary": "Borrowing a token because its value works today removes the theming seam: a separator token used as a text color loses contrast the first time borders get lighter, and a text token used as a background takes the theme's text color into the surfaces. Add a token for the missing role instead.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|[;{\\s])color\\s*:\\s*var\\(\\s*--color-(?:border|separator|divider|line)(?:-[a-z]+)?\\s*\\)|\\bbackground(?:-color)?\\s*:\\s*var\\(\\s*--color-text(?:-[a-z]+)?\\s*\\)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Bad: separator token repurposed as a text color because it looked right — `.caption { color: var(--color-border); }`",
+        "ref": "skills/better-colors/color-usage.md#use-tokens-in-their-role"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Bad: text token repurposed as a background — `.tag { background: var(--color-text-secondary); }`",
+        "ref": "skills/better-colors/color-usage.md#use-tokens-in-their-role"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "A `border` or `separator` token inside `color:`, or a `text` token inside `background:` | Add a token for the missing role",
+        "ref": "skills/better-colors/SKILL.md#before-you-finish"
+      }
+    ],
+    "tests": [
+      {
+        "label": "separator token as text color fails",
+        "input": ".caption { color: var(--color-border); }",
+        "expect": "fail"
+      },
+      {
+        "label": "text token as background fails",
+        "input": ".tag { background: var(--color-text-secondary); }",
+        "expect": "fail"
+      },
+      {
+        "label": "role-correct declinations pass",
+        "input": ".caption { color: var(--color-text-secondary); } .tag { background: var(--color-bg-surface); } .field { border-color: var(--color-border); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The leading (?:^|[;{\\s]) keeps background-color/border-color from satisfying the color: half, so those keep their own roles. The two upstream Bad examples are used as the failing fixtures."
+  },
+  {
+    "id": "ZS-UI-120",
+    "domain": "ui",
+    "title": "No fake-but-plausible filler in fields and columns",
+    "summary": "A form field or table column filled with `johndoe@example.com` or a tagline like \"Let's build something\" is fabricated content disguised as real: it reads fine in a mockup and falls apart the moment a real user looks. Leave the cell empty or label the placeholder for what it is.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:joh?n(?:ny)?|jane|sarah|michael|david|emily|mary|alex|jessica|robert)[._-]?(?:doe|smith|chen|johnson|williams|brown|miller|jones|garcia|lee|wilson|taylor)?@example\\.(?:com|org|net)\\b|\\blet'?s build something\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Filler Data in Fields and Columns — empty form fields and table columns filled with fake but plausible data: `John Doe`, `johndoe@example.com`, \"Let's build something\", phone numbers and dates that belong to nobody. It is the strongest tell that the screen was generated, not built",
+        "ref": "skills/antislop-ui/SKILL.md#filler-data-in-fields-and-columns"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Generic filler copy like \"Let's build something\" is buzzword slop and does not belong in a data column (R-16)",
+        "ref": "skills/antislop-ui/SKILL.md#filler-data-in-fields-and-columns"
+      }
+    ],
+    "tests": [
+      {
+        "label": "person email as column value fails",
+        "input": "<td className=\"p-2 text-sm\">johndoe@example.com</td>",
+        "expect": "fail"
+      },
+      {
+        "label": "dotted name email fails",
+        "input": "<td>jane.doe@example.com</td>",
+        "expect": "fail"
+      },
+      {
+        "label": "tagline as a field placeholder fails",
+        "input": "<textarea name=\"message\" placeholder=\"Let's build something\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "generic labelled placeholders pass",
+        "input": "<td>email@example.com</td><textarea name=\"message\" placeholder=\"Drop your message here...\" />",
+        "expect": "pass"
+      }
+    ],
+    "notes": "`email@example.com`, `Your Name` and \"Drop your message here...\" are the placeholders upstream sanctions and stay clean; the rule fires on personal-name addresses and tagline filler. Domain is ui because field values and table cells live in markup, which only the ui and a11y engines scan."
+  },
+  {
+    "id": "ZS-UI-121",
+    "domain": "ui",
+    "title": "Assistant-brand cream / terracotta palette (Claude hexes)",
+    "summary": "The warm 'editorial' remedy to the indigo-gradient look became the most recognisable generated palette of all: a yellow-cream ground with a terracotta / rust-orange accent. taste-skill's lint fails these exact hexes by name ('Claude-brand cream / terracotta colour') and its inspector classifies any colour by HSL family (cream = hue 22-62, s>=0.16, l>=0.88; terracotta = hue 6-30, s 0.38-0.85, l 0.42-0.72), failing terracotta alone and cream+terracotta together because the pairing reads as an assistant brand, not the client's.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "#d97757",
+        "#da7756",
+        "#c15f3c",
+        "#cc785c",
+        "#bd5d3a",
+        "#f0eee6",
+        "#faf9f5",
+        "#f5f4ed",
+        "#eeece2",
+        "#e8e6dc"
+      ]
+    },
+    "source": [
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "['FAIL', 'claude-palette', /#(d97757|da7756|c15f3c|cc785c|bd5d3a|f0eee6|faf9f5|f5f4ed|eeece2|e8e6dc)\\b/i, 'Claude-brand cream / terracotta colour.']",
+        "ref": "skills/taste-skill/scripts/lint.mjs"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "Cream + terracotta palette (...) 'Re-draw the palette from the library. This pairing reads as an assistant brand, not yours.' / 'Terracotta / rust-orange accent (...)'",
+        "ref": "skills/taste-skill/scripts/lib/rules.mjs"
+      }
+    ],
+    "tests": [
+      {
+        "label": "claude cream + terracotta hexes fail",
+        "input": "<div style=\"background:#faf9f5;color:#d97757\">Warm cream ground with a terracotta accent</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "neutral ground with off-black ink passes",
+        "input": "<div style=\"background:#ffffff;color:#18181b\">Neutral ground, off-black ink, one blue accent</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hexes only - these are the exact values the upstream lint bans by name. ZS-UI-076 already carries a different warm-craft hex set (beige+brass+espresso) and ZS-UI-003 the Tailwind amber/stone cozy palette; this adds the assistant-brand family. The upstream HSL family test (cream/terracotta ranges) is not expressible as regex and stays with the semantic tier."
+  },
+  {
+    "id": "ZS-UI-122",
+    "domain": "ui",
+    "title": "Text-shadow as a legibility crutch",
+    "summary": "An inspector FAIL in taste-skill: any text-shadow on the page. Legibility over a photograph is fixed with a neutral scrim or a different crop, never with a shadow behind the glyphs - it reads as a 2010s template and is the same 'shadow on something at rest' tell as a card shadow.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\btext-shadow\\s*:(?!\\s*none\\b)[^;}]+|\\[text-shadow:[^\\]]+\\]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "if (s.textShadow) add('FAIL', 'text-shadow', `${s.textShadow} text-shadow(s).`, 'Remove; fix legibility with a scrim or a different crop.');",
+        "ref": "skills/taste-skill/scripts/lib/rules.mjs"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "['FAIL', 'shadow', /box-shadow\\s*:\\s*(?!none|0 0 #0000|var\\(--tw)|\\bshadow(-(sm|md|lg|xl|2xl|inner|\\[[^\\]]+\\]))?(?=[\"'\\s`])(?<!-shadow)|drop-shadow\\(|\\bdrop-shadow(-|\\b)|text-shadow\\s*:\\s*(?!none)/, 'Shadow. Elements at rest carry none; only real overlays (menu, dialog, sticky bar) may.']",
+        "ref": "skills/taste-skill/scripts/lint.mjs"
+      }
+    ],
+    "tests": [
+      {
+        "label": "text-shadow on a hero headline fails",
+        "input": ".hero h1 { text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35); }",
+        "expect": "fail"
+      },
+      {
+        "label": "explicit text-shadow: none passes",
+        "input": ".hero h1 { color: var(--ink); }\n@media (prefers-reduced-motion: reduce) { .hero h1 { text-shadow: none; } }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scope: text-shadow only. Card/menu box-shadows are covered by ZS-UI-033/096/106; 'text-shadow: none' is the reset and does not fire."
+  },
+  {
+    "id": "ZS-UI-123",
+    "domain": "ui",
+    "title": "Thin rules & divider lines (hr / divide-* / h-px / 1px border)",
+    "summary": "taste-skill's house rule is 'No thin rules. No hairline dividers, no 1px outlined boxes, no grid lines, crosshairs or crop marks' - separate with space, a background-tone step or scale instead. Its lint fails <hr>, Tailwind divide-x/divide-y, h-px/w-px, one-sided 1px borders (border-t/b/r/l/x/y) and height: 1px. Lines belong to real tables and form fields, not to page structure.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<hr\\b|\\bdivide-[xy](?:-\\d+)?(?![\\-\\w])|\\b(?:h|w)-px\\b|border-(?:top|bottom|left|right)\\s*:\\s*(?:0?\\.5|1)px\\b|\\bborder-[tblrxy](?![\\-\\w])|\\bheight\\s*:\\s*1px\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "['FAIL', 'hairline', /<hr\\b|\\bdivide-[xy](-\\d|\\b)|\\b(h|w)-px\\b|border-(top|bottom|left|right)\\s*:\\s*(0?\\.5|1)px|\\bborder-[tblrxy](?![-\\w])|\\bborder-[tblrxy]-(?!0\\b|none)\\[?1?(px)?\\]?(?=[\"'\\s`])|height\\s*:\\s*1px/, 'Thin rule / divider line. Separate with space, tone or scale; lines belong to real tables and form fields.']",
+        "ref": "skills/taste-skill/scripts/lint.mjs"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "**No thin rules.** No hairline dividers, no 1px outlined boxes, no grid lines, crosshairs or crop marks. | Space. A step in background tone. A change of scale. A filled shape.",
+        "ref": "skills/taste-skill/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "divide-y list separators fail",
+        "input": "<ul class=\"divide-y divide-gray-100\"><li>One</li><li>Two</li></ul>",
+        "expect": "fail"
+      },
+      {
+        "label": "a real table keeps its lines",
+        "input": "<table class=\"spec-sheet\"><tr><td>Weight</td><td>4.2 kg</td></tr></table>\n<section class=\"py-24\"><h2>The work</h2><p>Separated by space and a tone step.</p></section>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Pattern mirrored from the upstream lint, re-ordered so each alternative is single-line safe. ZS-UI-096 (hairline + diffuse shadow on one element) and ZS-UI-106 (1px gray card border) cover the bordered-card case; this covers the standalone divider forms. Table/form-field lines are expected: mark a real data table with an explicit class or table markup."
+  },
+  {
+    "id": "ZS-UI-124",
+    "domain": "ui",
+    "title": "Scroll hijacking / smooth-scroll library",
+    "summary": "taste-skill bans it outright in its motion reference: 'No scroll hijacking, no smooth-scroll library by default, no custom cursor. They cost usability.' A page that only reveals itself through a JS scroll engine (Lenis, Locomotive, smooth-scrollbar, ScrollSmoother) is the gallery-clone tell; native scrolling is the default and the page must read with the library removed.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\blenis\\b|locomotive-scroll|data-scroll-container|data-scroll-speed|smooth-scrollbar|ScrollSmoother|scroll-hijack",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "No scroll hijacking, no smooth-scroll library by default, no custom cursor. They cost usability, which is 30% of an Awwwards score and the line most winners score lowest on.",
+        "ref": "skills/taste-skill/references/motion.md"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "The page's ordinary scrolling does the work; nothing is hijacked.",
+        "ref": "skills/taste-skill/library/motions.json"
+      }
+    ],
+    "tests": [
+      {
+        "label": "lenis smooth-scroll engine fails",
+        "input": "<script>import Lenis from 'lenis'; const lenis = new Lenis({ smoothWheel: true, duration: 1.2 });</script>",
+        "expect": "fail"
+      },
+      {
+        "label": "native scrolling passes",
+        "input": "<main class=\"page\"><p>Native scrolling only; scroll snapping on the drag row, nothing hijacked.</p></main>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-114 already covers the sibling half of the same house rule (custom cursors). Sticky-position and scroll-linked (animation-timeline) compositions are allowed upstream and are not matched; `scroll-behavior: smooth` on anchors is deliberately not flagged."
+  },
+  {
+    "id": "ZS-UI-125",
+    "domain": "ui",
+    "title": "Stacked hover effects on one element",
+    "summary": "Hallmark gate 13: more than one hover effect at the same time on the same element (translate + scale + shadow + colour + rotate) is the 'make it feel alive' reflex - the element jumps, glows and recolours at once. One small, consistent response is the ceiling.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bhover:(?:-?translate-[^\\s\"]+|scale-[^\\s\"]+|rotate-[^\\s\"]+)[^\"\\n]{0,80}?\\bhover:(?:shadow[^\\s\"]*|bg-[^\\s\"]+|text-[^\\s\"]+|opacity-[^\\s\"]+|border-[^\\s\"]+|ring-[^\\s\"]+)|\\bhover:(?:shadow[^\\s\"]*|bg-[^\\s\"]+|text-[^\\s\"]+|opacity-[^\\s\"]+|border-[^\\s\"]+|ring-[^\\s\"]+)[^\"\\n]{0,80}?\\bhover:(?:-?translate-[^\\s\"]+|scale-[^\\s\"]+|rotate-[^\\s\"]+)|:hover[^{}]{0,60}\\{[^}]{0,200}?transform\\s*:[^;}]{0,60}(?:translate|scale)[^;}]{0,40};[^}]{0,200}?(?:box-shadow|background-color|background)\\s*:",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "13. Does any element have *more than one* hover effect at the same time (translate + scale + shadow + colour + rotate)?",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "translate + shadow + colour on one link fails",
+        "input": "<a class=\"hover:-translate-y-1 hover:shadow-lg hover:bg-slate-50\">Pricing</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "single colour response passes",
+        "input": "<a class=\"hover:bg-slate-50\">Pricing</a>",
+        "expect": "pass"
+      },
+      {
+        "label": "single transform in CSS passes",
+        "input": ".card:hover { transform: translateY(-2px); }\n.btn:active { transform: scale(0.98); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Three shapes: Tailwind utilities in either order, and the CSS block form (transform + box-shadow/background in the same :hover rule). ZS-UI-052 covers a *uniform* hover-scale/translate across many elements; this covers the stacking on a single element. Focus/active states are out of scope."
+  },
+  {
+    "id": "ZS-UI-126",
+    "domain": "ui",
+    "title": "Disabled state signalled by opacity alone",
+    "summary": "Hallmark gate 39: a disabled control needs three channels - the reduced opacity, the cursor, and the native disabled attribute (or aria-disabled). Opacity alone leaves a control that still looks clickable: no cursor change, no explanation. The same gate fails border-width shifts between input states, so state styling must never move the box.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?!.*(?:not-allowed|notAllowed)).*(?:disabled:opacity-[1-9]\\d?|(?::disabled|\\[disabled\\])[^{}]{0,40}\\{[^}]{0,120}?opacity\\s*:\\s*0?\\.\\d+)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "**Disabled signalled by `opacity` alone** - disabled needs three channels: `opacity: 0.55` AND `cursor: not-allowed` AND the native `disabled` attribute (or `aria-disabled=\"true\"`).",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "disabled by opacity alone fails",
+        "input": ".btn:disabled { opacity: 0.5; }",
+        "expect": "fail"
+      },
+      {
+        "label": "opacity + not-allowed cursor passes",
+        "input": ".btn:disabled { opacity: 0.55; cursor: not-allowed; }",
+        "expect": "pass"
+      },
+      {
+        "label": "tailwind disabled utilities with cursor pass",
+        "input": "<button class=\"disabled:opacity-50 disabled:cursor-not-allowed\" type=\"submit\">Save</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The rule reads the whole line: a `not-allowed` / `notAllowed` cursor anywhere on the same line clears it (the class-attribute or the CSS block is normally one line). The native `disabled` attribute itself is not checked here - add it in review. aria-disabled is not matched, per the upstream gate."
+  },
+  {
+    "id": "ZS-UI-127",
+    "domain": "ui",
+    "title": "Image-bearing grid track without minmax(0, 1fr)",
+    "summary": "Hallmark gate 50: a plain `1fr` track is `minmax(auto, 1fr)`, whose `auto` minimum is the widest item's intrinsic width - a 1200 px screenshot inside that track pushes the whole layout past the viewport on phones. Any grid track holding an image must be written `minmax(0, 1fr)` (one character per track).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:<(?:img|picture|video)\\b[^\\n]{0,240}?(?:grid-template-columns\\s*:\\s*(?![^;{}]*minmax\\()(?=[^;{}]*\\b1fr\\b)|grid-cols-\\[(?![^\\]]*minmax\\()(?=[^\\]]*\\b1fr\\b)))|(?:(?:grid-template-columns\\s*:\\s*(?![^;{}]*minmax\\()(?=[^;{}]*\\b1fr\\b)|grid-cols-\\[(?![^\\]]*minmax\\()(?=[^\\]]*\\b1fr\\b))[^\\n]{0,240}?<(?:img|picture|video)\\b)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "50. **Image-bearing grid track without `minmax(0, 1fr)`.** ... Plain `1fr` resolves to `minmax(auto, 1fr)`, where `auto` minimum is the largest content's intrinsic width ... The fix is one character per track: `1fr` -> `minmax(0, 1fr)`.",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1fr track holding an image fails",
+        "input": "<div class=\"grid\" style=\"grid-template-columns: 1fr 1fr\"><img src=\"/shots/studio.jpg\" alt=\"The studio floor\" /></div>",
+        "expect": "fail"
+      },
+      {
+        "label": "minmax(0, 1fr) track passes",
+        "input": "<div class=\"grid\" style=\"grid-template-columns: minmax(0, 1fr) minmax(0, 1fr)\"><img src=\"/shots/studio.jpg\" alt=\"The studio floor\" /></div>",
+        "expect": "pass"
+      },
+      {
+        "label": "tailwind grid-cols with an image passes",
+        "input": "<div class=\"grid grid-cols-2 gap-6\"><img src=\"/shots/studio.jpg\" alt=\"The studio floor\" /></div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Requires the declaration and the <img>/<picture>/<video> to be on the same line (the ui engine scans line by line); inline styles and compact markup are covered. Tailwind's numeric `grid-cols-2` already compiles to minmax(0, 1fr), so only hand-written `1fr` tracks and the `grid-cols-[1fr_2fr]` bracket form are flagged."
+  },
+  {
+    "id": "ZS-UI-128",
+    "domain": "ui",
+    "title": "All-caps display heads with line-height below 1",
+    "summary": "Hallmark gate 55: uppercase glyphs have no descenders and their cap-tops sit at the very top of the line box, so at line-height 0.94 the cap-tops of the next line visibly collide with the baseline of the line above when the title wraps. The floor for all-caps display heads is 1.0 (1.02-1.08 recommended) - the old Manifesto/Brutal 0.9x leading is the tell.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:text-transform\\s*:\\s*uppercase[^}]{0,160}?\\bline-height\\s*:\\s*0?\\.\\d+|\\bline-height\\s*:\\s*0?\\.\\d+[^}]{0,160}?text-transform\\s*:\\s*uppercase|\\buppercase\\b[^\"\\n]{0,80}?\\bleading-\\[0?\\.\\d+\\]|\\bleading-\\[0?\\.\\d+\\][^\"\\n]{0,80}?\\buppercase\\b)",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "55. **All-caps display heads with line-height < 1.0 -> cap-collision on wrap.** ... **Floor for all-caps display heads is `line-height: 1.0`; recommended `1.02-1.08`.**",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "uppercase at 0.94 leading fails",
+        "input": ".hero__display { text-transform: uppercase; line-height: 0.94; letter-spacing: -0.02em; }",
+        "expect": "fail"
+      },
+      {
+        "label": "uppercase at 1.04 leading passes",
+        "input": ".hero__display { text-transform: uppercase; line-height: 1.04; letter-spacing: -0.02em; }",
+        "expect": "pass"
+      },
+      {
+        "label": "tailwind leading-none with uppercase passes",
+        "input": "<h2 class=\"uppercase leading-none tracking-tight text-5xl\">The work</h2>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Both orders of the declarations and the Tailwind `uppercase` + `leading-[0.9]` form. `leading-none` is exactly 1.0 - the floor - so it passes; only sub-1.0 values (`leading-[.9]`, `line-height: 0.94`) fire. CSS keyword/size forms of leading are not evaluated."
+  },
+  {
+    "id": "ZS-UI-129",
+    "domain": "ui",
+    "title": "Generic browser serif stack (Times New Roman / Georgia / Garamond / Palatino)",
+    "summary": "The stitch design standard bans the default browser serif stacks by name: Times New Roman, Georgia, Garamond, Palatino - 'Never use default browser serif stacks'. A serif face is the cheapest way to look editorial; if serif is genuinely needed it must be a distinctive chosen face, not the fallback that happened to be installed.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:font-family|fontFamily)\\s*:\\s*[^;{}]{0,140}?\\b(?:Times New Roman|Times|Georgia|Garamond|Palatino)\\b|font-\\[[\"']?(?:Georgia|Times[^\\]]*)\\]",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "google-labs-code/stitch-skills",
+        "rule": "Generic serif fonts (`Times New Roman`, `Georgia`, `Garamond`, `Palatino`) - BANNED. If serif is needed for editorial/creative, use only distinctive modern serifs like `Fraunces`, `Gambarino`, `Editorial New`, or `Instrument Serif`. Never use default browser serif stacks.",
+        "ref": "plugins/stitch-utilities/skills/taste-design/resources/DESIGN.md"
+      },
+      {
+        "repo": "google-labs-code/stitch-skills",
+        "rule": "No generic serif fonts (`Times New Roman`, `Georgia`, `Garamond`) - if serif is needed, use distinctive modern serifs only (`Fraunces`, `Instrument Serif`)",
+        "ref": "plugins/stitch-utilities/skills/taste-design/resources/DESIGN.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "browser serif stack fails",
+        "input": "body { font-family: Georgia, \"Times New Roman\", serif; }",
+        "expect": "fail"
+      },
+      {
+        "label": "tokenised family passes",
+        "input": "body { font-family: var(--font-body), system-ui, sans-serif; }",
+        "expect": "pass"
+      },
+      {
+        "label": "tailwind arbitrary serif fails",
+        "input": "<h1 className=\"font-[Georgia] text-6xl\">Oak stools</h1>",
+        "expect": "fail"
+      }
+    ],
+    "notes": "Only within a family declaration (`font-family` / `fontFamily` / the Tailwind arbitrary `font-[...]` form). ZS-UI-015 bans the default sans families (Inter, Roboto, Poppins...), ZS-UI-017 the trendy display serifs (Playfair, Lora...) - the browser-default serif stack was the remaining hole. Bare Tailwind `font-serif` (the same default stack, unless remapped in the config) is left to review."
+  },
+  {
+    "id": "ZS-UI-130",
+    "domain": "ui",
+    "title": "Placeholder image hosts shipped as final imagery",
+    "summary": "The stitch design standard bans broken Unsplash links and placeholder services in shipped output. A `via.placeholder.com` / `placehold.co` / `dummyimage` / `loremflickr` / `source.unsplash.com` URL in an <img> is a grey box with a size number in production - the honest alternatives are a real photograph, a local asset, or a locally seeded `picsum.photos/seed/...`.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "source\\.unsplash\\.com|via\\.placeholder\\.com|\\bplaceholder\\.com\\b|placehold\\.co|dummyimage\\.com|loremflickr\\.com|lorempixel\\.com|placekitten\\.com|fakeimg\\.pl",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "google-labs-code/stitch-skills",
+        "rule": "No broken Unsplash links - use `picsum.photos/seed/{id}/800/600` or SVG UI Avatars",
+        "ref": "plugins/stitch-utilities/skills/taste-design/resources/DESIGN.md"
+      },
+      {
+        "repo": "google-labs-code/stitch-skills",
+        "rule": "No generic names ... No fabricated data or statistics - never generate metrics, performance numbers, uptime percentages, response times, or any data not explicitly provided by the user.",
+        "ref": "plugins/stitch-utilities/skills/taste-design/resources/DESIGN.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "placeholder service image fails",
+        "input": "<img src=\"https://via.placeholder.com/1200x800\" alt=\"Product screenshot\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "local asset passes",
+        "input": "<img src=\"/assets/storefront.jpg\" alt=\"The shopfront on Oak Street\" />",
+        "expect": "pass"
+      },
+      {
+        "label": "seeded picsum placeholder passes",
+        "input": "<img src=\"https://picsum.photos/seed/storefront/1200/800\" alt=\"Product photograph\" />",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Stays warning: a placeholder host inside a clearly-labelled prototype or fixture is legitimate, and the upstream names picsum as the sanctioned stand-in. ZS-UI-062/073 (stock art, assumed logos/avatars) are semantic; this is the machine-checkable URL half."
+  },
+  {
+    "id": "ZS-UI-131",
+    "domain": "ui",
+    "title": "Tilted data or copy (rotation on text elements)",
+    "summary": "The fast-agent design system's deslop list bans tilt on anything but stickers: 'Tilted data or copy - Only stickers tilt. Numbers stay level.' A rotated heading, paragraph, stat or table cell is the cheap 'designed' gesture - the rotation utility is meant for a sticker/burst asset, not for the text the page is made of.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:h[1-6]|p|span|li|td|th|blockquote|figcaption|a|button)\\b[^>]*class(?:Name)?=\"(?:[^\"]*\\s)?-?rotate-(?:1|2|3|6|12|45)\\b",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "evalstate/fast-agent",
+        "rule": "Tilted data or copy - Only stickers tilt. Numbers stay level.",
+        "ref": "design/fast-agent-system/guidelines/deslop.html"
+      },
+      {
+        "repo": "evalstate/fast-agent",
+        "rule": "Sizes: sm 13px, md 15px, lg 17px. Never tilt a button.",
+        "ref": "design/fast-agent-system/components/actions/Button.prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rotated heading fails",
+        "input": "<h2 class=\"text-4xl tracking-tight -rotate-2\">The work</h2>",
+        "expect": "fail"
+      },
+      {
+        "label": "rotated table cell fails",
+        "input": "<td class=\"tabular-nums rotate-3\">4.2 kg</td>",
+        "expect": "fail"
+      },
+      {
+        "label": "unrotated heading passes",
+        "input": "<h2 class=\"text-4xl tracking-tight\">The work</h2>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scoped to text-bearing elements (headings, p, span, li, table cells, quote, figcaption, links, buttons) so decorative sticker/badge markup is untouched, per the upstream 'only stickers tilt'. ZS-UI-053/114/108 cover spinner rotation, custom cursors and z-index; no other rule matches a tilt utility."
+  },
+  {
+    "id": "ZS-UI-132",
+    "domain": "ui",
+    "title": "Framework starter-template copy still visible",
+    "summary": "Ships the scaffold's own identity — `<title>Vite + React</title>`, \"Get started by editing app/page.tsx\", \"Click on the Vite and React logos\". The page reads as the generator's demo, not the product.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "Create Next App|Get started by editing\\s+(?:app|src\\/app)\\/page|Welcome to Vite|Vite \\+ React|click on the Vite and React logos|Generated by create next app"
+    },
+    "source": [
+      {
+        "repo": "TheOrcDev/shadscan",
+        "rule": "/Create Next App|Get started by editing\\s+(?:app|src\\/app)\\/page|Welcome to Vite|Vite \\+ React|click on the Vite and React logos|Generated by create next app/i",
+        "ref": "packages/cli/src/rules/no-starter-copy.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vite starter title",
+        "input": "<title>Vite + React + TS</title>",
+        "expect": "fail"
+      },
+      {
+        "label": "create-next-app body copy",
+        "input": "<p className=\"read-the-docs\">Click on the Vite and React logos to learn more</p>",
+        "expect": "fail"
+      },
+      {
+        "label": "product copy",
+        "input": "<p className=\"read-the-docs\">See the deployment guide for the CI pipeline.</p>",
+        "expect": "pass"
+      },
+      {
+        "label": "real headline",
+        "input": "<h1>Ship your data pipeline in minutes</h1>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Fails the moment scaffold wording is still user-visible; a project that genuinely is a Vite/Next starter can defend it. Only the upstream alternation is matched, so prose that merely discusses Vite is not flagged."
+  },
+  {
+    "id": "ZS-UI-133",
+    "domain": "ui",
+    "title": "<video> without a poster frame",
+    "summary": "A hero or scene video with no `poster` renders as a blank box until the first frame decodes; the most-watched element on the page looks broken for the first second.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<video\\b(?![^>]*\\bposter\\s*=)[^>]*>"
+    },
+    "source": [
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "`<video>` without poster — blank hero until the clip decodes",
+        "ref": "scripts/slopscan.mjs"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hero video without poster",
+        "input": "<video src=\"/scenes/hero.mp4\" autoplay muted loop playsinline></video>",
+        "expect": "fail"
+      },
+      {
+        "label": "hero video with poster",
+        "input": "<video src=\"/scenes/hero.mp4\" poster=\"/scenes/hero-poster.jpg\" autoplay muted loop playsinline></video>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Markup rule (html/jsx/tsx/vue/svelte/astro). A video whose first frame is already inline-encoded can defend the omission; the default is a poster or a still."
+  },
+  {
+    "id": "ZS-UI-134",
+    "domain": "ui",
+    "title": "Autoplaying media that is not muted",
+    "summary": "`autoplay` without `muted` starts sound without a user gesture — the ban is absolute: audio begins on interaction, never on load.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:audio|video)\\b(?=[^>]*\\bautoplay\\b)(?![^>]*\\bmuted\\b)[^>]*>"
+    },
+    "source": [
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "<${m[1].toLowerCase()} autoplay> without muted — sound must start on a user gesture",
+        "ref": "scripts/slopscan.mjs"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unmuted autoplay",
+        "input": "<video src=\"/promo.mp4\" autoplay loop></video>",
+        "expect": "fail"
+      },
+      {
+        "label": "jsx autoPlay camelCase",
+        "input": "<video autoPlay src={clip} playsInline />",
+        "expect": "fail"
+      },
+      {
+        "label": "muted autoplay",
+        "input": "<video src=\"/promo.mp4\" autoplay muted loop></video>",
+        "expect": "pass"
+      },
+      {
+        "label": "user-triggered audio",
+        "input": "<audio controls src=\"/chime.mp3\"></audio>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Complements the a11y rule that autoplaying media needs controls: this one is about audio starting without consent. Case-insensitive match also covers JSX `autoPlay`/`muted`."
+  },
+  {
+    "id": "ZS-UI-135",
+    "domain": "ui",
+    "title": "Button or CTA label longer than four words",
+    "summary": "Over-long labels (\"Click here to get started today\") quadruple the words without adding information; labels shorten to the verb and the object.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:button|Button)\\b[^>]*>\\s*(?:[A-Za-z][A-Za-z'’-]*\\s+){4,}[A-Za-z][A-Za-z'’-]*"
+    },
+    "source": [
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Count words in button labels, form instructions, error messages, and confirmation dialogs. If any label exceeds 4 words, or instructions exceed one line, check for redundancy.",
+        "ref": "skills/svvarm/references/slop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "five-word CTA",
+        "input": "<button className=\"btn-primary\">Click here to get started today</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "six-word CTA",
+        "input": "<Button variant=\"default\">Create your first workspace in seconds</Button>",
+        "expect": "fail"
+      },
+      {
+        "label": "two-word label",
+        "input": "<button className=\"btn-primary\">Get started</button>",
+        "expect": "pass"
+      },
+      {
+        "label": "labelled icon button",
+        "input": "<button type=\"submit\" aria-label=\"Save changes\"><span>Save</span></button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only counts a label whose first five tokens are bare words, so icon-first and expression-based labels pass. A label that must state a consequence (destructive confirm) can exceed four words on purpose."
+  },
+  {
+    "id": "ZS-UI-136",
+    "domain": "ui",
+    "title": "System font stack as the display typeface",
+    "summary": "Setting `system-ui` / `-apple-system` / `ui-sans-serif` as the first family makes the page wear the OS default — the sound of nobody choosing type, and the built-in substitute for a real display face.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:font-family|fontFamily)\\s*:\\s*[\"']?(?:system-ui|-apple-system|BlinkMacSystemFont|ui-sans-serif)\\b"
+    },
+    "source": [
+      {
+        "repo": "nghiahsgs/skills-slides",
+        "rule": "Do not use Inter, Roboto, Arial, system-ui, or -apple-system as the display/heading font.",
+        "ref": "references/anti-slop-checklist.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Avoid: Inter, Roboto, Arial, Fraunces, and bare system stacks as silent defaults",
+        "ref": "claude/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "system-ui heading",
+        "input": "h1 { font-family: system-ui, sans-serif; }",
+        "expect": "fail"
+      },
+      {
+        "label": "apple system stack in a style object",
+        "input": "const type = { fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif' };",
+        "expect": "fail"
+      },
+      {
+        "label": "chosen face with system fallback",
+        "input": "body { font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif; }",
+        "expect": "pass"
+      },
+      {
+        "label": "token reference",
+        "input": "h1 { font-family: var(--font-display); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Fires only when the system stack is the *first* family, so a system fallback after a chosen face is fine. Complements the banned-typeface rule, which lists named families but not the bare OS stacks."
+  },
+  {
+    "id": "ZS-UI-137",
+    "domain": "ui",
+    "title": "Stock Tailwind default palette hexes",
+    "summary": "The framework's own palette served raw — `#6366F1` indigo-500 buttons, `#10B981` emerald-500 success, `#3B82F6` blue-500 links — recognisable as \"no palette decision was made\"; any brand value replaces them.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "#3B82F6",
+        "#8B5CF6",
+        "#6366F1",
+        "#10B981",
+        "#EF4444",
+        "#F59E0B"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "robzilla1738/svvarm",
+        "rule": "Compare hex values against Tailwind defaults. Key suspects: #3B82F6 (blue-500), #8B5CF6 (violet-500), #6366F1 (indigo-500), #10B981 (emerald-500), #EF4444 (red-500), #F59E0B (amber-500)",
+        "ref": "skills/svvarm/references/slop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "emerald-500 success hex",
+        "input": ".badge-success { background: #10B981; }",
+        "expect": "fail"
+      },
+      {
+        "label": "indigo-500 literal in a config",
+        "input": "const brand = \"#6366F1\";",
+        "expect": "fail"
+      },
+      {
+        "label": "token reference",
+        "input": ".btn-primary { background: var(--brand-600); }",
+        "expect": "pass"
+      },
+      {
+        "label": "custom brand green",
+        "input": ".badge-success { background: #2F9E6B; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Fires on any use of these exact hexes, including solid fills and borders. ZS-UI-001 only sees #6366f1/#8b5cf6 inside a gradient or glow string, so this rule covers the solid-button case it misses. A brand that genuinely is indigo/emerald can defend it, but the hex should then come from a token file, not a literal."
+  },
+  {
+    "id": "ZS-UI-138",
+    "domain": "ui",
+    "title": "Hover feedback that only lowers opacity",
+    "summary": "`hover:opacity-*` / `:hover { opacity: 0.7 }` dims the control, which is the same signal the disabled state uses — the element reads as inactive exactly when it becomes interactive.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "hover:opacity-\\d+|:hover[^{}\\n]{0,40}\\{[^{}\\n]{0,80}opacity\\s*:\\s*0?\\.\\d+"
+    },
+    "source": [
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Don't use opacity reduction as hover; it reads as disabled.",
+        "ref": "claude/skills/interaction-states-pass.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "tailwind hover opacity",
+        "input": "<a className=\"hover:opacity-80\" href=\"/docs\">Docs</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "css hover opacity",
+        "input": ".card:hover { opacity: 0.7; }",
+        "expect": "fail"
+      },
+      {
+        "label": "surface-shift hover",
+        "input": ".card:hover { background-color: var(--surface-2); }",
+        "expect": "pass"
+      },
+      {
+        "label": "tailwind hover on a real property",
+        "input": "<a className=\"hover:bg-accent\" href=\"/docs\">Docs</a>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Opacity in a resting/disabled rule is untouched; only the hover path is flagged. Prefer a surface, border or elevation change on hover."
+  },
+  {
+    "id": "ZS-UI-139",
+    "domain": "ui",
+    "title": "UI transition or animation-duration over 500 ms",
+    "summary": "The motion vocabulary tops out at 500 ms (100/200/300/500); routine state changes over half a second read as lag, not polish.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:transition|transition-duration|animation-duration)\\s*:[^;{}\\n]{0,140}?(?<![\\w.])(?:[6-9]\\d{2}|\\d{4,})ms\\b|(?:transition|transition-duration|animation-duration)\\s*:[^;{}\\n]{0,140}?(?<![\\w.])0\\.[6-9]\\d*s\\b|(?:transition|transition-duration|animation-duration)\\s*:[^;{}\\n]{0,140}?(?<![\\w.])[1-9]\\d*(?:\\.\\d+)?s\\b"
+    },
+    "source": [
+      {
+        "repo": "plugin87/ux-ui-agent-skills",
+        "rule": "Motion system — durations, easings, and composite transition presets. UI motion is 100–300ms, never exceeds 500ms.",
+        "ref": "tokens/motion.json"
+      },
+      {
+        "repo": "plugin87/ux-ui-agent-skills",
+        "rule": "Avoid: long durations (> 500ms) on routine UI — feels sluggish.",
+        "ref": "taste/motion-choreography.md"
+      },
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "Durations: button 100–160ms · tooltip 125–200ms · dropdown 150–250ms · modal/drawer 200–500ms · any UI >300ms needs a written reason.",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1.2s drawer transition",
+        "input": ".drawer { transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1); }",
+        "expect": "fail"
+      },
+      {
+        "label": "800ms button transition",
+        "input": "button { transition: background-color 800ms ease-out; }",
+        "expect": "fail"
+      },
+      {
+        "label": "1.5s explicit animation duration",
+        "input": ".toast { animation-duration: 1.5s; }",
+        "expect": "fail"
+      },
+      {
+        "label": "200ms state change",
+        "input": "button { transition: background-color 200ms ease-out; }",
+        "expect": "pass"
+      },
+      {
+        "label": "two in-band durations",
+        "input": "button { transition: opacity 0.2s ease, transform 0.2s ease; }",
+        "expect": "pass"
+      },
+      {
+        "label": "ceiling value 500ms",
+        "input": ".modal { transition: transform 500ms ease-out; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scoped to `transition`/`transition-duration`/`animation-duration` declarations on one line. Spinner/keyframe loops written as shorthand (`animation: spin 800ms linear infinite`, documented at 600–1000 ms) are deliberately out of scope, as are date-like strings because the declaration window stops at `;`. ZS-UI-057 (0.2–0.3s window) and ZS-UI-105 (per-element ms bands) are statistical and therefore silent in the ui engine; this rule is the executable ceiling they describe."
+  },
+  {
+    "id": "ZS-UI-140",
+    "domain": "ui",
+    "title": "Fixed px font-size on headings (no fluid sizing)",
+    "summary": "A heading locked to `48px`/`64px` cannot survive the viewport matrix — enormous on a phone, small on a 4K panel. Heading sizes use `clamp()` or a size token.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:h[1-6]|hero-title|display-title)\\b[^{}\\n]{0,30}\\{[^{}\\n]{0,90}font-size\\s*:\\s*\\d+(?:\\.\\d+)?px"
+    },
+    "source": [
+      {
+        "repo": "nghiahsgs/skills-slides",
+        "rule": "All font sizes must use `clamp(min, preferred, max)` — never fixed `px` or `rem` values on heading elements.",
+        "ref": "references/anti-slop-checklist.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "h1 locked to 64px",
+        "input": "h1 { font-size: 64px; }",
+        "expect": "fail"
+      },
+      {
+        "label": "hero-title locked to 72px",
+        "input": ".hero-title { font-size: 72px; line-height: 1.05; }",
+        "expect": "fail"
+      },
+      {
+        "label": "fluid clamp",
+        "input": "h1 { font-size: clamp(2rem, 8vw, 6rem); }",
+        "expect": "pass"
+      },
+      {
+        "label": "size token",
+        "input": "h1 { font-size: var(--title-size); }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hygiene lock: matches a literal px size declared on an `h1`–`h6`/`hero-title`/`display-title` selector. `var(...)`, `clamp(...)` and rem/es values pass. Overlaps ZS-UI-021 only for 50–99px display sizes; this rule also catches mid-range fixed headings (e.g. `h2 { font-size: 32px }`) that the display-headline rule never sees, and its fix is fluid sizing rather than a smaller display size."
+  },
+  {
+    "id": "ZS-UI-141",
+    "domain": "ui",
+    "title": "Viewport-width containers (w-screen / 100vw / fixed px width)",
+    "summary": "`w-screen`, `width: 100vw` and `w-[1200px]` ignore the scrollbar and force horizontal overflow on mobile; layouts use `w-full` inside a max-width container instead.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<!max-)\\bw-screen\\b|(?<!max-)\\bw-\\[\\d{3,}px\\]|width\\s*:\\s*100vw\\b"
+    },
+    "source": [
+      {
+        "repo": "TheOrcDev/shadscan",
+        "rule": "CLASS_OVERFLOW_RISK_PATTERN = /^(?:[\\w-]+:)*!?(?:w-screen|min-w-(?:screen|\\[[^\\]\\s]+\\])|w-\\[\\d{3,}px\\]|overflow-x-visible)$/i",
+        "ref": "packages/cli/src/rules/mobile-overflow-absent.ts"
+      },
+      {
+        "repo": "lcsxu/zero-slop",
+        "rule": "rg -n \"min-h-screen|h-screen|w-screen|overflow-hidden|blur-|backdrop-blur|filter|drop-shadow\" src app pages components",
+        "ref": "skills/no-slop/references/ai-slop-patterns.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "w-screen section",
+        "input": "<section className=\"w-screen bg-ink text-paper\">",
+        "expect": "fail"
+      },
+      {
+        "label": "100vw hero",
+        "input": ".hero { width: 100vw; }",
+        "expect": "fail"
+      },
+      {
+        "label": "fixed 1200px image width",
+        "input": "<img className=\"w-[1200px]\" src={shot} alt=\"\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "w-full inside a container",
+        "input": "<section className=\"w-full max-w-6xl mx-auto\">",
+        "expect": "pass"
+      },
+      {
+        "label": "max-w-screen breakpoint cap",
+        "input": "<div className=\"max-w-screen-lg mx-auto\">",
+        "expect": "pass"
+      }
+    ],
+    "notes": "`max-w-screen-*` and `max-w-[1200px]` caps are exempt (negative lookbehind for `max-`). An intentional full-bleed band still uses `w-full` over `w-screen`."
   }
 ]

@@ -37,6 +37,18 @@ Sources: `rules/integrity.json#ZS-INTEGRITY-016`, `#ZS-INTEGRITY-017`, `#ZS-INTE
 **Detection humility.** TTR below 0.40 on 200+ words earns a second look, never a verdict. Never make high-confidence AI-authorship claims on texts under 200 words, and never flag on a single indicator — require 2–3 corroborating signals from different categories (4+ for `likely AI`), and never inject a stock voice (manufactured stakes, forced contrarianism, performed candor, fake first person) while rewriting.
 Sources: `rules/integrity.json#ZS-INTEGRITY-024`, `#ZS-INTEGRITY-025`, `#ZS-INTEGRITY-026`, `#ZS-INTEGRITY-022`.
 
+**Speculative gap-filling.** `likely founded in the 1990s`, `while details are limited`, `maintains a low profile` — a hedge wrapped around an invented fact is fabrication, not hedging style. Say the record is silent, or cut the sentence.
+Sources: `rules/integrity.json#ZS-INTEGRITY-029`; `reference/miqdadbadjuber/anti-slop:skills/antislop-copywriting/SKILL.md`.
+
+**Provenance is not proof.** `official`, `community`, a risk label or an unqualified `verified` badge identifies origin, never current maintenance, efficacy or security — and a heuristic score is not merge authority. The outlet-list and follower-count slice is machine-checked by `rules/integrity.json#ZS-INTEGRITY-028`; the badge and label claims stay review-only.
+Sources: `reference/sickn33/agentic-awesome-skills:docs/contributors/quality-bar.md`.
+
+**Verdict wording.** A score is never presented as proof and an accused person is never named: report `AI-like signals are present, but this is not proof`, with the confidence and the caveats, and ask for a longer sample below ~80 words.
+Sources: `rules/integrity.json#ZS-INTEGRITY-031`; `reference/lynote-ai/ai-text-detector:SKILL.md`.
+
+**Evidence labels and counting.** A missing proof artifact downgrades the claim to `hypothesis` or `insufficient evidence`; a weak proxy (an HTTP 200, exit 0) is never proof of success. Never pad findings to reach a quota: every file, symbol, and line number was read, and an invented `file:line` is worse than an omitted finding.
+Sources: `reference/yaklang/hack-skills:skills/hack/EVIDENCE_REPORT.md`; `reference/yaklang/hack-skills:skills/hack/CODE_AUDIT.md`.
+
 Deterministic layer: run `zero-slop scan` against `rules/integrity.json` first; treat its hits as candidates and apply the judgment above. Chat-domain copy (tone, formatting tics) belongs to the prose skill — this skill owns only verifiable-truth failures.
 
 ## Gotchas

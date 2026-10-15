@@ -1,6 +1,6 @@
 # Zero-Slop Rules Database
 
-Canonical, machine-readable consolidation of ~200 anti-AI-slop tells extracted from the 25 reference repositories (`reference/`). This is the **knowledge layer** (Layer 0): consumed by the check engines (`packages/core`, M1+), the CLI, MCP server, and the agent.
+Canonical, machine-readable consolidation of the anti-slop tells extracted from the reference corpus (`reference/`, refreshed through `scripts/sync-reference.mjs`; 520 rules as of 2026-10-16). This is the **knowledge layer** (Layer 0): consumed by the check engines (`packages/core`, M1+), the CLI, MCP server, and the agent.
 
 ## Domains
 

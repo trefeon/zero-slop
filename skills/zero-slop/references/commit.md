@@ -13,8 +13,10 @@ Constraints: flag candidates with `zero-slop scan` against `rules/commit.json`; 
 - Subject required and non-empty after the colon — `#ZS-COMMIT-003`.
 - Subject lower-case start, never sentence/pascal/upper-case (`add retry`, not `Add Retry`) — `#ZS-COMMIT-004`.
 - Header one line, max 100 chars, no leading/trailing whitespace — `#ZS-COMMIT-005`.
+- Scope is lower-case like the type: `fix(SCOPE):` fails — `#ZS-COMMIT-027`; and the subject ends without a full stop — `#ZS-COMMIT-026`; see `reference/commitlint:@commitlint/config-angular/README.md`, `reference/conventional-changelog:skills/conventional-commit-message/SKILL.md`.
 - Blank line between header, body, and footer or tooling cannot split them — `#ZS-COMMIT-006` (warning).
 - Body/footer lines max 100 chars each; URL lines exempt — `#ZS-COMMIT-007`.
+- Footer tokens are hyphenated (`Reviewed-by`, `Signed-off-by`); only `BREAKING CHANGE` keeps its space and must be upper-case or release tooling drops the major bump — `#ZS-COMMIT-031`, `#ZS-COMMIT-030`; see `reference/conventional-changelog:skills/conventional-commit-message/SKILL.md`.
 - Every commit in a PR conventional, not just the title — `#ZS-COMMIT-008`; each message max 500 chars — `#ZS-COMMIT-009`.
 - One logical change per commit so history stays revertable and cherry-pickable — `#ZS-COMMIT-020`; see `reference/DevOps-Security-Agent-Skills/devops/release/git-workflow/`.
 - Changelog discipline (what changed, why, migration notes) follows `reference/last30days-skill/skills/last30days/SKILL.md`; release-version bumps follow `reference/DevOps-Security-Agent-Skills/devops/release/semantic-versioning/`.
@@ -24,6 +26,8 @@ Constraints: flag candidates with `zero-slop scan` against `rules/commit.json`; 
 - Vague subjects fail: wip, minor fix, fix bug, phase 1, stuff, misc, cleanup, tweak, update stuff — name the changed thing — `#ZS-COMMIT-021`.
 - Imperative, not gerund: `update the client`, never `updating the client` — `#ZS-COMMIT-022`.
 - One dependency per bump, named with versions (`bump lodash 4.17.20 to 4.17.21`), never bulk `bump deps` — `#ZS-COMMIT-024`.
+- A refactor and a behavior change are two commits: `refactor: rename X and add Y` is a mixed-concern subject — `#ZS-COMMIT-025`.
+- Backtick every `@`-prefixed token (scoped package, decorator, JSDoc tag); a bare one pings a stranger — `#ZS-COMMIT-029`; see `reference/conventional-changelog:skills/conventional-commit-message/SKILL.md`.
 
 ## PR hygiene
 
@@ -45,4 +49,5 @@ Constraints: flag candidates with `zero-slop scan` against `rules/commit.json`; 
 - `#ZS-COMMIT-021` matches filler wording in the subject, never the type prefix — `refactor: simplify retry` is fine.
 - `#ZS-COMMIT-022` matches only the common gerund set (adding, updating, fixing…); adjectives like `pending` or `streaming` are not gerunds.
 - Mechanical refactors and pure deletions may exceed `#ZS-COMMIT-023` with justification; `#ZS-COMMIT-009`/`013`/`019` disable at 0.
+- `#ZS-COMMIT-005` is length-only: header whitespace padding is a separate check — read the raw header for leading/trailing spaces (`#ZS-COMMIT-028`; `reference/commitlint:docs/reference/rules.md`).
 - Deterministic layer: `zero-slop scan` plus `rules/commit.json`; semantic checks (`010`, `011`, `016`, `020`) need agent judgment — CLI cannot decide authorship or logical focus alone.

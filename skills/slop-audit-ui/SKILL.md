@@ -8,8 +8,8 @@ description: Audit a page or component for AI-generated visual tells (generic gr
 ## Goal
 
 Judge whether a UI's visual choices are deliberate or unchosen defaults.
-The deterministic layer is `zero-slop scan` plus `rules/ui.json` (117 checks,
-`ZS-UI-001`–`ZS-UI-117`); the CLI flags candidates, you judge intentionality.
+The deterministic layer is `zero-slop scan` plus `rules/ui.json` (141 checks,
+`ZS-UI-001`–`ZS-UI-141`); the CLI flags candidates, you judge intentionality.
 A flag is slop only when the pattern carries no brief-backed reason — a purple
 brand, a food site in warm tones, a genuinely ordered 3-step flow all pass.
 Deep copy-voice issues (chat/caption tone, banned openers beyond UI labels)
@@ -45,6 +45,7 @@ belong to the prose skill; this skill covers what is seen and laid out.
 | Gray text on a colored surface | Use the surface hue, darker/desaturated — never gray | `rules/ui.json#ZS-UI-094` · `reference/hallmark/skills/hallmark/references/color.md` |
 | Dark-mode elevation via shadow | Base darkest surface L 8–12% (`#121212` ref); elevate by +~3% lightness per level, text off-white | `rules/ui.json#ZS-UI-099` · `reference/hallmark/skills/hallmark/references/color.md` |
 | Aurora blobs / floating orbs | Ban ambient gradient blobs; ≤2 warm radial blooms only when the canvas is the design | `rules/ui.json#ZS-UI-061` |
+| Palette token named by appearance, component or number (`--color-blue-button`, `--color-sidebar-gray`, `--color-text-2`, `--color-gray-hover`); a token borrowed outside its role | Name the job, not the value, screen or position; ramps stay primitives | `rules/ui.json#ZS-UI-118` · `rules/ui.json#ZS-UI-119` · `reference/jakubkrehel/skills:skills/better-colors/token-naming.md` |
 | Contrast | Body 4.5:1 (APCA Lc ≥ 60); large text/icons/focus 3:1 (Lc ≥ 45); button text ≠ fill (ΔL > 5%, ΔC > 0.05) | `rules/ui.json#ZS-UI-007` notes · `reference/hallmark/skills/hallmark/references/slop-test.md` (gates 40–41) |
 
 ### Typography
@@ -98,6 +99,7 @@ belong to the prose skill; this skill covers what is seen and laid out.
 | Re-drawn OS chrome (fake browser dots, wrong URL bar) | Show content; never imitate the OS | `rules/ui.json#ZS-UI-049` |
 | Div-built "screenshots" of a real product | Real capture or an honest labeled placeholder | `rules/ui.json#ZS-UI-088` |
 | Missing favicon; custom cursor | Ship a favicon; no custom cursors | `rules/ui.json#ZS-UI-112` · `rules/ui.json#ZS-UI-114` |
+| Hero or scene `<video>` without a `poster`; autoplay that is not `muted` | Every video carries a poster; autoplay starts muted or not at all | `rules/ui.json#ZS-UI-133` · `rules/ui.json#ZS-UI-134` · `reference/agiwhitelist/auteur:scripts/slopscan.mjs` |
 
 ### Motion
 
@@ -105,6 +107,7 @@ belong to the prose skill; this skill covers what is seen and laid out.
 |---|---|---|
 | State-change duration | 0.2–0.3s ease; < 0.15s jarring, > 0.4s laggy | `rules/ui.json#ZS-UI-057` |
 | Duration by size | Press 100–160ms; tooltip 125–200ms; dropdown 150–250ms; modal/drawer 200–500ms; most UI < 300ms | `rules/ui.json#ZS-UI-105` · `reference/jakubkrehel-skills/skills/better-ui/enter-exit.md` |
+| Duration over 500ms | Motion vocabulary tops out at 500ms (100/200/300/500); spinner/keyframe shorthand is the documented exception | `rules/ui.json#ZS-UI-139` · `reference/plugin87/ux-ui-agent-skills:tokens/motion.json` |
 | `ease-in` on entrances; authored-easing fingerprint | Exits/`ease-out` or custom; plain `ease-in` on enter is the tell | `rules/ui.json#ZS-UI-101` · `rules/ui.json#ZS-UI-097` |
 | Scale-from-zero entrances; overshoot springs on state change | No `scale(0)` origin; reserve overshoot for physical gestures | `rules/ui.json#ZS-UI-098` · `rules/ui.json#ZS-UI-052` · `reference/jakubkrehel-skills/skills/better-ui/animations.md` |
 | Hover gated wrong; keyboard action animated | Hovers behind `@media (hover:hover) and (pointer:fine)`; focus rings instant, never transitioned | `rules/ui.json#ZS-UI-103` · `rules/ui.json#ZS-UI-104` · `reference/hallmark/skills/hallmark/references/slop-test.md` (gate 15) |
@@ -122,6 +125,9 @@ belong to the prose skill; this skill covers what is seen and laid out.
 | Placeholder names (Acme/Nexus), 01/02/03 ordinals, always-3-steps, "Trusted by" bars, middle-tier highlight, 4-column footer | Number only ordered things; prove claims; shape follows the real workflow | `rules/ui.json#ZS-UI-039` · `rules/ui.json#ZS-UI-040` · `rules/ui.json#ZS-UI-041` · `rules/ui.json#ZS-UI-042` · `rules/ui.json#ZS-UI-043` · `rules/ui.json#ZS-UI-068` |
 | Metric-section tropes (`LABEL // YEAR` stamps, fake system metrics) | Same bar as invented stats: real and specific or gone | `rules/ui.json#ZS-UI-113` · `rules/ui.json#ZS-UI-089` |
 | Locale/weather strips, version footers, scroll cues, poetic labels ("Overview", "Insights") | Delete unless the brief needs them; plain arrow glyph at most | `rules/ui.json#ZS-UI-084` · `rules/ui.json#ZS-UI-086` · `rules/ui.json#ZS-UI-087` · `rules/ui.json#ZS-UI-116` · `rules/ui.json#ZS-UI-091` |
+| Fake-but-plausible filler in fields and columns (`johndoe@example.com`, "Let's build something") | Error: the labelled generic placeholder (`email@example.com`, `Your Name`) is the sanctioned form | `rules/ui.json#ZS-UI-120` · `reference/miqdadbadjuber/anti-slop:skills/antislop-ui/SKILL.md` |
+| Starter-template copy still shipped (`Vite + React`, `Get started by editing app/page.tsx`) | Slop only while the shipped surface still carries the scaffold's identity; a real starter may defend it | `rules/ui.json#ZS-UI-132` · `reference/TheOrcDev/shadscan:packages/cli/src/rules/no-starter-copy.ts` |
+| CTA or button label longer than four words ("Click here to get started today") | Verb plus object ("Get started."); an error reads "Email required.", not a polite sentence | `rules/ui.json#ZS-UI-135` · `reference/robzilla1738/svvarm:skills/svvarm/references/slop.md` |
 
 ## Gotchas
 

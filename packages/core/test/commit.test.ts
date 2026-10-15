@@ -38,9 +38,9 @@ const rules = await loadCommitRules();
 const implemented = rules.filter((r) => !DEFERRED.has(r.id));
 
 describe("commit rules coverage", () => {
-  it("implements 11 of 20 commit rules, plus 4 skill-folded rules (rest deferred)", () => {
-    expect(rules).toHaveLength(24);
-    expect(implemented).toHaveLength(14);
+  it("implements 24 of 34 commit rules (rest deferred)", () => {
+    expect(rules).toHaveLength(34);
+    expect(implemented).toHaveLength(24);
   });
 
   it("every implemented rule's fail fixture flags and pass fixture stays clean", () => {

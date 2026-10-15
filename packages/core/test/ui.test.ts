@@ -53,12 +53,12 @@ describe("scanUi rule coverage", () => {
   it("executes every regex rule and defers statistical + semantic", () => {
     const byMatcher = new Map<string, number>();
     for (const r of allRules) byMatcher.set(r.matcher.type, (byMatcher.get(r.matcher.type) ?? 0) + 1);
-    expect(allRules).toHaveLength(145);
-    expect(byMatcher.get("regex")).toBe(93);
+    expect(allRules).toHaveLength(190);
+    expect(byMatcher.get("regex")).toBe(135);
     expect(byMatcher.get("statistical")).toBe(12);
-    expect(byMatcher.get("semantic")).toBe(38);
-    expect(byMatcher.get("list")).toBe(2);
-    expect(executableRules).toHaveLength(95);
+    expect(byMatcher.get("semantic")).toBe(39);
+    expect(byMatcher.get("list")).toBe(4);
+    expect(executableRules).toHaveLength(139);
   });
 
   it("skips statistical rules silently (contrast/palette/timing need CSS parsing -> M1.5)", () => {
