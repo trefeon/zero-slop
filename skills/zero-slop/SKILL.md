@@ -43,6 +43,8 @@ Report each finding as:
 - **Verdict:** slop (unchosen default) or intentional (brief-backed reason kept).
 - **Fix:** delete, fold into the existing helper, or replace with a token change — minimal, no invented replacement content.
 
+Report every finding verdict-first: each line is a verdict, a finding with `path:line`, or a check you ran — no preamble, no process narration, no closing summary. Source: reference/obra/superpowers:skills/subagent-driven-development/task-reviewer-prompt.md.
+
 ## Gotchas
 
 - The CLI flagging a match is not a verdict on `warning`-tier rules; a deliberate, on-brief use survives triage, an unchosen default does not.
@@ -51,3 +53,6 @@ Report each finding as:
 - Thresholds that look improvable are quoted from sources; re-deriving them per review invents rules.
 - When two domains flag the same text, merge on rule ID — overlapping prose descriptions are not double counts.
 - Prefer deletion or a token change over a redesign; never invent replacement copy, stats, testimonials, or logos to "fix" a section.
+- Quote-or-drop: every finding cites `path:line`, and numbers you did not compute from the transcript are invented — a claim without a resolvable citation is deleted, not argued (Source: reference/obra/superpowers:skills/diagnosing-superpowers/SKILL.md).
+- A subagent's or implementer's self-report is an unverified claim: a green self-assessment never upgrades a verdict and never substitutes for the diff (Source: reference/obra/superpowers:skills/subagent-driven-development/task-reviewer-prompt.md).
+- Keep tooling meta-commentary out of the deliverable — a report states what was found, not which pass produced it; engine health belongs in diagnostics (Source: reference/mvanhorn/last30days-skill:skills/last30days/SKILL.md).

@@ -9,17 +9,50 @@
     "matcher": {
       "type": "statistical",
       "metric": "contrastRatio",
-      "params": { "threshold": 4.5, "window": "text-background pair", "unit": "ratio" }
+      "params": {
+        "threshold": 4.5,
+        "window": "text-background pair",
+        "unit": "ratio"
+      }
     },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-25 Color Contrast (4.5:1 normal text)", "ref": "antislop.md" },
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Low-Contrast Text (compute the ratio, do not eyeball)", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Contrast (WCAG): normal text under 18px minimum 4.5:1", "ref": "claude/system-prompt.md" },
-      { "repo": "pa11y/pa11y", "rule": "Automated accessibility testing; WCAG2AA default standard", "ref": "README.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-25 Color Contrast (4.5:1 normal text)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Low-Contrast Text (compute the ratio, do not eyeball)",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Contrast (WCAG): normal text under 18px minimum 4.5:1",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "pa11y/pa11y",
+        "rule": "Automated accessibility testing; WCAG2AA default standard",
+        "ref": "README.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
+        "ref": "doc/rule-descriptions.md (color-contrast)"
+      }
     ],
     "tests": [
-      { "label": "4.48:1 fails", "input": "color: #777777; background: #FFFFFF; /* ratio 4.48, below 4.5 */", "expect": "fail" },
-      { "label": "7.5:1 passes", "input": "color: #444444; background: #FFFFFF; /* ratio 7.5 */", "expect": "pass" }
+      {
+        "label": "4.48:1 fails",
+        "input": "color: #777777; background: #FFFFFF; /* ratio 4.48, below 4.5 */",
+        "expect": "fail"
+      },
+      {
+        "label": "7.5:1 passes",
+        "input": "color: #444444; background: #FFFFFF; /* ratio 7.5 */",
+        "expect": "pass"
+      }
     ],
     "notes": "Contrast is local: test every spot text passes over, including over images and gradients. Use the WCAG formula ((L1+0.05)/(L2+0.05)) or a checker; never eyeball."
   },
@@ -33,16 +66,39 @@
     "matcher": {
       "type": "statistical",
       "metric": "contrastRatio",
-      "params": { "threshold": 3.0, "window": "large text pair (>=18px bold or >=24px regular)" }
+      "params": {
+        "threshold": 3,
+        "window": "large text pair (>=18px bold or >=24px regular)"
+      }
     },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-25 (large text 18px+ minimum 3:1)", "ref": "antislop.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Large text (18px+ bold or 24px+): minimum 3:1", "ref": "claude/system-prompt.md" },
-      { "repo": "Nutlope/hallmark", "rule": "Gate 40 contrast thresholds (large text WCAG 3:1)", "ref": "skills/hallmark/references/slop-test.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-25 (large text 18px+ minimum 3:1)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Large text (18px+ bold or 24px+): minimum 3:1",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 40 contrast thresholds (large text WCAG 3:1)",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
     ],
     "tests": [
-      { "label": "2.85:1 large text fails", "input": "font-size: 20px; color: #999999; background: #FFFFFF; /* 2.85 < 3.0 */", "expect": "fail" },
-      { "label": "3.54:1 large text passes", "input": "font-size: 20px; color: #888888; background: #FFFFFF; /* 3.54 >= 3.0 */", "expect": "pass" }
+      {
+        "label": "2.85:1 large text fails",
+        "input": "font-size: 20px; color: #999999; background: #FFFFFF; /* 2.85 < 3.0 */",
+        "expect": "fail"
+      },
+      {
+        "label": "3.54:1 large text passes",
+        "input": "font-size: 20px; color: #888888; background: #FFFFFF; /* 3.54 >= 3.0 */",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -55,16 +111,44 @@
     "matcher": {
       "type": "statistical",
       "metric": "contrastRatio",
-      "params": { "threshold": 3.0, "window": "UI component vs adjacent background" }
+      "params": {
+        "threshold": 3,
+        "window": "UI component vs adjacent background"
+      }
     },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Non-Text Contrast (3:1, WCAG 1.4.11)", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "UI components (buttons, icons): minimum 3:1", "ref": "claude/system-prompt.md" },
-      { "repo": "Nutlope/hallmark", "rule": "Gate 40 (icons and focus rings need WCAG 3:1)", "ref": "skills/hallmark/references/slop-test.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Non-Text Contrast (3:1, WCAG 1.4.11)",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "UI components (buttons, icons): minimum 3:1",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 40 (icons and focus rings need WCAG 3:1)",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "Community-Access/accessibility-agents",
+        "rule": "Non-Text Contrast (3:1 minimum) - UI components: buttons, inputs, checkboxes, toggles, cards; the component boundary must have 3:1 against adjacent colors",
+        "ref": "skills/contrast-master/SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "hairline border fails", "input": "input { border: 1px solid #DDDDDD; background: #FFFFFF; } /* ~1.5:1 */", "expect": "fail" },
-      { "label": "visible boundary passes", "input": "input { border: 1px solid #767676; background: #FFFFFF; } /* ~4.5:1 */", "expect": "pass" }
+      {
+        "label": "hairline border fails",
+        "input": "input { border: 1px solid #DDDDDD; background: #FFFFFF; } /* ~1.5:1 */",
+        "expect": "fail"
+      },
+      {
+        "label": "visible boundary passes",
+        "input": "input { border: 1px solid #767676; background: #FFFFFF; } /* ~4.5:1 */",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -74,13 +158,27 @@
     "summary": "The grey-on-grey hallucination: claiming a pairing passes AA without running the math (antislop-human). '#555555 on black is 2.8:1 — it fails'; the eye overestimates contrast on grey pairs and agents repeat the claim because it sounds plausible.",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "The Grey-on-Grey Hallucination", "ref": "skills/antislop-human/SKILL.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "The Grey-on-Grey Hallucination",
+        "ref": "skills/antislop-human/SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "uncomputed claim fails", "input": "This #555555 on black easily passes AA contrast.", "expect": "fail" },
-      { "label": "computed verdict passes", "input": "#777777 on white is 4.48:1, which fails the 4.5:1 threshold for normal text.", "expect": "pass" }
+      {
+        "label": "uncomputed claim fails",
+        "input": "This #555555 on black easily passes AA contrast.",
+        "expect": "fail"
+      },
+      {
+        "label": "computed verdict passes",
+        "input": "#777777 on white is 4.48:1, which fails the 4.5:1 threshold for normal text.",
+        "expect": "pass"
+      }
     ],
     "notes": "Never assert a pairing passes; run the contrast checker or the formula. #555555 on black computes to 2.8:1."
   },
@@ -91,13 +189,27 @@
     "summary": "White text over an image or gradient that is light in some areas drops below 4.5:1 where the image is light; checking one bright spot only is the tell (antislop-human 'Text Over a Photo or Gradient'; antislop R-25 requires testing the whole area).",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Text Over a Photo or Gradient / R-25 (test the whole area, not one point)", "ref": "skills/antislop-human/SKILL.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Text Over a Photo or Gradient / R-25 (test the whole area, not one point)",
+        "ref": "skills/antislop-human/SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "single-spot check fails", "input": "White headline over a hero photo, contrast verified only at the dark corner.", "expect": "fail" },
-      { "label": "scrim + worst spot passes", "input": "Headline over a scrim; verified the lightest part of the image still clears 4.5:1.", "expect": "pass" }
+      {
+        "label": "single-spot check fails",
+        "input": "White headline over a hero photo, contrast verified only at the dark corner.",
+        "expect": "fail"
+      },
+      {
+        "label": "scrim + worst spot passes",
+        "input": "Headline over a scrim; verified the lightest part of the image still clears 4.5:1.",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -110,16 +222,43 @@
     "matcher": {
       "type": "regex",
       "pattern": "outline\\s*:\\s*(?:none|0)\\b",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-32 Keyboard Accessibility (FORBIDDEN outline: none without replacement)", "ref": "antislop.md" },
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Removed Focus Outline", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Never remove the focus ring; replace it with :focus-visible", "ref": "claude/system-prompt.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-32 Keyboard Accessibility (FORBIDDEN outline: none without replacement)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Removed Focus Outline",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Never remove the focus ring; replace it with :focus-visible",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "An `outline: none` or `focus:outline-none` with no visible replacement leaves sighted keyboard users with no way to see where they are",
+        "ref": "skills/better-accessibility/focus-and-keyboard.md"
+      }
     ],
     "tests": [
-      { "label": "bare outline none fails", "input": "a { outline: none; }", "expect": "fail" },
-      { "label": "replaced focus style passes", "input": "button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }", "expect": "pass" }
+      {
+        "label": "bare outline none fails",
+        "input": "a { outline: none; }",
+        "expect": "fail"
+      },
+      {
+        "label": "replaced focus style passes",
+        "input": "button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -129,14 +268,32 @@
     "summary": "A focus ring the same color as the background, one that only appears on hover, or one thinner than a 1px border fails the contrast bar (antislop-human 'Weak or Invisible Focus Indicator'); Hallmark gate 26 requires :focus-visible, :active, and :disabled styling on every interactive element.",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Weak or Invisible Focus Indicator (R-32, R-34)", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Nutlope/hallmark", "rule": "Gate 26: interactive element lacks :focus-visible / :active / :disabled", "ref": "skills/hallmark/references/slop-test.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Weak or Invisible Focus Indicator (R-32, R-34)",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 26: interactive element lacks :focus-visible / :active / :disabled",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
     ],
     "tests": [
-      { "label": "invisible focus fails", "input": "button:focus { outline-color: #FFFFFF; } /* white ring on a white page */", "expect": "fail" },
-      { "label": "high-contrast ring passes", "input": "button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }", "expect": "pass" }
+      {
+        "label": "invisible focus fails",
+        "input": "button:focus { outline-color: #FFFFFF; } /* white ring on a white page */",
+        "expect": "fail"
+      },
+      {
+        "label": "high-contrast ring passes",
+        "input": "button:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }",
+        "expect": "pass"
+      }
     ],
     "notes": "Check the indicator in every theme you ship, light and dark (R-34). Focus rings must also appear instantly — no fade-in (Hallmark gate 15)."
   },
@@ -147,14 +304,37 @@
     "summary": "Menus that open on hover only, dropdowns that click-open but do not keyboard-open, drag-and-drop with no keyboard fallback: each excludes keyboard and assistive-tech users (antislop-human 'Mouse-Only Patterns'; Claude design-system-prompt keyboard navigation; antislop R-32).",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Mouse-Only Patterns (R-32)", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Keyboard navigation: everything reachable and operable by keyboard; hover-only interactions fail", "ref": "claude/system-prompt.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Mouse-Only Patterns (R-32)",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Keyboard navigation: everything reachable and operable by keyboard; hover-only interactions fail",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce a clickable non-interactive element has at least one keyboard event listener.",
+        "ref": "src/rules/click-events-have-key-events.js (meta.docs.description)"
+      }
     ],
     "tests": [
-      { "label": "hover-only menu fails", "input": "Dropdown opens on :hover only; Enter/Space do nothing when the trigger is focused.", "expect": "fail" },
-      { "label": "keyboard-operable passes", "input": "Dropdown opens on click or Enter/Space and navigates with arrow keys; Esc closes it.", "expect": "pass" }
+      {
+        "label": "hover-only menu fails",
+        "input": "Dropdown opens on :hover only; Enter/Space do nothing when the trigger is focused.",
+        "expect": "fail"
+      },
+      {
+        "label": "keyboard-operable passes",
+        "input": "Dropdown opens on click or Enter/Space and navigates with arrow keys; Esc closes it.",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -164,14 +344,37 @@
     "summary": "Focus that jumps around, skips content, or lands on hidden elements because DOM order does not match visual order makes navigation unpredictable (antislop-human 'Broken Tab Order'); modals must close on Escape (Claude design-system-prompt; antislop R-32).",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Broken Tab Order (R-32)", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Modals must close on Escape; tab order must be logical", "ref": "claude/system-prompt.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Broken Tab Order (R-32)",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Modals must close on Escape; tab order must be logical",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Escape dismisses whatever opened last: tooltip, then menu, then dialog; native `<dialog>` with `showModal()` closes on Escape",
+        "ref": "skills/better-accessibility/focus-and-keyboard.md"
+      }
     ],
     "tests": [
-      { "label": "scattered tabindex fails", "input": "tabindex=\"5\" on the footer link, tabindex=\"1\" on a hidden sidebar — focus jumps past main content.", "expect": "fail" },
-      { "label": "source-order passes", "input": "DOM order matches visual order; skip link jumps to main; modal traps focus and closes on Escape.", "expect": "pass" }
+      {
+        "label": "scattered tabindex fails",
+        "input": "tabindex=\"5\" on the footer link, tabindex=\"1\" on a hidden sidebar — focus jumps past main content.",
+        "expect": "fail"
+      },
+      {
+        "label": "source-order passes",
+        "input": "DOM order matches visual order; skip link jumps to main; modal traps focus and closes on Escape.",
+        "expect": "pass"
+      }
     ],
     "notes": "Never give real content tabindex=\"-1\" unless part of a controlled focus trap such as a dialog."
   },
@@ -185,15 +388,45 @@
     "matcher": {
       "type": "statistical",
       "metric": "hitTargetSize",
-      "params": { "threshold": 44, "unit": "px", "dimension": "min(width, height)" }
+      "params": {
+        "threshold": 44,
+        "unit": "px",
+        "dimension": "min(width, height)"
+      }
     },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "R-03 (button sizes meet the minimum tap target 44px)", "ref": "antislop.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Interactive hit targets: never smaller than 44px × 44px", "ref": "claude/system-prompt.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "R-03 (button sizes meet the minimum tap target 44px)",
+        "ref": "antislop.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Interactive hit targets: never smaller than 44px × 44px",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Aim for 44x44px on touch and 40x40px on desktop where density permits. WCAG 2.5.8's Level AA baseline is a 24x24 CSS-pixel target, or one of its exceptions",
+        "ref": "skills/better-accessibility/hit-areas.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure touch targets have sufficient size and space",
+        "ref": "doc/rule-descriptions.md (target-size)"
+      }
     ],
     "tests": [
-      { "label": "32px button fails", "input": "button { width: 32px; height: 32px; }", "expect": "fail" },
-      { "label": "44px target passes", "input": "button { min-width: 44px; min-height: 44px; }", "expect": "pass" }
+      {
+        "label": "32px button fails",
+        "input": "button { width: 32px; height: 32px; }",
+        "expect": "fail"
+      },
+      {
+        "label": "44px target passes",
+        "input": "button { min-width: 44px; min-height: 44px; }",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -203,14 +436,37 @@
     "summary": "Success/error/status communicated only by color excludes color-blind and low-vision users and disappears in forced-colors mode (antislop-human 'Color-Only Feedback'; Claude design-system-prompt 'don't rely on color alone to communicate state').",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Color-Only Feedback (C-4)", "ref": "skills/antislop-human/SKILL.md" },
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Don't rely on color alone to communicate state — pair with icons, text, or position", "ref": "claude/system-prompt.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Color-Only Feedback (C-4)",
+        "ref": "skills/antislop-human/SKILL.md"
+      },
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Don't rely on color alone to communicate state — pair with icons, text, or position",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Status needs a redundant cue: an icon, text or an underline alongside the color (1.4.1)",
+        "ref": "skills/better-accessibility/SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "red border only fails", "input": "input.invalid { border-color: red; } /* no message, no icon */", "expect": "fail" },
-      { "label": "text-first error passes", "input": "\"Password must be at least 8 characters\" shown beside the red-bordered field.", "expect": "pass" }
+      {
+        "label": "red border only fails",
+        "input": "input.invalid { border-color: red; } /* no message, no icon */",
+        "expect": "fail"
+      },
+      {
+        "label": "text-first error passes",
+        "input": "\"Password must be at least 8 characters\" shown beside the red-bordered field.",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -223,15 +479,39 @@
     "matcher": {
       "type": "regex",
       "pattern": "@keyframes|animation\\s*:|transition\\s*:",
-      "params": { "requiresFallback": "@media (prefers-reduced-motion: reduce)", "caseSensitive": false }
+      "params": {
+        "requiresFallback": "@media (prefers-reduced-motion: reduce)",
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Respect prefers-reduced-motion", "ref": "claude/system-prompt.md" },
-      { "repo": "Nutlope/hallmark", "rule": "Gate 27: every transform/animation keyframe covered by prefers-reduced-motion", "ref": "skills/hallmark/references/slop-test.md" }
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Respect prefers-reduced-motion",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "Gate 27: every transform/animation keyframe covered by prefers-reduced-motion",
+        "ref": "skills/hallmark/references/slop-test.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Wrap motion in `@media (prefers-reduced-motion: no-preference)` so it is opt-in",
+        "ref": "skills/better-accessibility/SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "uncovered animation fails", "input": ".card { transition: transform 0.3s ease; } /* no reduced-motion media query in the stylesheet */", "expect": "fail" },
-      { "label": "reduced-motion block passes", "input": "@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }", "expect": "pass" }
+      {
+        "label": "uncovered animation fails",
+        "input": ".card { transition: transform 0.3s ease; } /* no reduced-motion media query in the stylesheet */",
+        "expect": "fail"
+      },
+      {
+        "label": "reduced-motion block passes",
+        "input": "@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -244,15 +524,38 @@
     "matcher": {
       "type": "regex",
       "pattern": "<(?:div|span)[^>]*on(?:click|keydown|keyup)\\s*=",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Semantic HTML: <button> for buttons, never <div onclick>; proper heading hierarchy", "ref": "claude/system-prompt.md" },
-      { "repo": "pa11y/pa11y", "rule": "Runs axe-core / HTML_CodeSniffer WCAG audits", "ref": "README.md" }
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Semantic HTML: <button> for buttons, never <div onclick>; proper heading hierarchy",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "pa11y/pa11y",
+        "rule": "Runs axe-core / HTML_CodeSniffer WCAG audits",
+        "ref": "README.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce that non-interactive, visible elements (such as `<div>`) that have click handlers use the role attribute.",
+        "ref": "src/rules/no-static-element-interactions.js (meta.docs.description)"
+      }
     ],
     "tests": [
-      { "label": "div onclick fails", "input": "<div onclick=\"submit()\">Send</div>", "expect": "fail" },
-      { "label": "real button passes", "input": "<button type=\"submit\">Send</button>", "expect": "pass" }
+      {
+        "label": "div onclick fails",
+        "input": "<div onclick=\"submit()\">Send</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "real button passes",
+        "input": "<button type=\"submit\">Send</button>",
+        "expect": "pass"
+      }
     ],
     "notes": "Also covers heading hierarchy: don't skip levels (<h1> to <h3>)."
   },
@@ -266,15 +569,48 @@
     "matcher": {
       "type": "regex",
       "pattern": "<img(?![^>]*\\balt\\s*=)[^>]*>",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Alt text on every meaningful image; empty alt for decorative", "ref": "claude/system-prompt.md" },
-      { "repo": "pa11y/pa11y", "rule": "Audits alt-text violations (HTML_CodeSniffer example result)", "ref": "README.md" }
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Alt text on every meaningful image; empty alt for decorative",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "pa11y/pa11y",
+        "rule": "Audits alt-text violations (HTML_CodeSniffer example result)",
+        "ref": "README.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure <img> elements have alternative text or a role of none or presentation",
+        "ref": "doc/rule-descriptions.md (image-alt)"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce all elements that require alternative text have meaningful information to relay back to end user.",
+        "ref": "src/rules/alt-text.js (meta.docs.description)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Images must have accessible names unless they are decorative or redundant",
+        "ref": "accessibility-checker-engine/src/v4/rules/img_alt_valid.ts"
+      }
     ],
     "tests": [
-      { "label": "missing alt fails", "input": "<img src=\"quarterly-chart.png\">", "expect": "fail" },
-      { "label": "descriptive alt passes", "input": "<img src=\"quarterly-chart.png\" alt=\"Q3 revenue rose 12% quarter over quarter\">", "expect": "pass" }
+      {
+        "label": "missing alt fails",
+        "input": "<img src=\"quarterly-chart.png\">",
+        "expect": "fail"
+      },
+      {
+        "label": "descriptive alt passes",
+        "input": "<img src=\"quarterly-chart.png\" alt=\"Q3 revenue rose 12% quarter over quarter\">",
+        "expect": "pass"
+      }
     ],
     "notes": "Decorative images use alt=\"\" so screen readers skip them."
   },
@@ -285,13 +621,37 @@
     "summary": "Placeholder text is not a label — it disappears when the user types (Claude design-system-prompt form design; 'labels on every form input').",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "Trystan-SA/claude-design-system-prompt", "rule": "Labels on every form input; placeholder is not a label", "ref": "claude/system-prompt.md" }
+      {
+        "repo": "Trystan-SA/claude-design-system-prompt",
+        "rule": "Labels on every form input; placeholder is not a label",
+        "ref": "claude/system-prompt.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure every form element has a label",
+        "ref": "doc/rule-descriptions.md (label)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Each form control must have an associated label",
+        "ref": "accessibility-checker-engine/src/v4/rules/input_label_exists.ts (group)"
+      }
     ],
     "tests": [
-      { "label": "placeholder-only fails", "input": "<input placeholder=\"Email address\"> with no <label for> or aria-label.", "expect": "fail" },
-      { "label": "linked label passes", "input": "<label for=\"email\">Email address</label><input id=\"email\" type=\"email\" autocomplete=\"email\">", "expect": "pass" }
+      {
+        "label": "placeholder-only fails",
+        "input": "<input placeholder=\"Email address\"> with no <label for> or aria-label.",
+        "expect": "fail"
+      },
+      {
+        "label": "linked label passes",
+        "input": "<label for=\"email\">Email address</label><input id=\"email\" type=\"email\" autocomplete=\"email\">",
+        "expect": "pass"
+      }
     ],
     "notes": "Use type=\"email\"/\"tel\" and autocomplete attributes for mobile keyboards and autofill."
   },
@@ -302,13 +662,27 @@
     "summary": "Fixed pixel font sizes and overflow:hidden containers that clip text at 200% zoom break WCAG 1.4.4 text resizing (antislop-human 'Text That Cannot Zoom', R-35).",
     "tier": "error",
     "kind": "semantic",
-    "matcher": { "type": "semantic" },
+    "matcher": {
+      "type": "semantic"
+    },
     "source": [
-      { "repo": "miqdadbadjuber/anti-slop", "rule": "Text That Cannot Zoom (WCAG 1.4.4, R-35)", "ref": "skills/antislop-human/SKILL.md" }
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Text That Cannot Zoom (WCAG 1.4.4, R-35)",
+        "ref": "skills/antislop-human/SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "clipped at zoom fails", "input": "body { font-size: 12px; } .copy { overflow: hidden; height: 200px; } /* text clips at 200% zoom */", "expect": "fail" },
-      { "label": "fluid type passes", "input": "body { font-size: clamp(16px, 1rem + 0.5vw, 20px); } /* reflows at 200% zoom on a narrow viewport */", "expect": "pass" }
+      {
+        "label": "clipped at zoom fails",
+        "input": "body { font-size: 12px; } .copy { overflow: hidden; height: 200px; } /* text clips at 200% zoom */",
+        "expect": "fail"
+      },
+      {
+        "label": "fluid type passes",
+        "input": "body { font-size: clamp(16px, 1rem + 0.5vw, 20px); } /* reflows at 200% zoom on a narrow viewport */",
+        "expect": "pass"
+      }
     ]
   },
   {
@@ -321,16 +695,38 @@
     "matcher": {
       "type": "regex",
       "pattern": ":focus(?:-visible)?[^{]*\\{[^}]*outline\\s*:\\s*(?:thin|0?\\.5px|1px)\\b",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Visible Focus Rings — at least 2px solid perimeter or equivalent visible area", "ref": "SKILL.md" },
-      { "repo": "better-accessibility", "rule": "Focus rings — custom outline: 2px solid; never thinner", "ref": "focus-and-keyboard.md" },
-      { "repo": "wcag-accessibility-audit", "rule": "2.4.7 Focus Visible — minimum 2px, high contrast", "ref": "SKILL.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Visible Focus Rings — at least 2px solid perimeter or equivalent visible area",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "better-accessibility",
+        "rule": "Focus rings — custom outline: 2px solid; never thinner",
+        "ref": "focus-and-keyboard.md"
+      },
+      {
+        "repo": "wcag-accessibility-audit",
+        "rule": "2.4.7 Focus Visible — minimum 2px, high contrast",
+        "ref": "SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "1px ring fails", "input": "a:focus-visible { outline: 1px solid #333; }", "expect": "fail" },
-      { "label": "2px ring passes", "input": "a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }", "expect": "pass" }
+      {
+        "label": "1px ring fails",
+        "input": "a:focus-visible { outline: 1px solid #333; }",
+        "expect": "fail"
+      },
+      {
+        "label": "2px ring passes",
+        "input": "a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }",
+        "expect": "pass"
+      }
     ],
     "notes": "Works with ZS-A11Y-006 (never outline: none) and ZS-A11Y-007 (the ring's contrast must be verified against every adjacent color). A 2px+ outline is the floor; verify the complete indicator in every theme, including forced-colors mode."
   },
@@ -344,14 +740,28 @@
     "matcher": {
       "type": "regex",
       "pattern": "\\.(?:sr-only|visually-hidden|srtext|screen-reader-text)[^{]*\\{[^}]*?(?:display\\s*:\\s*none|visibility\\s*:\\s*hidden)",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Visually hidden content — canonical .sr-only pattern; never display:none or visibility:hidden", "ref": "screen-readers.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Visually hidden content — canonical .sr-only pattern; never display:none or visibility:hidden",
+        "ref": "screen-readers.md"
+      }
     ],
     "tests": [
-      { "label": "display none sr-only fails", "input": ".sr-only { position: absolute; display: none; }", "expect": "fail" },
-      { "label": "canonical clip pattern passes", "input": ".sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }", "expect": "pass" }
+      {
+        "label": "display none sr-only fails",
+        "input": ".sr-only { position: absolute; display: none; }",
+        "expect": "fail"
+      },
+      {
+        "label": "canonical clip pattern passes",
+        "input": ".sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }",
+        "expect": "pass"
+      }
     ],
     "notes": "Use 1px boxes, not 0 — some screen readers skip zero-sized elements. white-space: nowrap prevents words from being read as one run-together string. Skip links add a focus variant that un-hides the element (:focus overrides the positioning)."
   },
@@ -365,15 +775,38 @@
     "matcher": {
       "type": "regex",
       "pattern": "<(?:video|audio)(?=[^>]*\\bautoplay\\b)(?![^>]*\\bcontrols\\b)[^>]*>",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "No autoplaying media without visible controls (WCAG 2.2.2)", "ref": "motion-and-zoom.md" },
-      { "repo": "wcag-accessibility-audit", "rule": "2.2.2 auto-playing media with controls", "ref": "SKILL.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "No autoplaying media without visible controls (WCAG 2.2.2)",
+        "ref": "motion-and-zoom.md"
+      },
+      {
+        "repo": "wcag-accessibility-audit",
+        "rule": "2.2.2 auto-playing media with controls",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure <video> or <audio> elements do not autoplay audio for more than 3 seconds without a control mechanism to stop or mute the audio",
+        "ref": "doc/rule-descriptions.md (no-autoplay-audio)"
+      }
     ],
     "tests": [
-      { "label": "control-less autoplay fails", "input": "<video src=\"hero-loop.mp4\" autoplay muted loop></video>", "expect": "fail" },
-      { "label": "controls present passes", "input": "<video src=\"hero-loop.mp4\" autoplay muted loop controls></video>", "expect": "pass" }
+      {
+        "label": "control-less autoplay fails",
+        "input": "<video src=\"hero-loop.mp4\" autoplay muted loop></video>",
+        "expect": "fail"
+      },
+      {
+        "label": "controls present passes",
+        "input": "<video src=\"hero-loop.mp4\" autoplay muted loop controls></video>",
+        "expect": "pass"
+      }
     ],
     "notes": "Under prefers-reduced-motion, kill autoplay entirely and start carousels paused. Media without sound that runs longer than 5 seconds still needs the pause control — duration is the trigger, not audio."
   },
@@ -387,14 +820,28 @@
     "matcher": {
       "type": "regex",
       "pattern": "setTimeout\\([^;]{0,120},\\s*(?:\\d{1,3}|[1-4]\\d{3})\\s*\\)",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Autoplay and timed UI — 5 second floor; hover/focus pauses the timer", "ref": "motion-and-zoom.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Autoplay and timed UI — 5 second floor; hover/focus pauses the timer",
+        "ref": "motion-and-zoom.md"
+      }
     ],
     "tests": [
-      { "label": "3s dismiss fails", "input": "setTimeout(() => dismissToast(), 3000);", "expect": "fail" },
-      { "label": "5s floor passes", "input": "setTimeout(() => dismissToast(), 5000);", "expect": "pass" }
+      {
+        "label": "3s dismiss fails",
+        "input": "setTimeout(() => dismissToast(), 3000);",
+        "expect": "fail"
+      },
+      {
+        "label": "5s floor passes",
+        "input": "setTimeout(() => dismissToast(), 5000);",
+        "expect": "pass"
+      }
     ],
     "notes": "Flags dismiss-style timers under 5000ms. Not every setTimeout is a dismissal timer — review hits in context. Low-stakes confirmations may auto-dismiss; anything containing an action, an error, or information the user may need to act on stays until dismissed."
   },
@@ -408,16 +855,38 @@
     "matcher": {
       "type": "regex",
       "pattern": "<(?:div|section|span)(?![^>]*\\b(?:aria-live|role)\\s*=)[^>]*class=\"[^\"]*\\b(?:toast|snackbar)\\b[^\"]*\"[^>]*>",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "fixing-accessibility", "rule": "Toasts must not be the only way to convey critical information", "ref": "SKILL.md" },
-      { "repo": "better-accessibility", "rule": "Announce Dynamic Content — polite live region (role=\"status\") for toasts", "ref": "SKILL.md" },
-      { "repo": "better-accessibility", "rule": "Live regions — role=\"status\" for toasts, role=\"alert\" for urgent errors", "ref": "screen-readers.md" }
+      {
+        "repo": "fixing-accessibility",
+        "rule": "Toasts must not be the only way to convey critical information",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "better-accessibility",
+        "rule": "Announce Dynamic Content — polite live region (role=\"status\") for toasts",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "better-accessibility",
+        "rule": "Live regions — role=\"status\" for toasts, role=\"alert\" for urgent errors",
+        "ref": "screen-readers.md"
+      }
     ],
     "tests": [
-      { "label": "unannounced toast fails", "input": "<div class=\"toast\">Document deleted</div>", "expect": "fail" },
-      { "label": "status toast passes", "input": "<div role=\"status\" class=\"toast\">Document deleted</div>", "expect": "pass" }
+      {
+        "label": "unannounced toast fails",
+        "input": "<div class=\"toast\">Document deleted</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "status toast passes",
+        "input": "<div role=\"status\" class=\"toast\">Document deleted</div>",
+        "expect": "pass"
+      }
     ],
     "notes": "Default to polite (role=\"status\"); reserve role=\"alert\" / aria-live=\"assertive\" for urgent errors not tied to a control. The 'only path to an action inside an auto-dismissing toast' variant — data loss on a schedule — is semantic and deferred to M3."
   },
@@ -431,15 +900,33 @@
     "matcher": {
       "type": "regex",
       "pattern": "<input(?![^>]*\\b(?:aria-label|aria-labelledby)\\s*=)[^>]*\\bplaceholder\\s*=[^>]*>",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Labels — placeholder is never a label", "ref": "forms.md" },
-      { "repo": "fixing-accessibility", "rule": "Every input, select, and textarea must be labeled", "ref": "SKILL.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Labels — placeholder is never a label",
+        "ref": "forms.md"
+      },
+      {
+        "repo": "fixing-accessibility",
+        "rule": "Every input, select, and textarea must be labeled",
+        "ref": "SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "placeholder-only fails", "input": "<input type=\"text\" placeholder=\"Email address\">", "expect": "fail" },
-      { "label": "named placeholder passes", "input": "<input type=\"email\" placeholder=\"name@company.com\" aria-label=\"Email address\">", "expect": "pass" }
+      {
+        "label": "placeholder-only fails",
+        "input": "<input type=\"text\" placeholder=\"Email address\">",
+        "expect": "fail"
+      },
+      {
+        "label": "named placeholder passes",
+        "input": "<input type=\"email\" placeholder=\"name@company.com\" aria-label=\"Email address\">",
+        "expect": "pass"
+      }
     ],
     "notes": "The regex inspects the input element only; a linked <label for> or wrapping label also satisfies but is a cross-element association (see semantic ZS-A11Y-015). Placeholders used in addition to a label are fine and show an example of the expected format."
   },
@@ -453,15 +940,33 @@
     "matcher": {
       "type": "regex",
       "pattern": "min-width\\s*:\\s*(?:[89]\\d\\d|[1-9]\\d{3,})px",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Reflow at 320px — no two-dimensional scrolling", "ref": "motion-and-zoom.md" },
-      { "repo": "wcag-accessibility-audit", "rule": "1.4.10 Reflow — content reflows to 320px width without horizontal scrolling", "ref": "SKILL.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Reflow at 320px — no two-dimensional scrolling",
+        "ref": "motion-and-zoom.md"
+      },
+      {
+        "repo": "wcag-accessibility-audit",
+        "rule": "1.4.10 Reflow — content reflows to 320px width without horizontal scrolling",
+        "ref": "SKILL.md"
+      }
     ],
     "tests": [
-      { "label": "1200px min-width fails", "input": ".page { min-width: 1200px; }", "expect": "fail" },
-      { "label": "max-width centered passes", "input": ".page { max-width: 1200px; margin-inline: auto; }", "expect": "pass" }
+      {
+        "label": "1200px min-width fails",
+        "input": ".page { min-width: 1200px; }",
+        "expect": "fail"
+      },
+      {
+        "label": "max-width centered passes",
+        "input": ".page { max-width: 1200px; margin-inline: auto; }",
+        "expect": "pass"
+      }
     ],
     "notes": "min-width is the blocker; max-width is fine. Genuinely two-dimensional content (tables, maps, code blocks) scrolls inside its own container — that is the 2D-content exception, not a page-level min-width. Fixed heights on text containers are the same failure mode under 200% zoom: prefer min-height."
   },
@@ -475,14 +980,28 @@
     "matcher": {
       "type": "regex",
       "pattern": "forced-color-adjust\\s*:\\s*none",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Forced-colors — keep default color adjustment or use a system color such as Highlight", "ref": "focus-and-keyboard.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Forced-colors — keep default color adjustment or use a system color such as Highlight",
+        "ref": "focus-and-keyboard.md"
+      }
     ],
     "tests": [
-      { "label": "frozen color fails", "input": "a { forced-color-adjust: none; }", "expect": "fail" },
-      { "label": "system color passes", "input": "@media (forced-colors: active) { a:focus-visible { outline: 2px solid Highlight; } }", "expect": "pass" }
+      {
+        "label": "frozen color fails",
+        "input": "a { forced-color-adjust: none; }",
+        "expect": "fail"
+      },
+      {
+        "label": "system color passes",
+        "input": "@media (forced-colors: active) { a:focus-visible { outline: 2px solid Highlight; } }",
+        "expect": "pass"
+      }
     ],
     "notes": "In forced-colors: active, keep the default color adjustment or explicitly use a system color (Highlight, ButtonText, CanvasText). Custom focus colors must be re-verified under forced colors, not frozen."
   },
@@ -496,15 +1015,43 @@
     "matcher": {
       "type": "regex",
       "pattern": "tabindex\\s*=\\s*\"[1-9]\\d*\"|tabindex\\s*=\\s*'[1-9]\\d*'",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "tabindex rules — only 0 and -1, never positive values", "ref": "focus-and-keyboard.md" },
-      { "repo": "fixing-accessibility", "rule": "Do not use tabindex greater than 0", "ref": "SKILL.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "tabindex rules — only 0 and -1, never positive values",
+        "ref": "focus-and-keyboard.md"
+      },
+      {
+        "repo": "fixing-accessibility",
+        "rule": "Do not use tabindex greater than 0",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Elements should not have tabindex greater than zero",
+        "ref": "lib/rules/tabindex.json (metadata.help)"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce `tabIndex` value is not greater than zero.",
+        "ref": "src/rules/tabindex-no-positive.js (meta.docs.description)"
+      }
     ],
     "tests": [
-      { "label": "positive tabindex fails", "input": "<div tabindex=\"5\">Footer link</div>", "expect": "fail" },
-      { "label": "roving tabindex passes", "input": "<button tabindex=\"-1\">Menu item</button>", "expect": "pass" }
+      {
+        "label": "positive tabindex fails",
+        "input": "<div tabindex=\"5\">Footer link</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "roving tabindex passes",
+        "input": "<button tabindex=\"-1\">Menu item</button>",
+        "expect": "pass"
+      }
     ],
     "notes": "Concrete, machine-checkable half of the semantic broken-tab-order rule (ZS-A11Y-009): fix the DOM order instead of patching with positive values. Roving tabindex for composite widgets: active item 0, all others -1."
   },
@@ -518,15 +1065,48 @@
     "matcher": {
       "type": "regex",
       "pattern": "<(?:button|input|select|textarea)[^>]*\\baria-hidden\\s*=\\s*\"true\"|<a(?=[^>]*\\bhref\\s*=)[^>]*\\baria-hidden\\s*=\\s*\"true\"",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Never put aria-hidden on (or above) a focusable element", "ref": "semantics-and-aria.md" },
-      { "repo": "better-accessibility", "rule": "aria-hidden — never on a focusable element", "ref": "screen-readers.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Never put aria-hidden on (or above) a focusable element",
+        "ref": "semantics-and-aria.md"
+      },
+      {
+        "repo": "better-accessibility",
+        "rule": "aria-hidden — never on a focusable element",
+        "ref": "screen-readers.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "ARIA hidden element must not be focusable or contain focusable elements",
+        "ref": "lib/rules/aria-hidden-focus.json"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Disallow `aria-hidden=\"true\"` from being set on focusable elements.",
+        "ref": "src/rules/no-aria-hidden-on-focusable.js (meta.docs.description)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "A hidden element should not contain any tabbable elements",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_hidden_nontabbable.ts (group)"
+      }
     ],
     "tests": [
-      { "label": "hidden link fails", "input": "<a href=\"/docs\" aria-hidden=\"true\">Docs</a>", "expect": "fail" },
-      { "label": "hidden icon passes", "input": "<svg aria-hidden=\"true\" focusable=\"false\"><path /></svg>", "expect": "pass" }
+      {
+        "label": "hidden link fails",
+        "input": "<a href=\"/docs\" aria-hidden=\"true\">Docs</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "hidden icon passes",
+        "input": "<svg aria-hidden=\"true\" focusable=\"false\"><path /></svg>",
+        "expect": "pass"
+      }
     ],
     "notes": "If you hide something interactive, also remove it from the tab order (and from focusability). Decorative elements get aria-hidden=\"true\" only when they are genuinely non-focusable."
   },
@@ -540,14 +1120,28 @@
     "matcher": {
       "type": "regex",
       "pattern": "<(?:div|span)(?![^>]*\\brole\\s*=)[^>]*\\baria-label\\s*=",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "better-accessibility", "rule": "Common ARIA mistakes — aria-label on a plain div or span", "ref": "semantics-and-aria.md" }
+      {
+        "repo": "better-accessibility",
+        "rule": "Common ARIA mistakes — aria-label on a plain div or span",
+        "ref": "semantics-and-aria.md"
+      }
     ],
     "tests": [
-      { "label": "div aria-label fails", "input": "<div aria-label=\"Main menu\">", "expect": "fail" },
-      { "label": "role-backed name passes", "input": "<div role=\"menu\" aria-label=\"Main menu\">", "expect": "pass" }
+      {
+        "label": "div aria-label fails",
+        "input": "<div aria-label=\"Main menu\">",
+        "expect": "fail"
+      },
+      {
+        "label": "role-backed name passes",
+        "input": "<div role=\"menu\" aria-label=\"Main menu\">",
+        "expect": "pass"
+      }
     ],
     "notes": "aria-label only works on elements with a role or native naming. The real fix is usually a native element — <button>, <a>, <nav> — rather than ARIA on a div."
   },
@@ -561,16 +1155,1190 @@
     "matcher": {
       "type": "regex",
       "pattern": "<button(?![^>]*\\b(?:aria-label|aria-labelledby)\\s*=)[^>]*>\\s*<(?:svg|img)",
-      "params": { "caseSensitive": false }
+      "params": {
+        "caseSensitive": false
+      }
     },
     "source": [
-      { "repo": "fixing-accessibility", "rule": "Icon-only buttons must have aria-label or aria-labelledby", "ref": "SKILL.md" },
-      { "repo": "better-accessibility", "rule": "Accessible Names Everywhere — icon-only buttons need a descriptive aria-label", "ref": "SKILL.md" }
+      {
+        "repo": "fixing-accessibility",
+        "rule": "Icon-only buttons must have aria-label or aria-labelledby",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "better-accessibility",
+        "rule": "Accessible Names Everywhere — icon-only buttons need a descriptive aria-label",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure buttons have discernible text",
+        "ref": "doc/rule-descriptions.md (button-name)"
+      }
     ],
     "tests": [
-      { "label": "unlabeled icon button fails", "input": "<button class=\"icon-btn\"><svg><path /></svg></button>", "expect": "fail" },
-      { "label": "named icon button passes", "input": "<button aria-label=\"Close\"><svg aria-hidden=\"true\"><path /></svg></button>", "expect": "pass" }
+      {
+        "label": "unlabeled icon button fails",
+        "input": "<button class=\"icon-btn\"><svg><path /></svg></button>",
+        "expect": "fail"
+      },
+      {
+        "label": "named icon button passes",
+        "input": "<button aria-label=\"Close\"><svg aria-hidden=\"true\"><path /></svg></button>",
+        "expect": "pass"
+      }
     ],
     "notes": "The icon inside a labeled button should be aria-hidden=\"true\" so the name isn't doubled. A visible text label inside the button also satisfies the rule (text-first buttons don't match this pattern); aria-labelledby pointing at a visible label works too."
+  },
+  {
+    "id": "ZS-A11Y-029",
+    "domain": "a11y",
+    "title": "Viewport meta must not block zoom",
+    "summary": "`maximum-scale=1` and `user-scalable=no` switch pinch-zoom off, so a low-vision user cannot enlarge the text to 200% (WCAG 1.4.4). better-accessibility bans both outright in the viewport meta.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bmaximum-scale\\s*=\\s*[\"']?(?:1(?:\\.0+)?|0(?:\\.\\d+)?)[\"']?|\\buser-scalable\\s*=\\s*[\"']?(?:no|0)[\"']?",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Never set `maximum-scale=1` or `user-scalable=no` in the viewport meta",
+        "ref": "skills/better-accessibility/SKILL.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`maximum-scale=1` or `user-scalable=no` | Remove it",
+        "ref": "skills/better-accessibility/SKILL.md#before-you-finish"
+      }
+    ],
+    "tests": [
+      {
+        "label": "maximum-scale=1 fails",
+        "input": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "user-scalable=no fails",
+        "input": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, user-scalable=no\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "plain viewport passes",
+        "input": "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only blocking values fire: maximum-scale of 2 or more and user-scalable=yes stay clean. iOS ignores user-scalable on newer versions, Android does not, so the textual ban still applies."
+  },
+  {
+    "id": "ZS-A11Y-030",
+    "domain": "a11y",
+    "title": "Role-based custom controls need a keyboard handler",
+    "summary": "`role=\"button\"` (or tab/menuitem/switch) on a div or span promises the full keyboard model to a screen reader, but the element only gets one if the author adds an Enter/Space handler. A role with no key handler is worse than no role at all.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:div|span|li|section|p|figure|td|h[1-6])\\b(?=[^>]*\\brole\\s*=\\s*[\"'](?:button|tab|menuitem|switch|radio|checkbox|slider|combobox|option)[\"'])(?![^>]*\\bonKey(?:Down|Up|Press)\\b)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`role=\"button\"` or `role=\"tab\"` with no `onKeyDown` | Use the native element, or implement the APG key map",
+        "ref": "skills/better-accessibility/SKILL.md#before-you-finish"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Where a native element is truly impossible, the full polyfill is `role=\"button\"` plus `tabindex=\"0\"` plus Enter and Space handlers",
+        "ref": "skills/better-accessibility/semantics-and-aria.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "role=button with no key handler fails",
+        "input": "<div role=\"button\" tabIndex={0} onClick={openSettings}>Settings</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "role=tab with no key handler fails",
+        "input": "<span role=\"tab\" tabIndex={0} aria-selected=\"true\" onClick={selectTab}>Billing</span>",
+        "expect": "fail"
+      },
+      {
+        "label": "role=button with onKeyDown passes",
+        "input": "<div role=\"button\" tabIndex={0} onKeyDown={handleArrowKeys} onClick={openSettings}>Settings</div>",
+        "expect": "pass"
+      },
+      {
+        "label": "native button passes",
+        "input": "<button onClick={openSettings}>Settings</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Line-scoped: the whole opening tag must sit on one line. Native elements (button, input, a[href]) are deliberately out of scope; the pattern matches non-native hosts only."
+  },
+  {
+    "id": "ZS-A11Y-031",
+    "domain": "a11y",
+    "title": "Do not disable submit to gate validation",
+    "summary": "`disabled={!isValid}` on a submit button hides why the form cannot be sent, drops focus to body for keyboard users and never announces an error. Validate on submit and focus the first invalid field instead.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:button|input|fieldset|select|textarea)\\b[^>]*\\bdisabled\\s*=\\s*\\{\\s*![^}]*\\}",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`disabled={!isValid}` on a submit button | Keep it enabled and validate on submit",
+        "ref": "skills/better-accessibility/SKILL.md#before-you-finish"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Validate on submit, never by disabling submit until the form is valid",
+        "ref": "skills/better-accessibility/SKILL.md#errors-that-announce"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Never disable submit to gate validation. Validate on submit instead",
+        "ref": "skills/better-accessibility/semantics-and-aria.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "disabled until valid fails",
+        "input": "<button type=\"submit\" disabled={!isValid} className=\"btn\">Save</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "disabled bound to a negation fails",
+        "input": "<button type=\"submit\" disabled={!formValid}>Save</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "always-enabled submit passes",
+        "input": "<button type=\"submit\" onClick={handleSubmit}>Save</button>",
+        "expect": "pass"
+      },
+      {
+        "label": "pending state via aria-disabled passes",
+        "input": "<button type=\"submit\" aria-disabled={isSaving} onClick={handleSubmit}>Save</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Matches the JSX form only (disabled={...} bound to a negation). A plain HTML disabled attribute is left alone because the surrounding state is not visible to a line-scoped regex."
+  },
+  {
+    "id": "ZS-A11Y-032",
+    "domain": "a11y",
+    "title": "Live regions must exist before their content changes",
+    "summary": "A polite live region inserted together with its message is announced inconsistently across screen readers. Render the empty `role=\"status\"` region up front and only change its text when an update arrives.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\{\\s*[\\w.$?!\\[\\]'\"]+\\s*&&\\s*<(?:div|span|p|output|section)\\b[^>]*(?:\\brole\\s*=\\s*[\"'](?:status|alert)[\"']|\\baria-live\\s*=)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`{msg && <div role=\"status\">`, region mounted with its text | Render the empty region first and update its text",
+        "ref": "skills/better-accessibility/SKILL.md#before-you-finish"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "For repeated polite updates, keep a stable empty region in the DOM before changing its text. Inserting a new polite region with its content is announced inconsistently",
+        "ref": "skills/better-accessibility/screen-readers.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "conditionally mounted status region fails",
+        "input": "{saved && <div role=\"status\" className=\"sr-only\">Saved</div>}",
+        "expect": "fail"
+      },
+      {
+        "label": "conditionally mounted alert fails",
+        "input": "{error && <div role=\"alert\" className=\"form-error\">{error}</div>}",
+        "expect": "fail"
+      },
+      {
+        "label": "stable region with injected text passes",
+        "input": "<div role=\"status\" className=\"sr-only\">{saved ? \"Saved\" : \"\"}</div>",
+        "expect": "pass"
+      },
+      {
+        "label": "static live region passes",
+        "input": "<div aria-live=\"polite\" aria-atomic=\"true\">{statusMessage}</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Detects the conditional-mount JSX shape only; a region rendered once and updated through state is the sanctioned fix. Inert in plain HTML."
+  },
+  {
+    "id": "ZS-A11Y-033",
+    "domain": "a11y",
+    "title": "Identity inputs need an autocomplete token",
+    "summary": "A valid `autocomplete` token on fields that collect information about the user is a WCAG 1.3.5 requirement, and it is also what makes password managers and 2FA autofill work. `type=\"email\"`, `tel` and `password` are the standard cases.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<input\\b(?=[^>]*\\btype\\s*=\\s*[\"'](?:email|tel|password)[\"'])(?![^>]*\\bautocomplete\\s*=)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "A valid `autocomplete` token on fields about the user is a WCAG requirement (1.3.5). Pair it with a descriptive `name` attribute, a real `<form>` and no fake inputs",
+        "ref": "skills/better-accessibility/forms.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Add a valid `autocomplete` token and a descriptive `name` attribute, plus the `type` and `inputmode` that summon the right keyboard",
+        "ref": "skills/better-accessibility/SKILL.md#label-and-type-every-control"
+      }
+    ],
+    "tests": [
+      {
+        "label": "email input without autocomplete fails",
+        "input": "<input id=\"email\" type=\"email\" name=\"email\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "password input without autocomplete fails",
+        "input": "<input id=\"password\" type=\"password\" name=\"password\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "email input with autocomplete passes",
+        "input": "<input id=\"email\" type=\"email\" name=\"email\" autocomplete=\"email\" />",
+        "expect": "pass"
+      },
+      {
+        "label": "one-time-code tel input passes",
+        "input": "<input id=\"otp\" type=\"tel\" name=\"code\" autocomplete=\"one-time-code\" inputmode=\"numeric\" />",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Line-scoped. Password inputs should carry current-password or new-password rather than off; the rule only checks that a token is present."
+  },
+  {
+    "id": "ZS-A11Y-034",
+    "domain": "a11y",
+    "title": "Never combine disabled with aria-disabled",
+    "summary": "Native `disabled` already removes the control from the tab order and suppresses activation, while `aria-disabled=\"true\"` only announces the state. Setting both announces a state the element no longer has, and the two mechanisms disagree on focusability.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:button|input|select|textarea|option|fieldset)\\b(?=[^>]*\\sdisabled(?=[\\s>=/]))(?=[^>]*\\baria-disabled\\s*=\\s*[\"']true[\"'])[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Never set both `disabled` and `aria-disabled` on the same element",
+        "ref": "skills/better-accessibility/semantics-and-aria.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "both attributes fail",
+        "input": "<button disabled aria-disabled=\"true\" className=\"btn-disabled\">Save</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "JSX disabled prop plus aria-disabled fails",
+        "input": "<button disabled={!ready} aria-disabled=\"true\">Save</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "aria-disabled alone passes",
+        "input": "<button aria-disabled=\"true\" onClick={blocked} className=\"btn-disabled\">Save</button>",
+        "expect": "pass"
+      },
+      {
+        "label": "native disabled alone passes",
+        "input": "<button disabled className=\"btn-disabled\">Save</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The `\\sdisabled` prefix keeps aria-disabled itself from satisfying the native-attribute half of the match."
+  },
+  {
+    "id": "ZS-A11Y-035",
+    "domain": "a11y",
+    "title": "Infinite animation needs a pause or stop control",
+    "summary": "Anything moving on its own for more than five seconds needs a visible pause, stop or hide control (WCAG 2.2.2). An animation declared `infinite` runs forever, so a marquee, float or bouncing decoration ships a 2.2.2 failure unless a control exists.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\banimation(?:-name)?\\s*:(?![^;}]*\\b(?:spin|spinner|loading|skeleton|rotate|progress)\\b)[^;}]*\\binfinite\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Anything moving, blinking or updating on its own for more than 5 seconds needs a visible pause control (2.2.2)",
+        "ref": "skills/better-accessibility/SKILL.md#nothing-the-user-needs-runs-on-a-timer"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Visible controls on anything that moves on its own (2.2.2). Anything moving, blinking or updating on its own for more than 5 seconds needs a visible pause or stop control, muted looping hero videos included",
+        "ref": "skills/better-accessibility/motion-and-zoom.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "infinite marquee fails",
+        "input": ".marquee { animation: marquee 20s linear infinite; }",
+        "expect": "fail"
+      },
+      {
+        "label": "loading spinner passes",
+        "input": ".spinner { animation: spin 1s linear infinite; }",
+        "expect": "pass"
+      },
+      {
+        "label": "skeleton pulse passes",
+        "input": ".skeleton { animation: loading-pulse 1.5s ease-in-out infinite; }",
+        "expect": "pass"
+      },
+      {
+        "label": "finite animation passes",
+        "input": ".card:hover { animation: lift 200ms ease-out 1; }",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Loading spinners, skeleton and progress animations are excluded by name, since motion-and-zoom keeps them under reduced motion. A two-declaration form (animation-name plus animation-iteration-count on separate lines) stays clean; the shorthand or animation-name must carry infinite on the scanned line."
+  },
+  {
+    "id": "ZS-A11Y-036",
+    "domain": "a11y",
+    "title": "Visible label text must appear in the accessible name (2.5.3)",
+    "summary": "WCAG 2.5.3 Label in Name: a control showing \"Send\" whose accessible name is \"Submit message\" breaks voice-control users, who say what they see and get nothing. Prefer visible text or aria-labelledby over aria-label, and start any aria-label with the visible words.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "WCAG 2.5.3 Label in Name: a button showing \"Send\" with `aria-label=\"Submit message\"` breaks voice control users who say \"click Send\"",
+        "ref": "skills/better-accessibility/semantics-and-aria.md"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "Visible label text must appear in the accessible name. Decorative elements get `aria-hidden=\"true\"`, never on a focusable element",
+        "ref": "skills/better-accessibility/SKILL.md#accessible-names-everywhere"
+      },
+      {
+        "repo": "jakubkrehel/skills",
+        "rule": "`aria-label` whose text omits the visible label | Start the name with the visible text",
+        "ref": "skills/better-accessibility/SKILL.md#before-you-finish"
+      }
+    ],
+    "tests": [
+      {
+        "label": "aria-label that drops the visible word fails",
+        "input": "<button aria-label=\"Submit message\">Send</button> (visible text \"Send\" is absent from the accessible name)",
+        "expect": "fail"
+      },
+      {
+        "label": "aria-label that starts with the visible word passes",
+        "input": "<button aria-label=\"Send message\">Send</button>",
+        "expect": "pass"
+      },
+      {
+        "label": "icon-only button with a name passes",
+        "input": "<button aria-label=\"Close\"><svg aria-hidden=\"true\"><path /></svg></button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Needs the rendered accessible name and the visible text side by side, so it is left to the triage pass rather than a regex."
+  },
+  {
+    "id": "ZS-A11Y-037",
+    "domain": "a11y",
+    "title": "Decorative SVG / canvas without aria-hidden or an accessible name",
+    "summary": "Hallmark gate 33: a visual-only <svg>, <canvas> or decorative figure must carry aria-label (if it conveys something) or aria-hidden=\"true\" (if it does not). Hand-built SVG illustration and CSS art are otherwise announced as an unlabelled 'group' or skipped silently - 'Skipping this is the new accessibility tell'.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:svg|canvas)\\b(?![^>]*\\b(?:aria-hidden|aria-label|aria-labelledby)\\s*[=:])(?![^>]*\\brole\\s*=\\s*[\"'](?:presentation|none)[\"'])[^>]*>",
+      "params": {
+        "caseInsensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "Nutlope/hallmark",
+        "rule": "33. Does any visual-only `<svg>`, custom-art `<div>`, `<canvas>`, or decorative figure lack `aria-label` or `aria-hidden=\"true\"`? Hand-built CSS art and SVG illustrations need an accessible name *or* an explicit hide. Skipping this is the new accessibility tell.",
+        "ref": "skills/hallmark/references/slop-test.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare icon svg fails",
+        "input": "<svg viewBox=\"0 0 24 24\" class=\"icon-tile\"><path d=\"M4 4h16v16H4z\" /></svg>",
+        "expect": "fail"
+      },
+      {
+        "label": "decorative svg hidden from AT passes",
+        "input": "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\" class=\"icon-tile\"><path d=\"M4 4h16v16H4z\" /></svg>",
+        "expect": "pass"
+      },
+      {
+        "label": "named canvas passes",
+        "input": "<canvas id=\"hero-canvas\" role=\"img\" aria-label=\"Live render of the chair in oak\" width=\"800\" height=\"400\"></canvas>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Checks the opening tag only (the ui/a11y engine scans line by line, so a multi-line React SVG needs the attribute on the first tag line). <img alt> is ZS-A11Y-014, icon-only buttons ZS-A11Y-028, and aria-hidden on focusable elements ZS-A11Y-026; role=\"presentation\"/\"none\" counts as an explicit hide."
+  },
+  {
+    "id": "ZS-A11Y-038",
+    "domain": "a11y",
+    "title": "aria-hidden plus a sequential tabindex makes an invisible tab stop",
+    "summary": "aria-hidden=\"true\" removes an element from the accessibility tree but not from the keyboard: tabindex 0 (or any positive value) on the same element leaves a focus stop that no screen reader announces. tabindex=\"-1\" is the allowed form because it removes the element from sequential focus (axe-core aria-hidden-focus; jsx-a11y no-aria-hidden-on-focusable; IBM equal-access aria_hidden_nontabbable).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:[a-z][a-z0-9-]*)(?=[^>]*\\baria-hidden\\s*=\\s*[\"'{]?true\\b)(?=[^>]*\\btabindex\\s*=\\s*[\"'{]?\\+?\\d)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "ARIA hidden element must not be focusable or contain focusable elements",
+        "ref": "lib/rules/aria-hidden-focus.json"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure aria-hidden elements are not focusable nor contain focusable elements",
+        "ref": "doc/rule-descriptions.md (aria-hidden-focus)"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce that `aria-hidden=\"true\"` is not set on focusable elements.",
+        "ref": "docs/rules/no-aria-hidden-on-focusable.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Fail: `<div aria-hidden=\"true\" tabIndex=\"0\" />` — Succeed: `<button aria-hidden=\"true\" tabIndex=\"-1\" />` // `tabIndex=-1` removes the element from sequential focus navigation so we don't flag it.",
+        "ref": "docs/rules/no-aria-hidden-on-focusable.md#rule-details"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Element \"{0}\" should not be focusable within the subtree of an element with an 'aria-hidden' attribute with value 'true'",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_hidden_nontabbable.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hidden div with tabindex 0 fails",
+        "input": "<div aria-hidden=\"true\" tabindex=\"0\" class=\"combobox-list\">Recent searches</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "jsx tabIndex 0 fails",
+        "input": "<div aria-hidden=\"true\" tabIndex={0} className=\"combobox-list\">Recent searches</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "tabindex -1 passes",
+        "input": "<div aria-hidden=\"true\" tabindex=\"-1\" class=\"combobox-list\">Recent searches</div>",
+        "expect": "pass"
+      },
+      {
+        "label": "hidden decorative svg passes",
+        "input": "<svg aria-hidden=\"true\" focusable=\"false\" class=\"icon\"><path d=\"M6 6l12 12\" /></svg>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Extended twin of ZS-A11Y-026, which only covers natively focusable tags (button/input/select/textarea/a[href]); this covers the tabindex-driven tab stop on any element. Negative tabindex is exempt on purpose (jsx-a11y documents tabIndex=\"-1\" as safe). Attributes must sit on the same line as the opening tag — multi-line opening tags are not seen."
+  },
+  {
+    "id": "ZS-A11Y-039",
+    "domain": "a11y",
+    "title": "role must be a valid, non-abstract ARIA role",
+    "summary": "A role value that is not an ARIA role — a made-up name like role=\"list-item\", or an abstract role such as role=\"widget\" — leaves the element with no semantics at all, so screen readers announce nothing. Match the value against the concrete role set (WAI-ARIA 1.2/1.3, DPUB-ARIA, WAI-ARIA Graphics).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<![\\w-])role\\s*=\\s*[\"']?(?!\\{)(?!(?:alert|alertdialog|application|article|banner|blockquote|button|caption|cell|checkbox|code|columnheader|combobox|comment|complementary|contentinfo|definition|deletion|dialog|directory|document|emphasis|feed|figure|form|grid|gridcell|group|heading|image|img|insertion|link|list|listbox|listitem|log|main|mark|marquee|math|menu|menubar|menuitem|menuitemcheckbox|menuitemradio|meter|navigation|none|note|option|paragraph|presentation|progressbar|radio|radiogroup|region|row|rowgroup|rowheader|scrollbar|search|searchbox|sectionfooter|sectionheader|separator|slider|spinbutton|status|strong|subscript|suggestion|superscript|switch|tab|table|tablist|tabpanel|term|text|textbox|time|timer|toolbar|tooltip|tree|treegrid|treeitem)(?![a-z-]))[a-z][a-z-]*",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure all elements with a role attribute use a valid value",
+        "ref": "doc/rule-descriptions.md (aria-roles)"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Role must be one of the valid ARIA roles: ${data.values}",
+        "ref": "lib/checks/aria/invalidrole.json"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Abstract role cannot be directly used: ${data.values}",
+        "ref": "lib/checks/aria/abstractrole.json"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce that elements with ARIA roles must use a valid, non-abstract ARIA role.",
+        "ref": "src/rules/aria-role.js (meta.docs.description)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "ARIA roles must be valid for the element to which they are assigned",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_semantics.ts (aria_role_valid)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hyphenated non-role fails",
+        "input": "<div role=\"list-item\" class=\"result\">Quarterly report</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "abstract role fails",
+        "input": "<div role=\"widget\" class=\"custom-control\">Volume</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "real role passes",
+        "input": "<div role=\"tabpanel\" id=\"panel-overview\" aria-labelledby=\"tab-overview\">Usage this week</div>",
+        "expect": "pass"
+      },
+      {
+        "label": "landmark role passes",
+        "input": "<div role=\"navigation\" aria-label=\"Docs\"><a href=\"/docs\">Docs</a></div>",
+        "expect": "pass"
+      },
+      {
+        "label": "jsx expression role passes",
+        "input": "<div role={role} aria-label=\"Result row\">Quarterly report</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Role value is checked as-is, so `role=\"checkbox menuitem\"` passes on the first token. Abstract roles (command, composite, input, landmark, range, roletype, section, sectionhead, select, structure, widget, window) are excluded from the allowlist, matching axe-core's abstractrole check. Same-line constraint as the other attribute rules."
+  },
+  {
+    "id": "ZS-A11Y-040",
+    "domain": "a11y",
+    "title": "Redundant role restating the element's implicit role",
+    "summary": "Writing the role a native element already has (role=\"button\" on <button>, role=\"banner\" on <header>, role=\"heading\" on <h2>, role=\"img\" on <img>) adds nothing and can double-announce in screen readers. ARIA adds nothing to the default semantics of most HTML elements (jsx-a11y no-redundant-roles; ARIA specialist agent).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:<header\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?banner\\b)|<footer\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?contentinfo\\b)|<main\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?main\\b)|<button\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?button\\b)|<select\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?listbox\\b)|<img\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?img\\b)|<h[1-6]\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?heading\\b)|<a\\b(?=[^>]*\\bhref\\s*=)(?=[^>]*\\brole\\s*=\\s*[\"'{]?link\\b)|<input\\b(?=[^>]*\\btype\\s*=\\s*[\"'{]?checkbox)(?=[^>]*\\brole\\s*=\\s*[\"'{]?checkbox\\b))[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce explicit role property is not the same as implicit/default role property on element.",
+        "ref": "src/rules/no-redundant-roles.js (meta.docs.description)"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Fail: `<button role=\"button\" />` `<img role=\"img\" src=\"foo.jpg\" />`; Succeed: `<div />` `<button role=\"presentation\" />`",
+        "ref": "docs/rules/no-redundant-roles.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "The default options for this rule allow an implicit role of `navigation` to be applied to a `nav` element as is advised by w3.",
+        "ref": "docs/rules/no-redundant-roles.md#rule-options"
+      },
+      {
+        "repo": "Community-Access/accessibility-agents",
+        "rule": "`<button>` -- never add `role=\"button\"`; `<a href>` -- never add `role=\"link\"`; `<input type=\"checkbox\">` -- never add `role=\"checkbox\"`; `<select>` -- never add `role=\"listbox\"` (implicit roles, redundant and can cause double announcements)",
+        "ref": "skills/aria-specialist/SKILL.md (ARIA You Must Never Add)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "button role on button fails",
+        "input": "<button role=\"button\" type=\"button\" class=\"btn-primary\">Save changes</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "heading role on h2 fails",
+        "input": "<h2 role=\"heading\" class=\"section-title\">Billing</h2>",
+        "expect": "fail"
+      },
+      {
+        "label": "nav role navigation passes (documented exception)",
+        "input": "<nav role=\"navigation\" aria-label=\"Main\"><a href=\"/pricing\">Pricing</a></nav>",
+        "expect": "pass"
+      },
+      {
+        "label": "svg role img passes (no implicit role)",
+        "input": "<svg role=\"img\" aria-label=\"Revenue trend\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" /></svg>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Pair list is deliberate, not a generic implicit-role map: nav/navigation is excluded (jsx-a11y's documented exception, and W3C advises it) and ul/list is excluded (the Safari-VoiceOver workaround). Paired lookaheads keep `<button role=\"link\">` (a real override) from matching."
+  },
+  {
+    "id": "ZS-A11Y-041",
+    "domain": "a11y",
+    "title": "Not a real aria-* attribute",
+    "summary": "An attribute that starts with aria- but is not a WAI-ARIA state or property (typos like aria-labeledby, inventions like aria-hidden-state) is silently ignored by the browser, so the name or state it was meant to carry never reaches assistive technology (axe-core aria-valid-attr; jsx-a11y aria-props; IBM equal-access aria_attribute_allowed).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<![\\w-])aria-(?!(?:actions|activedescendant|atomic|autocomplete|braillelabel|brailleroledescription|busy|checked|colcount|colindex|colspan|controls|current|describedby|description|details|disabled|dropeffect|errormessage|expanded|flowto|grabbed|haspopup|hidden|invalid|keyshortcuts|label|labelledby|level|live|modal|multiline|multiselectable|orientation|owns|placeholder|posinset|pressed|readonly|relevant|required|roledescription|rowcount|rowindex|rowspan|selected|setsize|sort|valuemax|valuemin|valuenow|valuetext)(?![a-z-]))[a-z][a-z-]*",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure attributes that begin with aria- are valid ARIA attributes",
+        "ref": "doc/rule-descriptions.md (aria-valid-attr)"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Invalid ARIA attribute name: ${data.values}",
+        "ref": "lib/checks/aria/aria-valid-attr.json"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Elements cannot use an invalid ARIA attribute. This will fail if it finds an `aria-*` property that is not listed in WAI-ARIA States and Properties spec. Fail: `<input aria-labeledby=\"address_label\">`",
+        "ref": "docs/rules/aria-props.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce all `aria-*` props are valid.",
+        "ref": "src/rules/aria-props.js (meta.docs.description)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "The attribute(s) '{0}' referenced by the element <{1}> is not a valid ARIA state or property",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_attribute_allowed.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "misspelled aria-labelledby fails",
+        "input": "<input id=\"email\" type=\"email\" aria-labeledby=\"email-hint\">",
+        "expect": "fail"
+      },
+      {
+        "label": "misspelled aria-hidden fails",
+        "input": "<div class=\"tooltip\" aria-hiden=\"true\">Saved</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "correct name passes",
+        "input": "<input id=\"email\" type=\"email\" aria-labelledby=\"email-hint\">",
+        "expect": "pass"
+      },
+      {
+        "label": "valid state passes",
+        "input": "<input id=\"email\" type=\"email\" aria-describedby=\"email-hint\" aria-invalid=\"false\">",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Allowlist is axe-core lib/standards/aria-attrs.js (52 names, ARIA 1.2+1.3). A future ARIA attribute added upstream will read as invalid until the list is refreshed — refresh it when the axe-core reference is re-synced."
+  },
+  {
+    "id": "ZS-A11Y-042",
+    "domain": "a11y",
+    "title": "Invalid ARIA state or property value",
+    "summary": "ARIA states take specific token values; a truthy-looking value (aria-expanded=\"1\", aria-hidden=\"yes\", aria-live=\"true\", aria-haspopup=\"yes\") is invalid, so the state is dropped and the widget never announces open/closed or hidden. Values must come from the attribute's own value set (jsx-a11y aria-proptypes; axe-core aria-valid-attr-value; IBM equal-access aria_attribute_value_valid).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<![\\w-])(?:aria-hidden|aria-expanded|aria-disabled|aria-readonly|aria-required|aria-multiline|aria-multiselectable|aria-busy|aria-modal|aria-selected|aria-atomic)\\s*=\\s*[\"']?(?!\\{)(?!true\\b|false\\b)[^\"\\s}]+|(?<![\\w-])(?:aria-pressed|aria-checked)\\s*=\\s*[\"']?(?!\\{)(?!true\\b|false\\b|mixed\\b|undefined\\b)[^\"\\s}]+|(?<![\\w-])aria-live\\s*=\\s*[\"']?(?!\\{)(?!off\\b|polite\\b|assertive\\b)[^\"\\s}]+|(?<![\\w-])aria-current\\s*=\\s*[\"']?(?!\\{)(?!page\\b|step\\b|location\\b|date\\b|time\\b|true\\b|false\\b)[^\"\\s}]+|(?<![\\w-])aria-orientation\\s*=\\s*[\"']?(?!\\{)(?!horizontal\\b|vertical\\b|undefined\\b)[^\"\\s}]+|(?<![\\w-])aria-sort\\s*=\\s*[\"']?(?!\\{)(?!none\\b|ascending\\b|descending\\b|other\\b)[^\"\\s}]+|(?<![\\w-])aria-autocomplete\\s*=\\s*[\"']?(?!\\{)(?!none\\b|inline\\b|list\\b|both\\b|inline-list\\b|both-list\\b)[^\"\\s}]+|(?<![\\w-])aria-haspopup\\s*=\\s*[\"']?(?!\\{)(?!false\\b|true\\b|menu\\b|listbox\\b|tree\\b|grid\\b|dialog\\b)[^\"\\s}]+|(?<![\\w-])aria-invalid\\s*=\\s*[\"']?(?!\\{)(?!false\\b|true\\b|grammar\\b|spelling\\b)[^\"\\s}]+",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce ARIA state and property values are valid.",
+        "ref": "src/rules/aria-proptypes.js (meta.docs.description)"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure all ARIA attributes have valid values",
+        "ref": "doc/rule-descriptions.md (aria-valid-attr-value)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "The value \"{0}\" specified for attribute '{1}' on element <{2}> is not valid",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_attribute_value_valid.ts"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "ARIA property values must be valid",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_attribute_value_valid.ts (group)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "aria-expanded with 1 fails",
+        "input": "<button aria-expanded=\"1\" aria-controls=\"panel-shipping\">Shipping details</button>",
+        "expect": "fail"
+      },
+      {
+        "label": "aria-live with true fails",
+        "input": "<div class=\"status\" aria-live=\"true\">Saved</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "aria-hidden with yes fails",
+        "input": "<div class=\"tooltip\" aria-hidden=\"yes\">Saved</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "boolean tokens pass",
+        "input": "<button aria-expanded=\"false\" aria-controls=\"panel-shipping\">Shipping details</button>",
+        "expect": "pass"
+      },
+      {
+        "label": "enumerated tokens pass",
+        "input": "<div class=\"status\" role=\"status\" aria-live=\"polite\" aria-atomic=\"true\">Saved</div>",
+        "expect": "pass"
+      },
+      {
+        "label": "jsx expression value passes",
+        "input": "<button aria-expanded={open} aria-controls=\"panel-shipping\">Shipping details</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Covers the boolean states plus live/current/orientation/sort/autocomplete/haspopup/invalid. JSX braces are handled (`aria-hidden={true}` passes), so only literal wrong values fire. aria-relevant, aria-dropeffect and aria-grabbed are left out (multi-token/complex value spaces)."
+  },
+  {
+    "id": "ZS-A11Y-043",
+    "domain": "a11y",
+    "title": "ARIA widget role missing its required state",
+    "summary": "Widget roles require their state attribute: checkbox/radio/switch/menuitemcheckbox/menuitemradio need aria-checked, slider/spinbutton/meter need aria-valuenow, combobox needs aria-expanded, heading needs aria-level. Without it the widget announces as a nameless box and never reports its state (axe-core aria-required-attr; jsx-a11y role-has-required-aria-props).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<[a-z][a-z0-9-]*\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?(?:checkbox|radio|switch|menuitemcheckbox|menuitemradio)\\b)(?![^>]*\\baria-checked\\s*=)[^>]*>|<[a-z][a-z0-9-]*\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?(?:slider|spinbutton|meter)\\b)(?![^>]*\\baria-valuenow\\s*=)[^>]*>|<[a-z][a-z0-9-]*\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?combobox\\b)(?![^>]*\\baria-expanded\\s*=)[^>]*>|<[a-z][a-z0-9-]*\\b(?=[^>]*\\brole\\s*=\\s*[\"'{]?heading\\b)(?![^>]*\\baria-level\\s*=)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure elements with ARIA roles have all required ARIA attributes",
+        "ref": "doc/rule-descriptions.md (aria-required-attr)"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Required ARIA attribute not present: ${data.values}",
+        "ref": "lib/checks/aria/aria-required-attr.json"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "requiredAttrs: ['aria-checked'] for checkbox/radio/menuitemcheckbox/menuitemradio/switch, ['aria-valuenow'] for slider/spinbutton/meter, ['aria-expanded'] for combobox, ['aria-level'] for heading",
+        "ref": "lib/standards/aria-roles.js"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Elements with ARIA roles must have all required attributes for that role. Fail: `<span role=\"checkbox\" aria-labelledby=\"foo\" tabindex=\"0\"></span>` — the checkbox role requires the aria-checked state",
+        "ref": "docs/rules/role-has-required-aria-props.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "checkbox without aria-checked fails",
+        "input": "<span role=\"checkbox\" class=\"todo\" tabindex=\"0\">Enable two-factor auth</span>",
+        "expect": "fail"
+      },
+      {
+        "label": "slider without aria-valuenow fails",
+        "input": "<div role=\"slider\" class=\"range\" tabindex=\"0\">Volume</div>",
+        "expect": "fail"
+      },
+      {
+        "label": "checkbox with aria-checked passes",
+        "input": "<span role=\"checkbox\" class=\"todo\" tabindex=\"0\" aria-checked=\"false\">Enable two-factor auth</span>",
+        "expect": "pass"
+      },
+      {
+        "label": "slider with aria-valuenow passes",
+        "input": "<div role=\"slider\" class=\"range\" tabindex=\"0\" aria-valuenow=\"40\">Volume</div>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Roles and required attributes come from axe-core lib/standards/aria-roles.js, so option/tab (aria-selected) are deliberately absent — axe does not list them. Only the attribute on the same opening tag counts; axe resolves inheritance through idrefs and would additionally flag those cases."
+  },
+  {
+    "id": "ZS-A11Y-044",
+    "domain": "a11y",
+    "title": "iframe or frame with no accessible name",
+    "summary": "A frame with no title (or an empty one) is announced as \"frame\" with no destination, so screen-reader users cannot tell which embed they are entering. Every iframe/frame needs a non-empty title, aria-label or aria-labelledby (axe-core frame-title; jsx-a11y iframe-has-title; IBM equal-access frame_title_exists).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:iframe|frame)\\b(?![^>]*\\btitle\\s*=\\s*[\"'{][^\"'}]+)(?![^>]*\\baria-label(?:ledby)?\\s*=\\s*[\"'{][^\"'}]+)(?![^>]*\\brole\\s*=\\s*[\"'{]?(?:none|presentation)\\b)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Frames must have an accessible name",
+        "ref": "lib/rules/frame-title.json"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "Ensure <iframe> and <frame> elements have an accessible name",
+        "ref": "doc/rule-descriptions.md (frame-title)"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce iframe elements have a title attribute.",
+        "ref": "src/rules/iframe-has-title.js (meta.docs.description)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Inline frames must have a unique, non-empty 'title' attribute; Fail: Inline frame does not have a 'title' attribute",
+        "ref": "accessibility-checker-engine/src/v4/rules/frame_title_exists.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "untitled iframe fails",
+        "input": "<iframe src=\"https://www.youtube.com/embed/9bZkp7q19f0\" allowfullscreen></iframe>",
+        "expect": "fail"
+      },
+      {
+        "label": "empty title fails",
+        "input": "<iframe src=\"/dashboards/embed\" title=\"\"></iframe>",
+        "expect": "fail"
+      },
+      {
+        "label": "titled iframe passes",
+        "input": "<iframe src=\"https://www.youtube.com/embed/9bZkp7q19f0\" title=\"Walkthrough: setting up SSO\" allowfullscreen></iframe>",
+        "expect": "pass"
+      },
+      {
+        "label": "aria-labelledby passes",
+        "input": "<iframe src=\"/dashboards/embed\" aria-labelledby=\"embed-heading\"></iframe>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "axe accepts four alternatives (non-empty title, aria-label, aria-labelledby, presentational role) — all four are honoured here. Title/aria-label must be on the same line as the opening tag; a prettier-formatted multi-line iframe will read as untitled."
+  },
+  {
+    "id": "ZS-A11Y-045",
+    "domain": "a11y",
+    "title": "List element with a non-<li> child",
+    "summary": "<ul> and <ol> may only directly contain <li>, <script> or <template>; a <div>/<a>/text sibling breaks the list, and screen readers stop announcing item counts. Generated card/step lists routinely wrap <div> items in <ol> (axe-core list / only-listitems; IBM equal-access list_children_valid).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:ul|ol)\\b[^>]*>\\s*<(?!li\\b|/|script\\b|template\\b)[a-z][a-z0-9-]*",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "<ul> and <ol> must only directly contain <li>, <script> or <template> elements",
+        "ref": "lib/rules/list.json"
+      },
+      {
+        "repo": "dequelabs/axe-core",
+        "rule": "List element has direct children that are not allowed: ${data.values}",
+        "ref": "lib/checks/lists/only-listitems.json"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "List component with \"group\" role must limit children to <listitem> elements; Fail: List component with \"group\" role has children that are not <listitem> elements",
+        "ref": "accessibility-checker-engine/src/v4/rules/list_children_valid.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "div child of ol fails",
+        "input": "<ol class=\"steps\"><div class=\"step\">Create an account</div></ol>",
+        "expect": "fail"
+      },
+      {
+        "label": "anchor child of ul fails",
+        "input": "<ul class=\"nav\"><a href=\"/pricing\">Pricing</a></ul>",
+        "expect": "fail"
+      },
+      {
+        "label": "li children pass",
+        "input": "<ol class=\"steps\"><li>Create an account</li><li>Verify your email</li></ol>",
+        "expect": "pass"
+      },
+      {
+        "label": "nested list in li passes",
+        "input": "<ul class=\"nav\"><li><ul><li><a href=\"/docs\">Docs</a></li></ul></li></ul>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The child must start on the same line as the <ul>/<ol> open tag (the ui/a11y engine scans line by line); a pretty-printed list whose first <div> sits on the next line is not detected. Parentage rules for <li>/<dt>/<dd> (axe listitem/dlitem) need a document pass — see featureIdeas."
+  },
+  {
+    "id": "ZS-A11Y-046",
+    "domain": "a11y",
+    "title": "Anchor used as a button (href=\"#\" / javascript: / onClick only)",
+    "summary": "<a href=\"#\"> and <a href=\"javascript:void(0)\"> announce as links and activate on Enter only, so an action wearing link semantics confuses both keyboard and screen-reader users; an <a> with a click handler and no href is not focusable at all. Actions belong on <button> (jsx-a11y anchor-is-valid).",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<a\\b[^>]*\\bhref\\s*=\\s*[\"'](?:#|javascript:[^\"']*)[\"']|<a\\b(?=[^>]*\\bonClick\\b)(?![^>]*\\bhref\\s*=)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce all anchors are valid, navigable elements.",
+        "ref": "src/rules/anchor-is-valid.js (meta.docs.description)"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "All these anchor implementations indicate that the element is only used to execute JavaScript code: `<a href=\"javascript:void(0)\" onClick={foo}>Perform action</a>` `<a href=\"#\" onClick={foo}>Perform action</a>` `<a onClick={foo}>Perform action</a>` — All the above should be replaced with: `<button onClick={foo}>Perform action</button>`",
+        "ref": "docs/rules/anchor-is-valid.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "href # with click handler fails",
+        "input": "<a href=\"#\" class=\"link\" onClick={handleExport}>Export CSV</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "javascript href fails",
+        "input": "<a href=\"javascript:void(0)\" class=\"link\">Export CSV</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "click handler without href fails",
+        "input": "<a onClick={handleExport} className=\"link\">Export CSV</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "real link passes",
+        "input": "<a href=\"/reports/export\" onClick={handleExport}>Export CSV</a>",
+        "expect": "pass"
+      },
+      {
+        "label": "button passes",
+        "input": "<button type=\"button\" onClick={handleExport}>Export CSV</button>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "In-page anchors (`href=\"#pricing\"`) and real hrefs with a click handler are left alone. Covers the two unambiguous jsx-a11y cases: placeholder/javascript href, and a clickable anchor with no href."
+  },
+  {
+    "id": "ZS-A11Y-047",
+    "domain": "a11y",
+    "title": "autofocus steals focus on load",
+    "summary": "Autofocusing on load drops the caret into a field the user did not choose: screen-reader and keyboard users are teleported past the page, and magnifier users lose their place. Set focus programmatically only where the user expects it (dialog open, validation error) — never with the autofocus/autoFocus attribute (jsx-a11y no-autofocus).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<[a-zA-Z][a-zA-Z0-9-]*[^>]*\\bautofocus\\b(?!\\s*=\\s*[\"'{]?false)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Enforce that `autoFocus` prop is either not set at all on elements or is only set to `false`. Auto-focusing elements can cause usability issues for sighted and non-sighted users, alike.",
+        "ref": "docs/rules/no-autofocus.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Fail: `<div autoFocus />` `<div autoFocus=\"true\" />` `<div autoFocus={undefined} />`; Succeed: `<div />` `<div autoFocus=\"false\" />`",
+        "ref": "docs/rules/no-autofocus.md#rule-options"
+      }
+    ],
+    "tests": [
+      {
+        "label": "jsx autoFocus fails",
+        "input": "<input type=\"search\" name=\"q\" autoFocus />",
+        "expect": "fail"
+      },
+      {
+        "label": "html autofocus true fails",
+        "input": "<input type=\"email\" name=\"email\" autofocus=\"true\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "autoFocus false passes",
+        "input": "<input type=\"search\" name=\"q\" autoFocus={false} />",
+        "expect": "pass"
+      },
+      {
+        "label": "no autofocus passes",
+        "input": "<input type=\"search\" name=\"q\" placeholder=\"Search docs\" aria-label=\"Search docs\" />",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Matches `autofocus` and `autoFocus` case-insensitively, and honours the documented escape hatch `autoFocus=\"false\"` / `autoFocus={false}`. Dialog focus management done in code (ref.focus() on open) is out of scope — this rule only sees the attribute."
+  },
+  {
+    "id": "ZS-A11Y-048",
+    "domain": "a11y",
+    "title": "New-tab link with no rel and no advance warning",
+    "summary": "A link that opens a new tab or window must warn the user in advance (WCAG 3.2.2 / G201) and should carry rel=\"noopener noreferrer\". IBM's rule fires on `a[target]` without \"new window\"/\"new tab\" in the text, title or aria-describedby; the mechanical half is a missing or non-noopener rel (IBM equal-access a_target_warning).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<a\\b(?=[^>]*\\btarget\\s*=\\s*[\"'{]*_blank\\b)(?![^>]*\\brel\\b)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Users should be warned in advance if their input action will open a new window",
+        "ref": "accessibility-checker-engine/src/v4/rules/a_target_warning.ts (group)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Inform the user when their input action will open a new window",
+        "ref": "accessibility-checker-engine/src/v4/rules/a_target_warning.ts (potential_warn)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "context: \"dom:a[target],dom:area[target],dom:base[target]\" ... passed = tStr == \"_parent\" || tStr == \"_self\" || tStr == \"_top\" ... textStr.indexOf(\"new window\") / \"new tab\"",
+        "ref": "accessibility-checker-engine/src/v4/rules/a_target_warning.ts (run)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "target blank without rel fails",
+        "input": "<a href=\"https://status.example.com\" target=\"_blank\">Status page</a>",
+        "expect": "fail"
+      },
+      {
+        "label": "target blank with rel but no warning text is still flagged",
+        "input": "<a href=\"https://status.example.com\" target=\"_blank\">Status page</a> after the release notes link",
+        "expect": "fail"
+      },
+      {
+        "label": "rel noopener noreferrer with warning passes",
+        "input": "<a href=\"https://status.example.com\" target=\"_blank\" rel=\"noopener noreferrer\">Status page (opens in a new tab)</a>",
+        "expect": "pass"
+      },
+      {
+        "label": "same-tab link passes",
+        "input": "<a href=\"/status\">Status page</a>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Widened deliberately: fires whenever rel is absent on a target=\"_blank\" anchor, regardless of the visible warning text (which sits outside the tag and cannot be seen by the line-based engine). Adding rel=\"noopener noreferrer\" always satisfies it; the human half (visible \"(opens in a new tab)\" text or title) stays a human rule."
+  },
+  {
+    "id": "ZS-A11Y-049",
+    "domain": "a11y",
+    "title": "Click or key handlers on non-interactive elements",
+    "summary": "Mouse and key handlers belong on interactive elements. A clickable <li>, <h3>, <p> or <img> has no focus, no role and no keyboard activation, so the action is unreachable without a mouse; wrap the interactive part in <button> or <a href> instead (jsx-a11y no-noninteractive-element-interactions; IBM equal-access aria_eventhandler_role_valid).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "<(?:main|area|h[1-6]|p|img|li|ul|ol)\\b(?=[^>]*\\bon(?:click|keydown|keypress|keyup|mousedown|mouseup)\\s*=)(?![^>]*\\brole\\s*=\\s*[\"'{]?(?:button|link|menuitem|menuitemcheckbox|menuitemradio|tab|checkbox|radio|switch|option|treeitem|gridcell|textbox|searchbox|combobox|slider|spinbutton)\\b)[^>]*>",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Non-interactive elements should not be assigned mouse or keyboard event listeners. Non-interactive elements include `<main>`, `<area>`, `<h1>` (,`<h2>`, etc), `<p>`, `<img>`, `<li>`, `<ul>` and `<ol>`.",
+        "ref": "docs/rules/no-noninteractive-element-interactions.md"
+      },
+      {
+        "repo": "jsx-eslint/eslint-plugin-jsx-a11y",
+        "rule": "Fix for an expandable heading: `<h3><button onClick={this._expandSection}>News</button></h3>` — put a button inside the heading instead of handling the interaction on the heading.",
+        "ref": "docs/rules/no-noninteractive-element-interactions.md (Case: This is a heading that expands/collapses content)"
+      },
+      {
+        "repo": "IBMa/equal-access",
+        "rule": "Elements with event handlers must have a valid ARIA role; Fail: The <{0}> element with '{1}' does not have a valid ARIA role specified",
+        "ref": "accessibility-checker-engine/src/v4/rules/aria_eventhandler_role_valid.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "clickable li fails",
+        "input": "<li className=\"row\" onClick={selectInvoice}>INV-1042, $1,280</li>",
+        "expect": "fail"
+      },
+      {
+        "label": "clickable h3 fails",
+        "input": "<h3 onClick={toggleSection}>Shipping details</h3>",
+        "expect": "fail"
+      },
+      {
+        "label": "button inside heading passes",
+        "input": "<h3><button type=\"button\" onClick={toggleSection}>Shipping details</button></h3>",
+        "expect": "pass"
+      },
+      {
+        "label": "button inside li passes",
+        "input": "<li className=\"row\"><button type=\"button\" onClick={selectInvoice}>INV-1042</button></li>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Tag list matches jsx-a11y's non-interactive set (`main`, `area`, `h1`-`h6`, `p`, `img`, `li`, `ul`, `ol`); `div`/`span` handlers are already ZS-A11Y-013. An explicit interactive role on the same tag is treated as the deliberate escape hatch and passes."
   }
 ]

@@ -20,6 +20,16 @@
         "repo": "commitlint",
         "rule": "type-enum (error, always)",
         "ref": "@commitlint/config-conventional/README.md"
+      },
+      {
+        "repo": "action-semantic-pull-request",
+        "rule": "if (!types.some((type) => new RegExp(`^${type}$`).test(result.type))) { raiseError(`Unknown release type \"${result.type}\" found in pull request title \"${prTitle}\".`) }",
+        "ref": "src/validatePrTitle.js"
+      },
+      {
+        "repo": "action-semantic-pull-request",
+        "rule": "types: | fix / feat / JIRA-\\d+ — Configure which types are allowed (newline-delimited). These are regex patterns auto-wrapped in `^ $`.",
+        "ref": "README.md"
       }
     ],
     "tests": [
@@ -55,6 +65,11 @@
         "repo": "commitlint",
         "rule": "type-case (error, always, lower-case)",
         "ref": "@commitlint/config-conventional/src/index.ts"
+      },
+      {
+        "repo": "super-linter",
+        "rule": "module.exports = { extends: [\"@commitlint/config-conventional\"], helpUrl: \"https://www.conventionalcommits.org/\", ignores: [(msg) => /Signed-off-by: dependabot\\[bot]/m.test(msg)] }",
+        "ref": "commitlint.config.js"
       }
     ],
     "tests": [
@@ -90,6 +105,11 @@
         "repo": "commitlint",
         "rule": "subject-empty (error, never)",
         "ref": "@commitlint/config-conventional/README.md"
+      },
+      {
+        "repo": "action-semantic-pull-request",
+        "rule": "if (!result.subject) { raiseError(`No subject found in pull request title \"${prTitle}\".`) }",
+        "ref": "src/validatePrTitle.js"
       }
     ],
     "tests": [
@@ -125,6 +145,11 @@
         "repo": "commitlint",
         "rule": "subject-case (error, never, [sentence-case, start-case, pascal-case, upper-case])",
         "ref": "@commitlint/config-conventional/README.md"
+      },
+      {
+        "repo": "action-semantic-pull-request",
+        "rule": "subjectPattern: ^(?![A-Z]).+$ — This example ensures the subject doesn't start with an uppercase character.",
+        "ref": "README.md"
       }
     ],
     "tests": [
@@ -282,6 +307,11 @@
         "repo": "peakoss-anti-slop",
         "rule": "CONVENTIONAL_PATTERN /^\\w+(?:\\([^)]+\\))?!?:\\s.+/",
         "ref": "src/checks/commit-checks.ts"
+      },
+      {
+        "repo": "commitlint-github-action",
+        "rule": "If the config file doesn't exist, config-conventional settings will be loaded as a default fallback. (the action lints every commit of the pull request, not only the head commit)",
+        "ref": "README.md"
       }
     ],
     "tests": [
@@ -491,6 +521,11 @@
         "repo": "peakoss-anti-slop",
         "rule": "max-emoji-count (default 2)",
         "ref": "action.yaml"
+      },
+      {
+        "repo": "peakoss-anti-slop",
+        "rule": "max-emoji-count: Maximum number of emojis allowed in the PR title and description. 0 disables this check. Default: 2",
+        "ref": "README.md"
       }
     ],
     "tests": [
@@ -704,6 +739,16 @@
         "repo": "claude-code-best-practice",
         "rule": "Git Commit Rules: create separate commits per file with descriptive messages",
         "ref": "CLAUDE.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Each commit does one logical thing ... Separate refactoring from feature work. A refactoring change and a feature change are two different changes — submit them separately.",
+        "ref": "skills/git-workflow-and-versioning/SKILL.md"
+      },
+      {
+        "repo": "conventional-changelog",
+        "rule": "Prefer one commit per coherent change. If one diff contains unrelated release visible changes, recommend splitting it.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
       }
     ],
     "tests": [
@@ -764,6 +809,16 @@
         "repo": "code-review-and-quality",
         "rule": "Change Descriptions: anti-patterns ('Fix bug,' 'Fix build,' 'Add patch,' 'Moving code from A to B,' 'Phase 1,' 'Add convenience functions.')",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Anti-patterns: \"Fix bug,\" \"Fix build,\" \"Add patch,\" \"Moving code from A to B,\" \"Phase 1,\" \"Add convenience functions.\"",
+        "ref": "skills/code-review-and-quality/SKILL.md"
+      },
+      {
+        "repo": "conventional-changelog",
+        "rule": "Avoid vague implementation notes like `add some feature`, `update stuff`, or `fix issue`. Prefer user-facing outcomes such as `support custom scopes`.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
       }
     ],
     "tests": [
@@ -800,6 +855,11 @@
         "repo": "code-review-and-quality",
         "rule": "First line: Short, imperative, standalone. 'Delete the FizzBuzz RPC' not 'Deleting the FizzBuzz RPC.'",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "First line: Short, imperative, standalone. \"Delete the FizzBuzz RPC\" not \"Deleting the FizzBuzz RPC.\"",
+        "ref": "skills/code-review-and-quality/SKILL.md"
       }
     ],
     "tests": [
@@ -835,6 +895,11 @@
         "repo": "code-review-and-quality",
         "rule": "Change Sizing: ~100 lines good, ~300 acceptable, ~1000 too large — split it",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. ~1000 lines → Split into smaller changes.",
+        "ref": "skills/git-workflow-and-versioning/SKILL.md"
       }
     ],
     "tests": [
@@ -871,6 +936,16 @@
         "repo": "code-review-and-quality",
         "rule": "One dependency per change; bulk 'bump deps' merges are the riskiest upgrades",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "One dependency per change. ... the riskiest upgrades are the ones merged in bulk with a message like \"bump deps.\" A bulk bump that breaks the build hides which package did it.",
+        "ref": "skills/code-review-and-quality/SKILL.md"
+      },
+      {
+        "repo": "conventional-changelog",
+        "rule": "For dependency-only work: Use `fix(deps)` for runtime dependency updates in `dependencies` when `deps` is an accepted scope. Use `dev-deps` for development-only tooling dependency updates.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
       }
     ],
     "tests": [
@@ -886,5 +961,430 @@
       }
     ],
     "notes": "A bump that names the exact package and versions is a reviewable single change; a blanket 'bump deps' hides which package caused a breakage."
+  },
+  {
+    "id": "ZS-COMMIT-025",
+    "domain": "commit",
+    "title": "Mixed-concern commit subject (refactor + feature in one commit)",
+    "summary": "A subject that both refactors and adds/fixes describes two changes, so the diff cannot be reviewed, reverted or understood as one unit — and review comments land on the wrong half. Refactors ship separately from behavior changes.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:refactor(?:ing|s|ed)?|renam(?:e|es|ed|ing)|extract(?:s|ed|ing)?|restructure(?:s|d)?|reformat(?:s|ted)?|clean ?ups?)\\b[^\\n]*\\band\\b[^\\n]*\\b(?:add(?:s|ed|ing)?|introduce(?:s|d)?|implement(?:s|ed|ing)?|support(?:s|ed)?|fix(?:es|ed|ing)?|creat(?:e|es|ed|ing)|new)\\b|\\b(?:add(?:s|ed|ing)?|introduce(?:s|d)?|implement(?:s|ed|ing)?|support(?:s|ed)?|fix(?:es|ed|ing)?|creat(?:e|es|ed|ing)|new)\\b[^\\n]*\\band\\b[^\\n]*\\b(?:refactor(?:ing|s|ed)?|renam(?:e|es|ed|ing)|extract(?:s|ed|ing)?|restructure(?:s|d)?|reformat(?:s|ted)?|clean ?ups?)\\b",
+      "params": {
+        "headerOnly": true,
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Separate refactoring from feature work. A change that refactors existing code and adds new behavior is two changes — submit them separately.",
+        "ref": "skills/code-review-and-quality/SKILL.md:128"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Bad: Mixed concerns — git commit -m \"refactor validation and add phone number field\"",
+        "ref": "skills/git-workflow-and-versioning/SKILL.md:105-106"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Don't combine formatting changes with behavior changes. Don't combine refactors with features. Each type of change should be a separate commit — and ideally a separate PR",
+        "ref": "skills/git-workflow-and-versioning/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "refactor-and-add subject fails",
+        "input": "refactor: rename validation helpers and add phone number validation",
+        "expect": "fail"
+      },
+      {
+        "label": "pure refactor subject passes",
+        "input": "refactor: extract validation helpers into a shared module",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Header-only; requires a refactor-class verb joined by `and` to a feature-class verb (either order). Comma-separated laundry lists (`fix sidebar, update deps, refactor utils`) and two-feature subjects that do not involve a refactor verb are not matched — see ZS-COMMIT-020/021 for those."
+  },
+  {
+    "id": "ZS-COMMIT-026",
+    "domain": "commit",
+    "title": "Subject must not end with a full stop",
+    "summary": "conventional-commit subjects are changelog bullets, so a trailing '.' is a tell of pasted prose; the period belongs in the body or in a closing footer ('Fixes #123.').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\.\\s*$",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "subject-full-stop (condition: subject ends with value; rule: never; value '.') — echo \"fix: some message.\" # fails",
+        "ref": "@commitlint/config-conventional/README.md"
+      },
+      {
+        "repo": "conventional-changelog",
+        "rule": "description is required immediately after ': '. Keep it concise, changelog-ready ... Do not end it with a period.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "subject ending in a period fails",
+        "input": "fix: some message.",
+        "expect": "fail"
+      },
+      {
+        "label": "period in the body or footer passes",
+        "input": "fix(cli): preserve the prerelease tag\n\nFixes #123.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Header-scoped: a body sentence or a trailing footer period is untouched. Complements ZS-COMMIT-004 (subject case) and ZS-COMMIT-005 (length)."
+  },
+  {
+    "id": "ZS-COMMIT-027",
+    "domain": "commit",
+    "title": "Scope must be lower-case",
+    "summary": "A scope shouted as 'fix(SCOPE):' is rejected by the Angular config and by PR-title scope gates; scopes name a section of the codebase, so they stay lower-case ('fix(scope):').",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[A-Za-z]+\\([^)]*[A-Z]",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "\"scope-case\": [2, \"always\", \"lower-case\"]",
+        "ref": "@commitlint/config-angular/index.js:12"
+      },
+      {
+        "repo": "commitlint",
+        "rule": "echo \"fix(SCOPE): some message\" # fails",
+        "ref": "@commitlint/config-angular/README.md:82"
+      },
+      {
+        "repo": "action-semantic-pull-request",
+        "rule": "disallowScopes: | release / [A-Z]+ — by setting the value below ... `ci(e2e,release): ...` will be rejected",
+        "ref": "README.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "upper-case scope fails",
+        "input": "fix(SCOPE): some message",
+        "expect": "fail"
+      },
+      {
+        "label": "lower-case and camelCase-free scopes pass",
+        "input": "fix(scope): some message",
+        "expect": "pass"
+      },
+      {
+        "label": "scopeless header passes",
+        "input": "fix: some message",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Mirrors type-case (ZS-COMMIT-002) for the scope segment; a mixed-case scope such as fix(apiV2): also fails. config-conventional itself does not enable scope-case, config-angular does. config-angular's other extras are deliberately not ported: subject-exclamation-mark ('never') contradicts the conventional `!` marker ZS-COMMIT-001 accepts, and header-max-length 72 is a config choice, not a new tell (ZS-COMMIT-005 uses 100)."
+  },
+  {
+    "id": "ZS-COMMIT-028",
+    "domain": "commit",
+    "title": "Commit header must not be padded with whitespace",
+    "summary": "A header with leading or trailing whitespace lints green on length yet breaks in git log and grep output; commitlint's header-trim is an error-level rule in config-conventional.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^\\s+|\\s+$",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "commitlint",
+        "rule": "header-trim — condition: `header` must not have initial or trailing whitespaces",
+        "ref": "docs/reference/rules.md"
+      },
+      {
+        "repo": "commitlint",
+        "rule": "\"header-trim\": [RuleConfigSeverity.Error, \"always\"]",
+        "ref": "@commitlint/config-conventional/src/index.ts:11"
+      }
+    ],
+    "tests": [
+      {
+        "label": "trailing whitespace on the header fails",
+        "input": "fix: correct the retry count  ",
+        "expect": "fail"
+      },
+      {
+        "label": "clean header passes",
+        "input": "fix: correct the retry count\n\nBody line.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-COMMIT-005's summary and the slop-audit-commit checklist claim header-trim is implied by the 100-char cap, but its pattern (^.{101,}$) cannot catch a padded short header — this rule is the missing half, not a duplicate."
+  },
+  {
+    "id": "ZS-COMMIT-029",
+    "domain": "commit",
+    "title": "Unbackticked @-token pings a GitHub user",
+    "summary": "A bare @-prefixed token (scoped package, decorator, JSDoc tag) is parsed by GitHub as a user mention, linking and notifying an unrelated account; wrap it in backticks.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|[\\s(])@(?:[\\w.-]+\\/[\\w.-]+|(?:deprecated|param|returns?|see|example|throws|override|inheritDoc|link|since)\\b)"
+    },
+    "source": [
+      {
+        "repo": "conventional-changelog",
+        "rule": "Wrap any `@`-prefixed token that is not an intentional GitHub user mention in backticks — scoped package names (`@types/node`), decorators (`@Injectable`), JSDoc/annotation tags (`@deprecated`). GitHub parses a bare `@name` in commit messages and changelogs as a user mention, which can link and notify an unrelated GitHub account.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare scoped package and doc tag fail",
+        "input": "feat: add @types/node support to the loader\n\nBare @deprecated tags are no longer rewritten.",
+        "expect": "fail"
+      },
+      {
+        "label": "backticked token and e-mail address pass",
+        "input": "feat: add `@types/node` support to the loader\n\nBackticked `@deprecated` tags keep working; mail still goes to ops@example.com.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Pattern only fires on token shapes that are never intentional mentions (owner/repo scope, doc tags); a deliberate 'cc @reviewer' is untouched, and an @ preceded by a backtick or by a word character (e-mail) is not matched."
+  },
+  {
+    "id": "ZS-COMMIT-030",
+    "domain": "commit",
+    "title": "Breaking-change footer token must be upper-case",
+    "summary": "Conventional Commit units are case-insensitive except one: release tooling only recognises the footer token as `BREAKING CHANGE` (or `BREAKING-CHANGE`), so 'breaking change:' silently drops the major bump.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?:breaking|Breaking)[ -](?:change|Change)\\s*:",
+      "params": {
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "conventional-changelog",
+        "rule": "Conventional Commit units are not case-sensitive, except `BREAKING CHANGE`, which must be uppercase when used as that footer token.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
+      },
+      {
+        "repo": "conventional-changelog",
+        "rule": "Footer tokens use hyphens instead of spaces, such as `Reviewed-by`, except for `BREAKING CHANGE`. `BREAKING-CHANGE` is synonymous with `BREAKING CHANGE`.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "lower-case footer token fails",
+        "input": "feat!: drop the legacy fallback\n\nbreaking change: token fallbacks are no longer applied.",
+        "expect": "fail"
+      },
+      {
+        "label": "upper-case footer token passes",
+        "input": "feat!: drop the legacy fallback\n\nBREAKING CHANGE: token fallbacks are no longer applied.",
+        "expect": "pass"
+      },
+      {
+        "label": "hyphenated upper-case synonym passes",
+        "input": "feat!: drop the legacy fallback\n\nBREAKING-CHANGE: token fallbacks are no longer applied.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Case-sensitive on purpose so the canonical `BREAKING CHANGE:` never trips it; the realistic mixed casings (breaking change:, Breaking Change:) are matched."
+  },
+  {
+    "id": "ZS-COMMIT-031",
+    "domain": "commit",
+    "title": "Footer tokens use hyphens, not spaces",
+    "summary": "A trailer written as 'Signed off by:' / 'Reviewed by:' is not a footer token at all — parsers, DCO bots and changelog tooling key on the hyphenated form ('Signed-off-by:').",
+    "tier": "info",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "Signed off by",
+        "Co-authored by",
+        "Co authored by",
+        "Reviewed by",
+        "Tested by",
+        "Acked by",
+        "Suggested by",
+        "Reported by",
+        "Approved by",
+        "Authored by"
+      ],
+      "params": {
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "conventional-changelog",
+        "rule": "Footer tokens use hyphens instead of spaces, such as `Reviewed-by`, except for `BREAKING CHANGE`.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "space-separated trailer fails",
+        "input": "docs: add the migration guide\n\nSigned off by: Jane Doe <jane@example.com>",
+        "expect": "fail"
+      },
+      {
+        "label": "hyphenated trailers pass",
+        "input": "docs: add the migration guide\n\nSigned-off-by: Jane Doe <jane@example.com>\nReviewed-by: Kim <kim@example.com>",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Case-sensitive so ordinary prose ('as suggested by the reviewer') is not flagged; the space-variant set is the hyphenated trailer vocabulary in its spaced spelling, and 'BREAKING CHANGE' is deliberately exempt (see the footer-case rule)."
+  },
+  {
+    "id": "ZS-COMMIT-032",
+    "domain": "commit",
+    "title": "Passive-voice commit subject",
+    "summary": "A subject that states what happened ('custom scopes were added') reads as a changelog of events; an active verb phrase ('support custom scopes') commands the change and stays imperative.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[a-z]+(?:\\([^)]+\\))?!?:\\s+(?:\\S+\\s+){0,3}(?:was|were|had been|has been|have been)\\s+\\w+(?:ed|en)\\b",
+      "params": {
+        "headerOnly": true
+      }
+    },
+    "source": [
+      {
+        "repo": "conventional-changelog",
+        "rule": "Active verb phrases are usually better than passive sentences. Prefer `support custom scopes` over `custom scopes were added` unless passive voice is clearly more natural for the project.",
+        "ref": "skills/conventional-commit-message/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "passive subject fails",
+        "input": "feat: custom scopes were added to the writer",
+        "expect": "fail"
+      },
+      {
+        "label": "imperative subject passes",
+        "input": "feat: support custom scopes in the writer",
+        "expect": "pass"
+      },
+      {
+        "label": "present-tense copula is not flagged",
+        "input": "fix: the flag is enabled by default",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only past-tense auxiliaries (was/were/had been/has been/have been) trigger it, so descriptive 'is/are' subjects are not flagged; complementary to ZS-COMMIT-022 (gerund subjects), which catches a different non-imperative shape."
+  },
+  {
+    "id": "ZS-COMMIT-033",
+    "domain": "commit",
+    "title": "Emoji-only commit title has no description",
+    "summary": "In gitmoji repos the emoji is the intention and a message is still required ('<intention> [scope?][:?] <message>'); a title made of emoji alone carries no information for humans or changelogs.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?=[\\s\\S]*\\p{Extended_Pictographic})[\\p{Extended_Pictographic}\\u200d\\ufe0f\\s]+$",
+      "params": {
+        "headerOnly": true,
+        "flags": "u"
+      }
+    },
+    "source": [
+      {
+        "repo": "gitmoji",
+        "rule": "`<intention> [scope?][:?] <message>` — `intention`: An emoji from the list. `scope`: An optional string ... `message`: A brief explanation of the change.",
+        "ref": "README.md"
+      },
+      {
+        "repo": "gitmoji",
+        "rule": "Commit your changes. Don't forget to add a commit title with an emoji and a description.",
+        "ref": ".github/CONTRIBUTING.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "emoji-only title fails",
+        "input": "✨",
+        "expect": "fail"
+      },
+      {
+        "label": "emoji plus description passes",
+        "input": "✨ add the deploy workflow",
+        "expect": "pass"
+      },
+      {
+        "label": "conventional title without emoji passes",
+        "input": "feat: add the deploy workflow",
+        "expect": "pass"
+      },
+      {
+        "label": "blank header is not this rule's business",
+        "input": "",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Flags the absence of a message, not the emoji (gitmoji repos legitimately lead with one); an emoji-only header also trips ZS-COMMIT-008, but this rule names the gitmoji-specific defect."
+  },
+  {
+    "id": "ZS-COMMIT-034",
+    "domain": "commit",
+    "title": "AI co-author trailer in commit message",
+    "summary": "`Co-Authored-By: Claude ...` and `Generated with [Claude Code]` trailers record model provenance in permanent history; upstream's attribution rule covers the trailer form.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "co-authored-by:\\s*(?:claude|chatgpt|openai|anthropic|copilot|gemini)|generated\\s+with\\s+\\[?claude(?:\\s+code)?",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "no-ai-attribution pattern branch: co-?authored-by:\\s*(?:claude|chatgpt|openai|anthropic|copilot|gemini)",
+        "ref": "src/rules/code-quality.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "claude trailer fails",
+        "input": "feat(api): add rate limiting to the public endpoints\n\nCo-Authored-By: Claude <noreply@anthropic.com>",
+        "expect": "fail"
+      },
+      {
+        "label": "normal commit passes",
+        "input": "feat(api): add rate limiting to the public endpoints\n\nInstrumented with Prometheus counters; limits come from config.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Commit-domain twin of the code-domain attribution rule (same upstream pattern). Scope limits the match to the trailer/generator strings; a human co-author or a scaffold script is untouched. Teams that require provenance disclosure should allowlist this rule instead of deleting it."
   }
 ]

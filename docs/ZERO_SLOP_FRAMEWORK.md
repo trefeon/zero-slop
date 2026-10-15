@@ -308,7 +308,7 @@ zero-slop gate --tier error
 
 ## 6. Research Foundation: Reference Collection & Coverage Gaps
 
-The framework is grounded in 84 clones under `reference/` (gitignored; ≥300⭐ default with sole-player niche exceptions; giant engine repos (llama.cpp, vLLM, transformers, LanguageTool, Lighthouse, PR-Agent, super-linter, gitleaks, guardrails, promptfoo, semantic-release, raid, fast-detect-gpt) are shallow `--depth 1` clones since their value is current source, not history). Collectively they encode ~340 named slop tells plus the enforcement/measurement layers.
+The framework is grounded in 84 repo directories under `reference/` (gitignored; ≥300⭐ default with sole-player niche exceptions). The corpus is machine-managed: `scripts/reference-corpus.json` is the manifest, `node scripts/sync-reference.mjs --dir reference` fast-forwards every entry or clones missing ones (`--depth 1`), and `reference/CORPUS_STATE.json` records the head revision per repo. Refresh 2026-10-16: 58 look-alike repos added, 16 existing clones fast-forwarded upstream; `languagetool` is a blobless sparse clone of its EN rule set. Engine, detector and tooling repos whose value is not rules stay out of the manifest (llama.cpp, vLLM, transformers, outlines, Lighthouse, PR-Agent, gitleaks, zizmor, harden-runner, promptfoo, raid, fast-detect-gpt, factool, ux-skill, ai-detector-benchmark). One doc-named entry has no canonical upstream (`SemEval2024-task8`). Collectively the corpus encodes ~340 named slop tells plus the enforcement/measurement layers.
 
 ### 6.1 Collective coverage by domain
 
@@ -411,6 +411,20 @@ Layer 3  Measurement  → slop score, baselines, regression tracking            
 
 ---
 
+## 7.4 Backlog: engine work surfaced by the 2026-10 corpus refresh
+
+The refresh produced 53 concrete engine/tooling ideas, each citing its upstream implementation. Sizes are implementing estimates, not commitments; the repo roadmap (M1.5 CSS depth, M2 CLI/action, M3 measurement) already sequences most of them.
+
+- **Matcher params**: `requiresNearby {pattern, maxChars}` so presence rules can demand a companion token (dmmulroy anti-slop `require-safety-comment-for-type-assertion`); negative-evidence guard for absence checks (taste-skill `forbidWhenAbsent`, auteur WebGL without `prefers-reduced-motion`); token-allowlist plus `requireToken` for design-system adherence (fast-agent oxlint config); vale-style alternation fragments in list terms; a `suggestion` payload on findings fed by proselint PreferredForms and LanguageTool bad=good tables (~80 lines); cap params on code-domain regex rules (~20 lines).
+- **Prose metrics**: `closerRepetition` for the same short closer after 3+ paragraphs (~60 lines); bold-label list runs (~40 lines); burstiness CV band plus lexical-diversity window (kimhons/humanize, ~120 lines); ordered trigram phrase stage and MATTR-500 stats (~100/~45 lines); rider-gated lexicon weights for technical words (ZeroSlop, ~80 lines); severity-weighted tell density (im-not-ai, ~60 lines); contraction-ratio advisory line (anti-ai-slop-writing, ~50 lines).
+- **Scoring and reporting**: composite slop score 60/25/15 over words, contrast constructions and trigrams (~60-150 lines); JSON verdict envelope with fixed fields (~30 lines); `--format=agents` reporter with severity, criterion and confidence (~70 lines); credential `--fix` scrub (~25 lines); structured-answer prose check outside the JSON block (~35 lines).
+- **Markup and CSS depth**: static contrast-pair resolver, optional APCA Lc metric (~90-200 lines); logical-line joining so multi-line tags match (~60 lines); token graph checks for semantic chains (~150 lines); CSS-block clone counting for repeated radius/padding/shadow triples (~80 lines); shadow-uniformity metric (~60 lines); rendered-overflow probe at 320px (~120 lines); parse5 document pass for heading order, landmarks and list parentage (~250 lines); axe rule catalogue generator so a11y rules cite `axe:<ruleId>` (~110 lines).
+- **Diff and PR scope**: `--diff`/`--staged` scoped scanning (~120 lines); baseline/delta gating (~200 lines); PR-metadata rules (lockfile hygiene without manifest, max code references, max added comments, PR-template section cap; ~25-80 lines each); branch-name matcher (gitmoji, ~30 lines); DCO gate (commitlint, ~15 lines); reply-shape chat check for first-line action and bounded next step (~80 lines); `zero-slop commit` wizard (~150 lines).
+- **Skills tooling**: `zero-slop skills lint` for the frontmatter contract (~120 lines); strict frontmatter parser rejecting eval-based variants (~20 lines); fail-closed skill relocation (~85 lines); terminal-escape sanitizing (~15 lines); reference validator wired into CI (~150 lines); artifact constraint validator (~170 lines).
+- **Measurement**: rule-signal benchmark separating AI-generated from mature OSS repos (~300 lines); repo-to-rule coverage report.
+
+---
+
 ## 8. Agent Framework Decision: Verified 2026-08-17
 
 ### 8.1 Three Choice Layers
@@ -438,7 +452,7 @@ Rationale: the enforcement product is npm-native: every deterministic engine we 
 ```
 
 - **Language**: TypeScript, Node ≥22.
-- **Agent backbone**: Mastra 1.x (workflows own the deterministic scan sequence; agents do triage/fix reasoning; built-in evals measure detector precision/recall; MCP server exposes the audit as tools to every harness). Lighter alternative if needed: Vercel AI SDK v7 alone.
+- **Agent backbone**: Mastra 1.x (workflows own the deterministic scan sequence; agents do triage/fix reasoning; built-in evals measure detector precision/recall; MCP server exposes the audit as tools to every client runtime). Lighter alternative if needed: Vercel AI SDK v7 alone.
 - **Exposure**: CLI (`zero-slop scan|check|gate|report|baseline`) + MCP server + GitHub Action + Agent Skills, wrapped as one Agent Plugin for one-command install.
 - **Measurement**: golden slop corpus from `reference/` (84 repos already cloned) → Mastra evals; optionally DSPy-style rubric calibration later.
 - **Explicitly rejected**: LangGraph/Pydantic AI (Python split), AutoGen (maintenance), OpenAI Agents SDK (OpenAI-centric), Claude Agent SDK as backbone (lock-in), AG-1 (dead).
@@ -448,6 +462,7 @@ Rationale: the enforcement product is npm-native: every deterministic engine we 
 - **M0: Consolidation ✅ (delivered 2026-08-17)**: `rules/` JSON database: **249 canonical rules across 7 domains** (prose 72, ui 75, code 36, commit 20, integrity 15, a11y 16, chat 15), every rule source-attributed to the 25 reference repos, tiered (error/warning/info), matcher-typed (regex/list/statistical/ast/semantic), with pass+fail fixtures. TS workspace scaffolded (pnpm, `@zero-slop/core` with zod-validated loader + `pnpm validate:rules` gate). Rules schema: `rules/README.md`.
 - **M1: Core engines ✅ (delivered 2026-08-17)**: `@zero-slop/core` check engines: `scanText` (prose/chat/integrity), `scanFile` (ui + a11y + code + prose-on-markdown), `scanCommitMessage`. 78/102 text rules, 57/91 ui/a11y regex rules, 20/36 code rules, 11/20 commit rules executable (semantic → M3 agent; contrast/statistical UI → M1.5 CSS parsing). 265 tests, all 249 rules' fixtures verified, `pnpm test` + `pnpm typecheck` green.
 - **M1.5: Skill-audit fold ✅ (delivered 2026-08-17)**: audited 69 globally-installed skills.sh anti-slop skills (3 scouts, ~350 candidates) and folded the highest-value ~140 into the rules DB → **389 rules** (prose 119, ui 117, code 51, commit 24, integrity 27, a11y 28, chat 23). New coverage: tiered AI vocabulary (avoid-ai-writing), false agency/anthropomorphism/X-is-real (unslop), tropes catalog (deslop), CJK analytical tells (de-ai-writing) + Chinese web-fiction metrics (story-deslop), markup/citation fingerprints (ai-writing-detection), premium-consumer palette hexes + eyebrow/hero/motion budgets (design-taste-frontend, frontend-design-deslop, emil-design-eng), WCAG 2.2 + focus spec + sr-only (better-accessibility, wcag-accessibility-audit), Frappe code patterns + line/class gates. New engine metrics: typeTokenRatio, verdict-gated wordCount, corroboratingSignals, file/class line counts, commit list matcher. 408 tests green.
+- **M1.6: Corpus refresh + port ✅ (delivered 2026-10-16)**: the corpus moved to a committed manifest (`scripts/reference-corpus.json`, 84 repos) with `scripts/sync-reference.mjs` for clone/refresh (`languagetool` sparse, `--depth 1` elsewhere); 58 look-alike repos cloned, 16 existing clones fast-forwarded upstream. Ported **+131 rules → 520** (prose 155, ui 141, code 74, commit 34, integrity 33, a11y 49, chat 34) sourced from 48 upstream repos, every rule fixture-verified by the engines; skill bodies carry the new checklist items.
 - **M2: CLI + CI**: `zero-slop` CLI (commander) + `zero-slop-action` GitHub Action with PR report; wired alongside commitlint-action + pa11y-ci.
 - **M3: Agent + measurement**: Mastra workflows (scan graph), triage agent, evals against golden corpus, slop score + baseline regression in CI.
 - **M4: Distribution**: Agent Skills package + MCP server + Agent Plugin + picker installer.

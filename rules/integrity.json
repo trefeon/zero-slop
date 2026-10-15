@@ -294,6 +294,11 @@
         "repo": "miqdadbadjuber/anti-slop",
         "rule": "R-38 Real Content or Honest Placeholder / R-23 (statistics marked [REAL DATA])",
         "ref": "antislop.md"
+      },
+      {
+        "repo": "muratcankoylan/Agent-Skills-for-Context-Engineering",
+        "rule": "| Placeholders not examples | User must fill in | Avoids \"AI slop\"; forces personalization |",
+        "ref": "examples/digital-brain-skill/SKILLS-MAPPING.md"
       }
     ],
     "tests": [
@@ -593,6 +598,11 @@
         "repo": "ai-writing-detection",
         "rule": "Footnote markers (↩ / ↩2) at the end of citations",
         "ref": "reference/citation-patterns.md"
+      },
+      {
+        "repo": "manavmishra/ZeroSlop",
+        "rule": "chatbot-residue: \\bwould you like me to\\b|\\blet me know if you(?:'|’)d like\\b|\\bi hope this message finds you\\b|\\bmy (?:training data|knowledge cutoff)\\b|\\bas of my last (?:update|training)\\b",
+        "ref": "data/patterns.json#chatbot-residue"
       }
     ],
     "tests": [
@@ -960,6 +970,11 @@
         "repo": "ai-writing-detection",
         "rule": "Minimum requirements — <50 unreliable, 50–100 very low, 100–200 low, 200–500 moderate, 500+ higher",
         "ref": "reference/false-positive-prevention.md"
+      },
+      {
+        "repo": "lynote-ai/ai-text-detector",
+        "rule": "Ask for a longer sample when the text is under about 80 words.",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -1056,5 +1071,277 @@
       }
     ],
     "notes": "Pairs with ZS-INTEGRITY-020 for the date-stub half of the same template pattern. Full citation verification — broken external links, DOI/ISBN checksum failures, declared-but-unused references — is semantic/network-dependent and deferred to M3."
+  },
+  {
+    "id": "ZS-INTEGRITY-028",
+    "domain": "integrity",
+    "title": "Borrowed authority: outlet lists and follower counts",
+    "summary": "A row of prestige outlets or a follower/subscriber count stands in for what was actually said or done. The humanizer skill names both as borrowed authority: use the real source and its claim, or cut the list.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:active|strong|large) social media (?:presence|following)\\b|\\b(?:over|more than)\\s+\\d[\\d,.]*\\s*(?:k|m|million)?\\+?\\s*(?:followers|subscribers)\\b|\\b(?:cited|featured|profiled|quoted|published|covered)\\s+in\\s+[A-Z][\\w.&'’ -]{2,30},\\s+(?:[A-Z][\\w.&'’ -]{2,30},\\s+)*(?:and\\s+)?[A-Z][\\w.&'’ -]{2,30}",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "blader/humanizer",
+        "rule": "**Watch for:** experts argue, observers have cited, industry reports, some critics, several publications; cited, featured, or profiled in [a list of outlets], trade publications, independent coverage; active social media presence, over N followers. **Problem:** A name or an unnamed authority stands in for what was said. ... a list of prestige outlets props up a person.",
+        "ref": "SKILL.md §17 (Borrowed authority)"
+      },
+      {
+        "repo": "blader/humanizer",
+        "rule": "Before (prestige list): Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu. She maintains an active social media presence with over 500,000 followers. After: Her views have been cited in The New York Times and the BBC.",
+        "ref": "SKILL.md §17 (Borrowed authority)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fails - followers as notability",
+        "input": "She maintains an active social media presence with over 500,000 followers.",
+        "expect": "fail"
+      },
+      {
+        "label": "fails - prestige outlet list",
+        "input": "Her views have been cited in The New York Times, BBC, Financial Times, and The Hindu.",
+        "expect": "fail"
+      },
+      {
+        "label": "passes - single named source",
+        "input": "Her views have been cited in The New York Times and the BBC.",
+        "expect": "pass"
+      },
+      {
+        "label": "passes - plain subscriber count",
+        "input": "The newsletter has 2,400 subscribers and 30 paying customers.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-INTEGRITY-004 lists users/customers/requests/countries and does not hold followers or subscribers; the outlet alternative needs two comma-separated outlets, so a single named outlet passes."
+  },
+  {
+    "id": "ZS-INTEGRITY-029",
+    "domain": "integrity",
+    "title": "No speculative gap-filling (a guess dressed as fact)",
+    "summary": "When the source does not say, writing a sentence about not knowing and then inventing plausible filler (\"the company was likely founded in the 1990s\", \"she maintains a low profile\") dresses a guess as fact. Say the detail is undocumented, or drop the sentence.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:while|although|though)\\s+(?:specific\\s+)?(?:details|information|records|documentation|sources)\\s+(?:are|is|remain|remains)\\s+(?:limited|scarce|unclear|sparse|thin)\\b|\\b(?:likely|probably|presumably)\\s+(?:founded|started|born|began|originated)\\b|\\bmaintains?\\s+a\\s+low\\s+profile\\b|\\blittle\\s+is\\s+known\\s+about\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Speculative Gap-Filling — the writer does not know a fact, so they write a sentence about not knowing it, then invent plausible filler: \"the company was likely founded in the 1990s\", \"she maintains a low profile\". A guess dressed as fact",
+        "ref": "skills/antislop-copywriting/SKILL.md#speculative-gap-filling"
+      },
+      {
+        "repo": "miqdadbadjuber/anti-slop",
+        "rule": "Rule: R-17, R-36 (numbers and claims without a real source are FORBIDDEN; if there is no real data, show no claim)",
+        "ref": "antislop.md#r-17--data--numbers"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hedged invention fails",
+        "input": "While specific details are limited, the founder likely started small and grew through word of mouth.",
+        "expect": "fail"
+      },
+      {
+        "label": "low-profile filler fails",
+        "input": "Little is known about her early career; she maintains a low profile.",
+        "expect": "fail"
+      },
+      {
+        "label": "named absence of a source passes",
+        "input": "The founding details are not documented in our sources. Revenue reached $4.2M in 2024 (audited filing).",
+        "expect": "pass"
+      },
+      {
+        "label": "sourced date passes",
+        "input": "The company was founded in 2011 (Companies House filing 09934122).",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Fires on the hedged-invention shapes upstream names. Stating that a fact is undocumented (the sanctioned fix) stays clean; the pattern needs the hedge plus an invented verb, not the absence statement alone."
+  },
+  {
+    "id": "ZS-INTEGRITY-030",
+    "domain": "integrity",
+    "title": "No empty or stubbed link targets",
+    "summary": "Markdown links whose target is empty or a literal stub — `[release notes]()`, `[docs](URL)` — assert a source that does not exist. The last30days citation law forbids guessing, reconstructing, or reassembling URLs and forbids emitting empty links; a claim without a real URL should carry a plain label instead.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\[[^\\]\\n]{1,120}\\]\\(\\s*\\)|\\[[^\\]\\n]{1,120}\\]\\(\\s*(?:URL|url|TODO|TBD|LINK|link|PLACEHOLDER|placeholder)\\s*\\)",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "mvanhorn/last30days-skill",
+        "rule": "Never guess, reconstruct, or reassemble URLs. If a source genuinely has no URL, use its plain label. Never emit empty links.",
+        "ref": "skills/last30days/SKILL.md"
+      },
+      {
+        "repo": "mvanhorn/last30days-skill",
+        "rule": "Prefer readable labels over bare URLs where the governing contract permits them.",
+        "ref": "skills/last30days/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty link target fails",
+        "input": "The regression is documented in the [release notes]() for 2.22.",
+        "expect": "fail"
+      },
+      {
+        "label": "real target passes",
+        "input": "The regression is documented in the [release notes](https://docs.docker.com/compose/release-notes/) for 2.22.",
+        "expect": "pass"
+      },
+      {
+        "label": "in-page anchor passes",
+        "input": "Jump to [configuration](#configuration) or keep reading.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Distinct from ZS-INTEGRITY-027 (literal `url=URL` inside citation templates) and ZS-PROSE-094 (bracketed slot-fillers in prose): this targets the markdown link slot itself. In-page anchors like `[skip to content](#main)` are legitimate and are not matched."
+  },
+  {
+    "id": "ZS-INTEGRITY-031",
+    "domain": "integrity",
+    "title": "No authorship or misconduct accusation in a verdict",
+    "summary": "ai-text-detector's required behavior is that a detection result is never presented as proof and never accuses a named person; its avoid list is explicit ('This was definitely written by AI.', 'The detector proves misconduct.'). Our integrity rules gate verdict confidence and corroboration but never ban the accusation wording itself.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "definitely written by ai",
+        "was definitely written by",
+        "detector proves",
+        "proves misconduct",
+        "proves the text",
+        "this is plagiarism",
+        "plagiarized this",
+        "committed plagiarism",
+        "you cheated",
+        "they cheated"
+      ]
+    },
+    "source": [
+      {
+        "repo": "lynote-ai/ai-text-detector",
+        "rule": "- Never present the score as proof. - Never accuse a named person of cheating, fraud, or misconduct.",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "lynote-ai/ai-text-detector",
+        "rule": "Avoid: - \"This was definitely written by AI.\" - \"The detector proves misconduct.\" - Any accusation against a named person.",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "lynote-ai/ai-text-detector",
+        "rule": "Prefer \"AI-like signals are present\" over \"This was written by AI\".",
+        "ref": "SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "accusation verdict fails",
+        "input": "The submission was definitely written by AI and the detector proves misconduct.",
+        "expect": "fail"
+      },
+      {
+        "label": "hedged signal report passes",
+        "input": "AI-like signals are present in three of five paragraphs, but this is not proof of authorship. Treat the result as inconclusive pending a longer sample.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Applies to text that reports or acts on a detection verdict (agent answers, review notes, moderation comments). ZS-INTEGRITY-025/026 stay the statistical gates; this rule bans the wording they assume is absent."
+  },
+  {
+    "id": "ZS-INTEGRITY-032",
+    "domain": "integrity",
+    "title": "No live API keys in generated output",
+    "summary": "guardrails treats credential leakage as a validation criterion for LLM output: its no-secrets example registers a validator over the string field with an OpenAI key pattern and scrubs the key on failure. Generated prose or shell examples that embed a real-looking key are an output-integrity defect, not a style tell.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bsk-[A-Za-z0-9_-]{20,}"
+    },
+    "source": [
+      {
+        "repo": "guardrails-ai/guardrails",
+        "rule": "We want to ask help with an API, but make sure that the generated text has no secrets.",
+        "ref": "docs/examples/no_secrets_in_generated_text.ipynb"
+      },
+      {
+        "repo": "guardrails-ai/guardrails",
+        "rule": "OPENAI_KEY_PATTERN = re.compile(r\"sk-[a-zA-Z0-9]{24}\") — … fail result \"Value {value} is an OpenAI API key\", corrected value replaces the key with \"sk-xxx\"",
+        "ref": "docs/examples/no_secrets_in_generated_text.ipynb"
+      }
+    ],
+    "tests": [
+      {
+        "label": "embedded key fails",
+        "input": "Call the endpoint with your key sk-proj-9f2c7a1d4b8e5f6a2c3d4e5f60718293 and it returns the completion.",
+        "expect": "fail"
+      },
+      {
+        "label": "placeholder key passes",
+        "input": "Call the endpoint with the key from the OPENAI_API_KEY environment variable; it returns the completion.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Upstream matches exactly sk-[a-zA-Z0-9]{24}; the body is widened to 20+ characters with '-' allowed so sk-proj-* and sk-svcacct-* keys are caught too. Placeholder forms (sk-xxx, sk-...) stay clean, matching upstream's fix value."
+  },
+  {
+    "id": "ZS-INTEGRITY-033",
+    "domain": "integrity",
+    "title": "Roleplay stage directions pasted into prose (*nods*, *sighs*)",
+    "summary": "Asterisk-wrapped action beats are chatbot residue: they are proof the text came out of a chat window, and they carry no information a reader needs.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\*(?:nods?|sighs?|smiles?|grins?|shrugs?|chuckles?|winks?|smirks?|frowns?|laughs?|gasps?|blinks?)\\b[^*\\n]{0,60}\\*"
+    },
+    "source": [
+      {
+        "repo": "manavmishra/ZeroSlop",
+        "rule": "chat-roleplay-action (weight 8, source conorbronsdon/avoid-ai-writing): \\*(?:nods?|sighs?|laughs?|smiles?|frowns?|shrugs?|grins?|winks?|chuckles?|gasps?|pauses?|thinks?|wonders?|whispers?|shouts?|gestures?|raises?|leans?|turns?|looks?|glances?|smirks?|blinks?)\\b[^*\\n]{0,70}\\*(?:$|[^*])",
+        "ref": "data/learned.json#chat-roleplay-action"
+      },
+      {
+        "repo": "manavmishra/ZeroSlop",
+        "rule": "Chatbot markup leakage (oaicite, citeturn0…, [cite: 1], utm_source=chatgpt.com) | Strip — these are proof, not style",
+        "ref": "skills/zero-slop/references/tells.md#4-punctuation--formatting"
+      }
+    ],
+    "tests": [
+      {
+        "label": "stage direction fails",
+        "input": "Let me take a look. *nods slowly* Yes, the retry logic is the culprit.",
+        "expect": "fail"
+      },
+      {
+        "label": "plain answer passes",
+        "input": "Let me take a look. The retry logic looks like the culprit.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Paste artifact rather than a style choice, so error tier. The four-lookahead alternative forms (adverbs, present participles) are covered by the \\b[^*]{0,60} tail."
   }
 ]

@@ -1,0 +1,428 @@
+{
+  "version": 1,
+  "repos": [
+    {
+      "name": "accessibility-agents",
+      "url": "https://github.com/Community-Access/accessibility-agents.git",
+      "group": "a11y"
+    },
+    {
+      "name": "action-semantic-pull-request",
+      "url": "https://github.com/amannn/action-semantic-pull-request.git",
+      "group": "commit"
+    },
+    {
+      "name": "agent-skills",
+      "url": "https://github.com/addyosmani/agent-skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "agent-skills-for-context-engineering",
+      "url": "https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering.git",
+      "group": "skills"
+    },
+    {
+      "name": "agentic-awesome-skills",
+      "url": "https://github.com/sickn33/agentic-awesome-skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "agentskills",
+      "url": "https://github.com/agentskills/agentskills.git",
+      "group": "skills"
+    },
+    {
+      "name": "AI-Research-SKILLs",
+      "url": "https://github.com/Orchestra-Research/AI-Research-SKILLs.git",
+      "group": "skills"
+    },
+    {
+      "name": "ai-text-detector",
+      "url": "https://github.com/lynote-ai/ai-text-detector.git",
+      "group": "measurement"
+    },
+    {
+      "name": "AIGC_text_detector",
+      "url": "https://github.com/YuchuanTian/AIGC_text_detector.git",
+      "group": "measurement"
+    },
+    {
+      "name": "anthropics-skills",
+      "url": "https://github.com/anthropics/skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "anti-ai-slop-writing",
+      "url": "https://github.com/jalaalrd/anti-ai-slop-writing.git",
+      "group": "prose"
+    },
+    {
+      "name": "anti-slop",
+      "url": "https://github.com/miqdadbadjuber/anti-slop.git",
+      "group": "code"
+    },
+    {
+      "name": "anti-slop-dmmulroy",
+      "url": "https://github.com/dmmulroy/anti-slop.git",
+      "group": "code"
+    },
+    {
+      "name": "anti-slop-writing",
+      "url": "https://github.com/adenaufal/anti-slop-writing.git",
+      "group": "chat"
+    },
+    {
+      "name": "auteur",
+      "url": "https://github.com/agiwhitelist/auteur.git",
+      "group": "ui"
+    },
+    {
+      "name": "axe-core",
+      "url": "https://github.com/dequelabs/axe-core.git",
+      "group": "a11y"
+    },
+    {
+      "name": "claude-code-best-practice",
+      "url": "https://github.com/shanraisshan/claude-code-best-practice.git",
+      "group": "code"
+    },
+    {
+      "name": "claude-design-system-prompt",
+      "url": "https://github.com/Trystan-SA/claude-design-system-prompt.git",
+      "group": "ui"
+    },
+    {
+      "name": "code-humanizer",
+      "url": "https://github.com/LeonardNJU/code-humanizer.git",
+      "group": "code"
+    },
+    {
+      "name": "commitlint",
+      "url": "https://github.com/conventional-changelog/commitlint.git",
+      "group": "commit"
+    },
+    {
+      "name": "commitlint-github-action",
+      "url": "https://github.com/wagoid/commitlint-github-action.git",
+      "group": "commit"
+    },
+    {
+      "name": "conventional-changelog",
+      "url": "https://github.com/conventional-changelog/conventional-changelog.git",
+      "group": "commit"
+    },
+    {
+      "name": "cz-cli",
+      "url": "https://github.com/commitizen/cz-cli.git",
+      "group": "commit"
+    },
+    {
+      "name": "davidondrej-skills",
+      "url": "https://github.com/davidondrej/skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "detect-gpt",
+      "url": "https://github.com/eric-mitchell/detect-gpt.git",
+      "group": "measurement"
+    },
+    {
+      "name": "DevOps-Security-Agent-Skills",
+      "url": "https://github.com/BagelHole/DevOps-Security-Agent-Skills.git",
+      "group": "meta"
+    },
+    {
+      "name": "distilly",
+      "url": "https://github.com/titanwings/distilly.git",
+      "group": "prose"
+    },
+    {
+      "name": "equal-access",
+      "url": "https://github.com/IBMa/equal-access.git",
+      "group": "a11y"
+    },
+    {
+      "name": "eslint-plugin-jsx-a11y",
+      "url": "https://github.com/jsx-eslint/eslint-plugin-jsx-a11y.git",
+      "group": "a11y"
+    },
+    {
+      "name": "fast-agent",
+      "url": "https://github.com/evalstate/fast-agent.git",
+      "group": "meta"
+    },
+    {
+      "name": "GenericAgent",
+      "url": "https://github.com/lsdefine/GenericAgent.git",
+      "group": "meta"
+    },
+    {
+      "name": "gitmoji",
+      "url": "https://github.com/carloscuesta/gitmoji.git",
+      "group": "commit"
+    },
+    {
+      "name": "GPTZero",
+      "url": "https://github.com/BurhanUlTayyab/GPTZero.git",
+      "group": "measurement"
+    },
+    {
+      "name": "guardrails",
+      "url": "https://github.com/guardrails-ai/guardrails.git",
+      "group": "chat"
+    },
+    {
+      "name": "hack-skills",
+      "url": "https://github.com/yaklang/hack-skills.git",
+      "group": "meta"
+    },
+    {
+      "name": "hallmark",
+      "url": "https://github.com/Nutlope/hallmark.git",
+      "group": "ui"
+    },
+    {
+      "name": "hermes-agent-self-evolution",
+      "url": "https://github.com/NousResearch/hermes-agent-self-evolution.git",
+      "group": "meta"
+    },
+    {
+      "name": "humanize",
+      "url": "https://github.com/kimhons/humanize.git",
+      "group": "prose"
+    },
+    {
+      "name": "humanizer",
+      "url": "https://github.com/blader/humanizer.git",
+      "group": "prose"
+    },
+    {
+      "name": "i-have-adhd",
+      "url": "https://github.com/ayghri/i-have-adhd.git",
+      "group": "prose"
+    },
+    {
+      "name": "im-not-ai",
+      "url": "https://github.com/epoko77-ai/im-not-ai.git",
+      "group": "prose"
+    },
+    {
+      "name": "jakubkrehel-skills",
+      "url": "https://github.com/jakubkrehel/skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "KarpeSlop",
+      "url": "https://github.com/CodeDeficient/KarpeSlop.git",
+      "group": "code"
+    },
+    {
+      "name": "kill-ai-slop",
+      "url": "https://github.com/yetone/kill-ai-slop.git",
+      "group": "ui"
+    },
+    {
+      "name": "languagetool",
+      "url": "https://github.com/languagetool-org/languagetool.git",
+      "group": "prose",
+      "sparse": [
+        "languagetool-language-modules/en/src/main/resources/org/languagetool/rules/en"
+      ]
+    },
+    {
+      "name": "last30days-skill",
+      "url": "https://github.com/mvanhorn/last30days-skill.git",
+      "group": "meta"
+    },
+    {
+      "name": "lm-watermarking",
+      "url": "https://github.com/jwkirchenbauer/lm-watermarking.git",
+      "group": "measurement"
+    },
+    {
+      "name": "no_ai_slop_writing_rules",
+      "url": "https://github.com/realrossmanngroup/no_ai_slop_writing_rules.git",
+      "group": "prose"
+    },
+    {
+      "name": "no-ai-slop",
+      "url": "https://github.com/petergyang/no-ai-slop.git",
+      "group": "prose"
+    },
+    {
+      "name": "no-slop",
+      "url": "https://github.com/Byk3y/no-slop.git",
+      "group": "prose"
+    },
+    {
+      "name": "obsidian-skills",
+      "url": "https://github.com/kepano/obsidian-skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "omakaseagent",
+      "url": "https://github.com/rblalock/omakaseagent.git",
+      "group": "ui"
+    },
+    {
+      "name": "pa11y",
+      "url": "https://github.com/pa11y/pa11y.git",
+      "group": "a11y"
+    },
+    {
+      "name": "pa11y-ci",
+      "url": "https://github.com/pa11y/pa11y-ci.git",
+      "group": "a11y"
+    },
+    {
+      "name": "peakoss-anti-slop",
+      "url": "https://github.com/peakoss/anti-slop.git",
+      "group": "ci"
+    },
+    {
+      "name": "proselint",
+      "url": "https://github.com/amperser/proselint.git",
+      "group": "prose"
+    },
+    {
+      "name": "reviewdog",
+      "url": "https://github.com/reviewdog/reviewdog.git",
+      "group": "code"
+    },
+    {
+      "name": "SAPC-APCA",
+      "url": "https://github.com/Myndex/SAPC-APCA.git",
+      "group": "a11y"
+    },
+    {
+      "name": "selfcheckgpt",
+      "url": "https://github.com/potsawee/selfcheckgpt.git",
+      "group": "integrity"
+    },
+    {
+      "name": "semantic-release",
+      "url": "https://github.com/semantic-release/semantic-release.git",
+      "group": "commit"
+    },
+    {
+      "name": "shadscan",
+      "url": "https://github.com/TheOrcDev/shadscan.git",
+      "group": "ui"
+    },
+    {
+      "name": "skills",
+      "url": "https://github.com/vercel-labs/skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "skills-slides",
+      "url": "https://github.com/nghiahsgs/skills-slides.git",
+      "group": "ui"
+    },
+    {
+      "name": "slop-scan",
+      "url": "https://github.com/modem-dev/slop-scan.git",
+      "group": "code"
+    },
+    {
+      "name": "slop-score",
+      "url": "https://github.com/sam-paech/slop-score.git",
+      "group": "measurement"
+    },
+    {
+      "name": "slop-score-skill",
+      "url": "https://github.com/closestfriend/slop-score-skill.git",
+      "group": "prose"
+    },
+    {
+      "name": "SlopZero",
+      "url": "https://github.com/IbrahimShoaib/SlopZero.git",
+      "group": "prose"
+    },
+    {
+      "name": "stitch-skills",
+      "url": "https://github.com/google-labs-code/stitch-skills.git",
+      "group": "ui"
+    },
+    {
+      "name": "super-linter",
+      "url": "https://github.com/super-linter/super-linter.git",
+      "group": "ci"
+    },
+    {
+      "name": "superdesign-skill",
+      "url": "https://github.com/superdesigndev/superdesign-skill.git",
+      "group": "ui"
+    },
+    {
+      "name": "superpowers",
+      "url": "https://github.com/obra/superpowers.git",
+      "group": "skills"
+    },
+    {
+      "name": "svvarm",
+      "url": "https://github.com/robzilla1738/svvarm.git",
+      "group": "ui"
+    },
+    {
+      "name": "talk-normal",
+      "url": "https://github.com/hexiecs/talk-normal.git",
+      "group": "chat"
+    },
+    {
+      "name": "taste-skill",
+      "url": "https://github.com/Leonxlnx/taste-skill.git",
+      "group": "ui"
+    },
+    {
+      "name": "textlint",
+      "url": "https://github.com/textlint/textlint.git",
+      "group": "prose"
+    },
+    {
+      "name": "ux-ui-agent-skills",
+      "url": "https://github.com/plugin87/ux-ui-agent-skills.git",
+      "group": "ui"
+    },
+    {
+      "name": "vale",
+      "url": "https://github.com/vale-cli/vale.git",
+      "group": "prose"
+    },
+    {
+      "name": "vercel-agent-skills",
+      "url": "https://github.com/vercel-labs/agent-skills.git",
+      "group": "skills"
+    },
+    {
+      "name": "vibecheck",
+      "url": "https://github.com/yuvrajangadsingh/vibecheck.git",
+      "group": "code"
+    },
+    {
+      "name": "write-good",
+      "url": "https://github.com/btford/write-good.git",
+      "group": "prose"
+    },
+    {
+      "name": "wshobson-agents",
+      "url": "https://github.com/wshobson/agents.git",
+      "group": "skills"
+    },
+    {
+      "name": "zero-ai-slop",
+      "url": "https://github.com/pallavkaushish/zero-ai-slop.git",
+      "group": "prose"
+    },
+    {
+      "name": "zero-slop",
+      "url": "https://github.com/lcsxu/zero-slop.git",
+      "group": "ui"
+    },
+    {
+      "name": "ZeroSlop",
+      "url": "https://github.com/manavmishra/ZeroSlop.git",
+      "group": "prose"
+    }
+  ]
+}

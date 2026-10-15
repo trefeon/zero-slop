@@ -68,7 +68,7 @@ same artifact.
 
 1. Banner + badges (MIT, version, npm, tests): first 20 lines
 2. **Install: one command** (`npx -y zero-slop scan .`): first 60 lines
-3. What it catches (389 rules across 7 domains, with 3 examples)
+3. What it catches (520 rules across 7 domains, with 3 examples)
 4. Usage: CLI (`scan/check/gate/report`), CI action, agent skills, MCP
 5. Before/after proof (demo screenshots like hallmark)
 6. Config reference → Contributing → License

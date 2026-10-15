@@ -109,6 +109,32 @@ describe("prose engine: cap behavior", () => {
   });
 });
 
+describe("prose engine: list counting", () => {
+  it("counts each occurrence of a list term once and scans past excluded code spans", async () => {
+    const prose = await loadDomain("prose");
+    const verbs = prose.find((r) => r.id === "ZS-PROSE-001")!;
+
+    const repeated = scanProse(
+      [verbs],
+      buildContext("We leverage the parser. They leverage the cache."),
+      {},
+    );
+    expect(repeated).toHaveLength(1);
+    expect(repeated[0]!.count).toBe(2);
+
+    // The first occurrence sits in a code span (excluded by ZS-PROSE-067);
+    // matching must continue past it instead of stopping at the first hit.
+    const masked = scanProse(
+      [verbs],
+      buildContext("Use `leverage` sparingly, but we leverage it daily.", { isMarkdown: true }),
+      {},
+    );
+    expect(masked).toHaveLength(1);
+    expect(masked[0]!.count).toBe(1);
+    expect(masked[0]!.evidence).toBe("leverage");
+  });
+});
+
 describe("prose engine: statistical matchers", () => {
   it("uniform sentence lengths trigger same-length run; varied lengths pass", async () => {
     const prose = await loadDomain("prose");

@@ -18,6 +18,11 @@
         "repo": "hexiecs/talk-normal",
         "rule": "No negation-based contrastive phrasing (any position/order)",
         "ref": "prompt.md"
+      },
+      {
+        "repo": "sam-paech/slop-score",
+        "rule": "Not-X-But-Y Pattern Detection — a 2-stage regex pipeline: Stage 1 surface patterns (dash forms, cross-sentence contrasts), Stage 2 POS-tagged patterns",
+        "ref": "README.md"
       }
     ],
     "tests": [
@@ -119,6 +124,16 @@
         "repo": "hexiecs/talk-normal",
         "rule": "No summary-stamp closings",
         "ref": "prompt.md"
+      },
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Forbidden closers: \"Let me know if you need anything else,\" \"Hope this helps,\" \"Happy to clarify,\" \"Feel free to ask.\"",
+        "ref": "skills/i-have-adhd/SKILL.md §10"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "Every line is a verdict, a finding with file:line, or a check you ran — no preamble, no process narration, no closing summary.",
+        "ref": "skills/subagent-driven-development/task-reviewer-prompt.md"
       }
     ],
     "tests": [
@@ -149,6 +164,11 @@
         "repo": "hexiecs/talk-normal",
         "rule": "Never restate the question",
         "ref": "prompt.md"
+      },
+      {
+        "repo": "blader/humanizer",
+        "rule": "a short reply that restates the problem, walks through the diagnosis, and lays out the evidence before it reaches the decision",
+        "ref": "SKILL.md §26 (Re-explaining what the reader knows)"
       }
     ],
     "tests": [
@@ -179,6 +199,11 @@
         "repo": "hexiecs/talk-normal",
         "rule": "Lead with the answer, then add context only if it genuinely helps",
         "ref": "prompt.md"
+      },
+      {
+        "repo": "blader/humanizer",
+        "rule": "Lead with the decision and keep only the reasoning that would change whether the reader agrees.",
+        "ref": "SKILL.md §26 (Re-explaining what the reader knows)"
       }
     ],
     "tests": [
@@ -908,5 +933,528 @@
         "expect": "pass"
       }
     ]
+  },
+  {
+    "id": "ZS-CHAT-024",
+    "domain": "chat",
+    "title": "No availability-ping closers in replies",
+    "summary": "Agent replies end with an offer to keep helping ('Let me know if you need anything else.', 'Happy to clarify.') instead of the next action. The ADHD-output skill bans these closers outright and asks for one bounded next action instead.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "let me know if",
+        "happy to clarify",
+        "happy to answer any questions"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Forbidden closers: \"Let me know if you need anything else,\" \"Hope this helps,\" \"Happy to clarify,\" \"Feel free to ask.\"",
+        "ref": "skills/i-have-adhd/SKILL.md §10 (No preamble, no recap, no closing pleasantries)"
+      },
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Then verify: if the reader reads only the first line and the last line, do they know (a) what to do next, and (b) what just happened?",
+        "ref": "skills/i-have-adhd/SKILL.md (Pre-send check)"
+      },
+      {
+        "repo": "adenaufal/anti-slop-writing",
+        "rule": "\"Let me know if...\" (never-include collaborative chat artifacts)",
+        "ref": "english/system-prompt.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fails - availability ping instead of a next action",
+        "input": "The patch is on the branch. Let me know if you need anything else.",
+        "expect": "fail"
+      },
+      {
+        "label": "passes - names the next action",
+        "input": "The patch is on the branch. Next: run the auth suite.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-CHAT-003 already bans summary-stamp closings (its list holds 'hope this helps' and 'feel free to ask'); this rule covers the offer-of-further-help family it does not contain."
+  },
+  {
+    "id": "ZS-CHAT-025",
+    "domain": "chat",
+    "title": "No work-summary recaps in replies",
+    "summary": "After finishing, the reply narrates what it just did ('I've now done X, Y, and Z, which means...') instead of showing the result. The ADHD-output skill forbids these recaps and asks for visible state plus one next action.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "i've now done",
+        "i have now done",
+        "here's what i did",
+        "here is what i did",
+        "to recap what i did",
+        "to summarize what i did",
+        "let me summarize what i did"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Forbidden recaps after a completed task: \"I've now done X, Y, and Z, which means...\"",
+        "ref": "skills/i-have-adhd/SKILL.md §10 (No preamble, no recap, no closing pleasantries)"
+      },
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Bad: \"I've made some changes to the auth flow. Among other things...\" Good: \"Login now works with magic links. Try: `npm run dev`, open `/login`.\"",
+        "ref": "skills/i-have-adhd/SKILL.md §7 (Make completed work visible)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fails - recap announces completed work",
+        "input": "I've now done the schema update, the backfill, and the index rebuild, which means the report should stop timing out.",
+        "expect": "fail"
+      },
+      {
+        "label": "passes - visible state plus next action",
+        "input": "The schema update is on the branch. Next: dry-run the backfill.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scope is the reply opener/recap position with first person; a bare 'the schema update is on the branch' statement is the fix, not a violation."
+  },
+  {
+    "id": "ZS-CHAT-026",
+    "domain": "chat",
+    "title": "No self-announcement openers ('Let me...', 'I'll...', 'Looking at your...')",
+    "summary": "Lines that open a reply by announcing the upcoming work rather than doing it are the forbidden openers of the ADHD-output skill. A tool call the harness requires is announced, not narrated; everything else starts with the answer.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?:Let me(?! know\\b)\\s|I'll\\s|I will\\s|I'm going to\\s|I am going to\\s|Looking at your\\s|Sure[,.!])",
+      "params": {
+        "flags": "m",
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Forbidden openers: \"Great question,\" \"Let me...\", \"I'll...\", \"Sure!\", \"Looking at your...\", \"To answer your question...\" Start with the answer. End when the answer is done.",
+        "ref": "skills/i-have-adhd/SKILL.md §10 (No preamble, no recap, no closing pleasantries)"
+      },
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Before sending, delete: 1. The first sentence if it announces what you are about to do.",
+        "ref": "skills/i-have-adhd/SKILL.md (Pre-send check)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fails - reply opens by announcing the work",
+        "input": "Let me take a look at the auth flow first.\n\nThe token check runs before the session lookup.",
+        "expect": "fail"
+      },
+      {
+        "label": "passes - opens with the answer",
+        "input": "The token check runs before the session lookup, in `verifyToken`.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Anchored to line start with the m flag and excludes 'Let me know...' so CA1-class closers are not double-counted. ZS-CHAT-022 holds the task-specific forms ('let me walk you through'); this covers the generic opener position."
+  },
+  {
+    "id": "ZS-CHAT-027",
+    "domain": "chat",
+    "title": "Matter-of-fact error reports (no 'Uh oh' / 'There seems to be a problem')",
+    "summary": "Performative dismay in a failure report ('Uh oh,', 'Oh no,', 'There seems to be a problem') buries the cause and fix. The ADHD-output skill bans these openers and asks for cause plus fix only.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "uh oh",
+        "oh no",
+        "there seems to be a problem",
+        "there appears to be a problem",
+        "there seems to be an issue",
+        "there appears to be an issue"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Never use \"Uh oh,\" \"Oh no,\" or \"There seems to be a problem.\" State cause and fix.\n\nBad: \"Uh oh, the test is failing. There seems to be an issue...\"\nGood: \"Test fails at `auth.spec.ts:42`: expected 200, got 401. Cause: missing auth header. Fix: add `Authorization: Bearer ${token}` to the request.\"",
+        "ref": "skills/i-have-adhd/SKILL.md §8 (Matter-of-fact tone for errors)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fails - dismay instead of cause",
+        "input": "Uh oh, the test is failing. There seems to be an issue with the auth header.",
+        "expect": "fail"
+      },
+      {
+        "label": "passes - cause and fix",
+        "input": "Test fails at auth.spec.ts:42: expected 200, got 401. Cause: the request has no Authorization header.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-UI-067 covers 'uh oh' in UI microcopy markup; this is the agent-reply surface. 'oh no' and the 'there seems/appears to be' constructions are the source's own examples of the same tell."
+  },
+  {
+    "id": "ZS-CHAT-028",
+    "domain": "chat",
+    "title": "No 'by the way' sidebars in replies",
+    "summary": "A second issue bolted onto a finished answer as a 'by the way' aside is the tangent dump the ADHD-output skill suppresses: it splits attention between a done task and an open one. Surface the second issue once, as its own question.",
+    "tier": "info",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "by the way",
+        "btw"
+      ],
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Bad: \"Here's the fix. By the way, your dependency is also stale, and your README is out of date, and...\" Good: \"Here's the fix. Separately: there is also a stale dependency. Want me to handle that next?\"",
+        "ref": "skills/i-have-adhd/SKILL.md §4 (Suppress tangents)"
+      },
+      {
+        "repo": "ayghri/i-have-adhd",
+        "rule": "Before sending, delete: ... 3. Any \"by the way\" sidebar.",
+        "ref": "skills/i-have-adhd/SKILL.md (Pre-send check)"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fails - tangent appended to the fix",
+        "input": "The fix is on main. By the way, your lockfile is also stale and your README is out of date.",
+        "expect": "fail"
+      },
+      {
+        "label": "passes - tangent offered as its own item",
+        "input": "The fix is on main. Separately: the lockfile is stale. Want a ticket for that?",
+        "expect": "pass"
+      }
+    ],
+    "notes": "'btw' is the same sidebar in abbreviated form. A second issue raised as its own question is the prescribed fix, not a violation."
+  },
+  {
+    "id": "ZS-CHAT-029",
+    "domain": "chat",
+    "title": "No unverified success hedges ('should work now', 'seems to work', 'looks correct')",
+    "summary": "Agent answers that predict success instead of reporting a run result — 'should work now', 'should pass now', 'seems to work', 'looks correct', 'probably works'. Superpowers' verification gate lists 'should', 'probably', 'seems to' as red flags and marks `❌ \"Should pass now\" / \"Looks correct\"` as the failure pattern; a claim is legitimate only when the verification command ran and its output is in the same message.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:should|probably|presumably|hopefully)\\s+(?:now\\s+)?(?:work|works|pass|passes|be\\s+(?:fixed|working|correct|fine|done)|fix|have\\s+fixed|be\\s+good)\\b|\\b(?:seems|appears)\\s+to\\s+(?:work|be\\s+(?:fixed|working|correct))\\b|\\blooks\\s+(?:correct|fixed|good\\s+now|right\\s+now)\\b|\\bshould\\s+be\\s+(?:good|all\\s+set)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "Red Flags - STOP: Using \"should\", \"probably\", \"seems to\"",
+        "ref": "skills/verification-before-completion/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "Tests: ❌ \"Should pass now\" / \"Looks correct\"",
+        "ref": "skills/verification-before-completion/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "Rationalization Prevention: \"Should work now\" | RUN the verification",
+        "ref": "skills/verification-before-completion/SKILL.md"
+      },
+      {
+        "repo": "vercel-labs/skills",
+        "rule": "Pending, approval-gated, absent, unrelated, or unexplained failed checks are limitations, never passing checks.",
+        "ref": ".factory/workflows/triage/skills/triage/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hedged success claim fails",
+        "input": "I moved the retry into the client. It should work now, and the suite should pass.",
+        "expect": "fail"
+      },
+      {
+        "label": "evidence-backed claim passes",
+        "input": "I ran `npm test`: 34/34 pass, 0 failures. The retry now lives in the client.",
+        "expect": "pass"
+      },
+      {
+        "label": "looks-correct variant fails",
+        "input": "The diff looks correct to me, so I'm marking the task done.",
+        "expect": "fail"
+      }
+    ],
+    "notes": "Warning tier: the phrase is only a candidate. A hedge that also states the limitation ('untested on Windows') or cites the command output in the same message keeps its meaning; the tell is the prediction standing in for a run. Superpowers phrases the same gate as `NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE`."
+  },
+  {
+    "id": "ZS-CHAT-030",
+    "domain": "chat",
+    "title": "No gratitude expressions or praise-then-pivot openers in replies",
+    "summary": "Replies that open with thanks or praise before the substance — 'Thanks for catching that!', 'Thank you for the changes, however...', 'Great work, but...'. Superpowers' review skill hard-bans the gratitude family (`❌ ANY gratitude expression`, `If you catch yourself about to write \"Thanks\": DELETE IT`), and GenericAgent's review SOP bans the praise-plus-pivot sandwich by name.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "thanks for catching that",
+        "thanks for catching this",
+        "thanks for the review",
+        "thanks for the feedback",
+        "thanks for the changes",
+        "thanks for the update",
+        "thank you for the",
+        "thanks for pointing that out",
+        "great work, but",
+        "good work, but",
+        "nice work, but",
+        "great job, but",
+        "good catch, but",
+        "great catch, but",
+        "looks good, but"
+      ]
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "❌ \"Thanks for catching that!\" / ❌ \"Thanks for [anything]\" / ❌ ANY gratitude expression",
+        "ref": "skills/receiving-code-review/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "If you catch yourself about to write \"Thanks\": DELETE IT. State the fix instead.",
+        "ref": "skills/receiving-code-review/SKILL.md"
+      },
+      {
+        "repo": "lsdefine/GenericAgent",
+        "rule": "零奉承 — 不写 \"Great work, but...\", \"Thanks for the changes, however...\"。",
+        "ref": "memory/review_sop.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "gratitude opener fails",
+        "input": "Thanks for catching that! I moved the null check into the parser.",
+        "expect": "fail"
+      },
+      {
+        "label": "praise-then-pivot fails",
+        "input": "Great work, but the migration still drops the retry counter.",
+        "expect": "fail"
+      },
+      {
+        "label": "state the fix passes",
+        "input": "Fixed: the null check now runs before the parser reads the header, at `parse.ts:88`.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Existing chat sycophancy rules cover flattery about the asker ('You're absolutely right!'); this rule adds the gratitude family and the praise-then-pivot sandwich ('X, but/however') that those lists miss. Whole-word list matching keeps 'thanks' inside a quoted email or a changelog author line out of scope."
+  },
+  {
+    "id": "ZS-CHAT-031",
+    "domain": "chat",
+    "title": "No raw scoring tuples or uncertainty rows in the answer",
+    "summary": "Analysis scratch leaking into the reply — '(score 42, 7 items, sources: reddit, x)' and '- Uncertainty: single-source' rows. The last30days contract says the ranked-evidence region is scratch evidence to transform into prose and that raw score tuples or uncertainty rows must never be emitted; their presence means no synthesis happened.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\(\\s*score\\s+\\d|\\buncertainty:\\s*(?:single|thin|multi)-?(?:source|evidence)?\\b|\\b\\d+\\s+items?,\\s*sources?:|\\bscore:\\s*\\d+\\s*/\\s*\\d+\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "mvanhorn/last30days-skill",
+        "rule": "Never emit raw score tuples or uncertainty rows.",
+        "ref": "skills/last30days/SKILL.md"
+      },
+      {
+        "repo": "mvanhorn/last30days-skill",
+        "rule": "If the draft contains `### 1.` followed by `(score N, M items, sources: ...)`, `- Uncertainty: single-source`, or `- Uncertainty: thin-evidence`, stop and regenerate.",
+        "ref": "skills/last30days/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "score tuple fails",
+        "input": "### 1. Latency regressions (score 42, 7 items, sources: reddit, x)\n- Uncertainty: single-source\nThe release notes mention a rollback.",
+        "expect": "fail"
+      },
+      {
+        "label": "synthesised prose passes",
+        "input": "Latency regressions dominated the window: three reddit threads and a long X post all pointed at the same rollback.",
+        "expect": "pass"
+      },
+      {
+        "label": "real metrics with units pass",
+        "input": "Median build time fell from 4m10s to 2m35s across the 12 sampled runs.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Error tier because the artifact is mechanical, not stylistic: a score tuple or uncertainty row is an unfinished pipeline stage visible to the reader. Real scores in a data table or metrics block are not this tell."
+  },
+  {
+    "id": "ZS-CHAT-032",
+    "domain": "chat",
+    "title": "Negation frame: correct-then-reject and elided-conjunction forms",
+    "summary": "talk-normal bans negation-based contrastive phrasing in any position and order. ZS-CHAT-001 only catches the 'it's not X, it's Y' and 不是X而是Y shapes; the trailing rejection ('X，而不是Y') and the form with the conjunction elided ('不是X，是Y') slip through, and the upstream regression log shows both leaking in real model output.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "而不是|不是[^。！？]{1,25}[，,]\\s*是"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Do not use negation-based contrastive phrasing in any position. This covers any sentence structure where a negative adverb rejects an alternative to set up or append to a positive claim: in any order (\"reject then correct\" or \"correct then reject\")",
+        "ref": "prompt.md"
+      },
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "New variant (reverse order): \"真正的创新者=五种特质同时拉满的人，而不是单纯'聪明'或'有创意'的人\" — this is \"correct then reject\" order. The v0.4.0 rule only banned \"open by negating\"",
+        "ref": "regressions/rule-17-negation-frame.md"
+      },
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Classic form: \"最稀缺的不是高智商，是'开放性+尽责性'同时很高\" — standard, with the 而 elided but the structure intact.",
+        "ref": "regressions/rule-17-negation-frame.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "correct-then-reject fails",
+        "input": "真正的创新者是五种特质同时拉满的人，而不是单纯聪明的人。",
+        "expect": "fail"
+      },
+      {
+        "label": "elided conjunction fails",
+        "input": "最稀缺的不是高智商，是开放性加尽责性同时很高。",
+        "expect": "fail"
+      },
+      {
+        "label": "parallel positive clauses pass",
+        "input": "真正的创新者同时具备五种特质。其中最稀缺的是开放性加尽责性同时很高。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Extends ZS-CHAT-001, whose pattern requires 而是/，而 or an English 'it's not … it's'; upstream's narrow exception (necessary/sufficient conditions in logic, math, or formal proofs) still applies."
+  },
+  {
+    "id": "ZS-CHAT-033",
+    "domain": "chat",
+    "title": "Summary-stamp labels in any position (structural 一句话X： / X一下：)",
+    "summary": "talk-normal bans any label that announces a one-line summary before delivering it, in any position, and names the structural variants 一句话X： and X一下： rather than a fixed word list. The opening-position stamp ('核心是一句话：') is the upstream regression file's documented open gap.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "一句话[^。！？，]{0,6}[：:]|(?:概括|归纳|梳理|汇总|小结)一下[：:]|核心是一句话"
+    },
+    "source": [
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Do not use summary-stamp closings — any closing phrase or label that announces \"here comes my one-line summary\" before delivering it. This covers … and any structural variant like \"一句话X：\" or \"X一下：\" that labels a summary before delivering it.",
+        "ref": "prompt.md"
+      },
+      {
+        "repo": "hexiecs/talk-normal",
+        "rule": "Known gap (not yet addressed in rules): opening-position summary stamps. The third v0.6.1 Andreessen test opened with \"这条我认同，核心是一句话：真正的创新者是...\". The \"核心是一句话：\" label is the same rhetorical move as a closing summary stamp, just at the start of the response.",
+        "ref": "regressions/rule-17-negation-frame.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "opening-position stamp fails",
+        "input": "核心是一句话：真正的创新者是五种特质同时拉满的人。",
+        "expect": "fail"
+      },
+      {
+        "label": "structural 一句话X： label fails",
+        "input": "一句话说：先把索引建好，再谈查询计划。",
+        "expect": "fail"
+      },
+      {
+        "label": "bare claim passes",
+        "input": "先建索引，再谈查询计划。索引比查询计划更值得先做。",
+        "expect": "pass"
+      }
+    ],
+    "notes": "ZS-CHAT-003 lists summary-stamp terms but its list matcher cannot fire on the 一句话X： / X一下： structures its own summary claims to cover; this rule covers those structures and the documented opening-position gap."
+  },
+  {
+    "id": "ZS-CHAT-034",
+    "domain": "chat",
+    "title": "No engagement-bait closers from a chat assistant",
+    "summary": "anti-slop-writing lists collaborative chat artifacts as never-include: 'Would you like me to…', 'Is there anything else…', 'Let me know if…', 'As an AI language model…'. These solicit a next turn instead of ending on the answer, and the existing chat rules only cover the 'if you want, I can' and 'hope this helps' shapes.",
+    "tier": "error",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "would you like me to",
+        "is there anything else",
+        "anything else you need",
+        "do you want me to",
+        "as an ai language model"
+      ]
+    },
+    "source": [
+      {
+        "repo": "adenaufal/anti-slop-writing",
+        "rule": "**Collaborative chat artifacts (never include):** \"I hope this helps!\" | \"Of course!\" | \"Certainly!\" | \"You're absolutely right!\" | \"Would you like me to...\" | \"Is there anything else...\" | \"Let me know if...\" | \"As an AI language model...\" | \"I'd be happy to...\" | \"Great question!\"",
+        "ref": "english/system-prompt.md"
+      },
+      {
+        "repo": "adenaufal/anti-slop-writing",
+        "rule": "- Remove chat or reasoning scaffolding from a deliverable, such as \"Let me break this down\" or a self-narrated plan the reader did not request.",
+        "ref": "english/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "solicitation closer fails",
+        "input": "The retry budget is 3 attempts. Is there anything else you need before I close the ticket?",
+        "expect": "fail"
+      },
+      {
+        "label": "offer to act fails",
+        "input": "The cache key is derived from the route. Would you like me to add a test for the retry path?",
+        "expect": "fail"
+      },
+      {
+        "label": "answer then stop passes",
+        "input": "The retry budget is 3 attempts. The migration files are in db/migrations and each one is reversible.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Complements ZS-CHAT-003 ('hope this helps') and ZS-CHAT-008 (conditional follow-up menus); terms are limited to the shapes those two rules do not match. ZS-CHAT-024 owns the generic 'let me know if' shape, so one clause yields one finding."
   }
 ]

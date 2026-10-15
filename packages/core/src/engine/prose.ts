@@ -152,7 +152,10 @@ function matchList(rule: Rule, ctx: ScanContext): Finding | null {
   if (rule.matcher.type !== "list") return null;
   const { terms, params = {} } = rule.matcher;
   const caseSensitive = params.caseSensitive === true;
-  const flags = "u" + (caseSensitive ? "" : "i");
+  // Global flag is required: `matchAll` advances via lastIndex and counts one
+  // hit per successful exec; without it the first occurrence is counted twice
+  // and later occurrences of the term are never seen.
+  const flags = "gu" + (caseSensitive ? "" : "i");
   let totalHits = 0;
   const matchedTerms: string[] = [];
   let firstIndex = Infinity;

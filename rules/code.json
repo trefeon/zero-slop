@@ -228,6 +228,11 @@
         "repo": "slop-scan",
         "rule": "types.generic-record-casts",
         "ref": "src/rules/generic-record-casts/README.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Are type boundaries explicit? Question gratuitous `any`/`unknown`/optional/casts and silent fallbacks that paper over an unclear invariant — making the boundary explicit often makes the surrounding control flow simpler.",
+        "ref": "skills/code-review-and-quality/SKILL.md"
       }
     ],
     "tests": [
@@ -263,6 +268,11 @@
         "repo": "slop-scan",
         "rule": "types.generic-record-casts (type-escape family)",
         "ref": "src/rules/generic-record-casts/README.md"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-double-assertion' — description: 'Chained type assertions like `as unknown as T` bypass TypeScript safety. AI chains these to silence type errors it does not understand.'",
+        "ref": "src/rules/code-quality.ts"
       }
     ],
     "tests": [
@@ -333,6 +343,11 @@
         "repo": "slop-scan",
         "rule": "structure.pass-through-wrappers",
         "ref": "src/rules/pass-through-wrappers/README.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Delete a pass-through wrapper that adds indirection without clarifying the API.",
+        "ref": "skills/code-review-and-quality/SKILL.md"
       }
     ],
     "tests": [
@@ -368,6 +383,11 @@
         "repo": "slop-scan",
         "rule": "defensive.async-noise",
         "ref": "src/rules/async-noise/README.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "SIMPLIFY: Unnecessary async wrapper — async function getUser(id: string): Promise<User> { return await userService.findById(id); }",
+        "ref": "skills/code-simplification/SKILL.md"
       }
     ],
     "tests": [
@@ -513,6 +533,11 @@
         "repo": "slop-scan",
         "rule": "structure.barrel-density",
         "ref": "src/rules/barrel-density/README.md"
+      },
+      {
+        "repo": "vercel-labs/agent-skills",
+        "rule": "Barrel files are entry points that re-export multiple modules (e.g. `index.js` that does `export * from './module'`). Import directly from source files instead of barrel files.",
+        "ref": "skills/react-best-practices/rules/bundle-barrel-imports.md"
       }
     ],
     "tests": [
@@ -581,6 +606,11 @@
         "repo": "code-humanizer",
         "rule": "Pattern 1: Reimplementing an existing helper",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 1: Reimplementing an existing helper (the signature AI tell) — 'agents write code from the prompt outward, not from the repo inward. Every duplicate forks future fixes.'",
+        "ref": "SKILL.md"
       }
     ],
     "tests": [
@@ -615,6 +645,11 @@
       {
         "repo": "code-humanizer",
         "rule": "Pattern 2: _v2 / _new / _impl clones",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 2: `_v2` / `_new` / `_impl` clones — 'the agent didn't dare modify the original, so now there are two sources of truth.'",
         "ref": "SKILL.md"
       }
     ],
@@ -709,6 +744,16 @@
         "repo": "code-humanizer",
         "rule": "Pattern 5: Dead 'for future use' code",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Don't preserve speculative abstractions. If it's not used now, it's complexity without value. Remove it and re-add when needed.",
+        "ref": "skills/code-simplification/SKILL.md"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-unused-protocol' — description: 'Protocol class defined but never referenced in the file. AI scaffold from a previous iteration that the model abandoned.'",
+        "ref": "src/rules/python.ts"
       }
     ],
     "tests": [
@@ -775,6 +820,11 @@
       {
         "repo": "code-humanizer",
         "rule": "Pattern 8: Broad exception swallowing",
+        "ref": "SKILL.md"
+      },
+      {
+        "repo": "code-humanizer",
+        "rule": "Pattern 8: Broad exception swallowing — 'converts crashes (visible, debuggable) into corruption (invisible).'",
         "ref": "SKILL.md"
       }
     ],
@@ -916,6 +966,26 @@
         "repo": "code-humanizer",
         "rule": "Pattern 12: Narrating comments",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Comments explaining \"what\" | `// increment counter` above `count++` | Delete the comment — the code is clear enough",
+        "ref": "skills/code-simplification/SKILL.md"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-obvious-comments' — description: 'Comments that restate what the code does are noise. AI generates these constantly.'",
+        "ref": "src/rules/ai-tells.ts"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-narrator-comments' — description: 'AI writes \"This function handles...\" style comments that narrate instead of explain.'",
+        "ref": "src/rules/ai-tells.ts"
+      },
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'excessive_boilerplate_comment' — pattern: /\\/\\/\\s*This (?:function|component|hook|variable|method).* (?:does|is|handles?|returns?|takes?|processes?)/gi — message: \"Boilerplate comment that restates the obvious — adds zero insight\"",
+        "ref": "ai-slop-detector.ts"
       }
     ],
     "tests": [
@@ -988,6 +1058,16 @@
         "repo": "code-humanizer",
         "rule": "Pattern 14: Dead imports, unused variables, decorative banners",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-section-dividers' — description: 'AI generates ASCII section dividers like \"// ========\" that clutter code.'",
+        "ref": "src/rules/ai-tells.ts"
+      },
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'production_console_log' — message: \"Found console logging in production code. Remove before deployment.\"",
+        "ref": "ai-slop-detector.ts"
       }
     ],
     "tests": [
@@ -1019,6 +1099,11 @@
         "repo": "code-humanizer",
         "rule": "Pattern 15: Tests that assert the mock (report-only by default)",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "The mock earns no assertions. A mock assertion passes when the mock is present and fails when it is absent — it says nothing about the component.",
+        "ref": "skills/test-driven-development/writing-good-tests.md"
       }
     ],
     "tests": [
@@ -1255,6 +1340,11 @@
         "repo": "code-quality",
         "rule": "Avoid wildcard imports (`from module import *`)",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-star-import' — description: 'from module import * pollutes the namespace and makes code harder to understand.'",
+        "ref": "src/rules/python.ts"
       }
     ],
     "tests": [
@@ -1541,6 +1631,11 @@
         "repo": "code-review-and-quality",
         "rule": "Watch file size, not just diff size (~1000 total lines is a common inspection signal)",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Watch file size, not just diff size. ... around 1000 *total* lines in a single file ... is a common inspection signal, not a hard cap. Decompose, then add.",
+        "ref": "skills/code-review-and-quality/SKILL.md"
       }
     ],
     "tests": [
@@ -1681,6 +1776,11 @@
         "repo": "improve-code-quality",
         "rule": "Broken Window Theory: fix hacks immediately or board them up with a tracked ticket — never an untracked `// TODO`",
         "ref": "SKILL.md"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-ai-todo' — description: 'AI assistants leave placeholder TODOs that never get implemented.' — pattern targets (?:TODO|FIXME|HACK|XXX)\\s*:?\\s*(?:implement|add|fix|handle|replace|update|complete|finish|create|write|build|setup|configure|refactor)",
+        "ref": "src/rules/code-quality.ts"
       }
     ],
     "tests": [
@@ -1772,5 +1872,844 @@
       }
     ],
     "notes": "The tell is an f-prefixed SQL string or a quoted SQL literal concatenated with `+`; parameterized queries with placeholders pass. ORM builders (frappe.qb, query builders) are the preferred form."
+  },
+  {
+    "id": "ZS-CODE-052",
+    "domain": "code",
+    "title": "Module mocking in tests (`vi.mock` / `jest.mock`)",
+    "summary": "Vitest/Jest module mocking replaces a real dependency seam with a registry hack the test mutates, so the test passes against a mock and the module graph the app actually runs is never exercised.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:vi|jest)\\.(?:mock|doMock|unstable_mockModule)\\s*\\("
+    },
+    "source": [
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "rejects Vitest and Jest `mock`, `doMock`, and `unstable_mockModule` calls in favor of real dependency seams.",
+        "ref": "README.md#rules"
+      },
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "Disallow Vitest and Jest module mocking; tests must replace dependencies through real interfaces.",
+        "ref": "src/rules/no-module-mocking.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "vi.mock call fails",
+        "input": "import { vi } from \"vitest\";\nimport { getUser } from \"./user-store\";\n\nvi.mock(\"./user-store\");\n\ndescribe(\"getUser\", () => {\n  it(\"returns a user\", async () => {\n    await expect(getUser(1)).resolves.toMatchObject({ id: 1 });\n  });\n});",
+        "expect": "fail"
+      },
+      {
+        "label": "typed spy on a real seam passes",
+        "input": "import { vi } from \"vitest\";\nimport { api } from \"./api\";\n\nconst fakeUsers = new Map<number, User>([[1, { id: 1, name: \"Ada\" }]]);\n\nvi.mocked(api.fetchUser).mockImplementation(async (id) => fakeUsers.get(id));",
+        "expect": "pass"
+      }
+    ],
+    "notes": "`vi.mocked(...)` (the typing helper) is deliberately not matched — only the registry-level `mock`/`doMock`/`unstable_mockModule` calls. Prefer injecting the collaborator (an interface the test implements) over module-level replacement."
+  },
+  {
+    "id": "ZS-CODE-053",
+    "domain": "code",
+    "title": "Chained type assertions (`x as A as B`)",
+    "summary": "Stapling two `as` clauses together fabricates evidence the compiler never checked — the middle type is an invented waypoint that makes the cast look reviewed. A single assertion documents one claim; a chain documents none.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bas\\s+(?!const\\b)(?!(?:unknown|any)\\s+as\\b)(?:[A-Z][\\w$.]*(?:<[^<>]{1,80}>)?|object|string|number|boolean|symbol|bigint|never|void)\\s+as\\s+(?:[A-Z][\\w$]*(?:<[^<>]{1,80}>)?|object|string|number|boolean|symbol|bigint|never|void)\\b"
+    },
+    "source": [
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "rejects nested `as` and angle-bracket assertions that fabricate evidence; chains made only of `as const` remain valid.",
+        "ref": "README.md#rules"
+      },
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "Disallow chained TypeScript as and angle-bracket assertions, including parenthesized chains.",
+        "ref": "src/rules/no-chained-type-assertions.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "double as fails",
+        "input": "const payload = JSON.parse(raw) as object as ParsedInvoice;\nprocess(payload);",
+        "expect": "fail"
+      },
+      {
+        "label": "single assertion and as const pass",
+        "input": "const routes = [\"/\", \"/pricing\"] as const;\nconst config = loadConfig() as AppConfig;",
+        "expect": "pass"
+      }
+    ],
+    "notes": "`as unknown as T` and `as any as T` are excluded on purpose: they are already the canonical `as any`/double-cast tell (ZS-CODE-008), so a chain there is not double-reported. Both type operands must be type-shaped (capitalized name, generic, or a primitive keyword) so English prose in comments ('as long as the run') cannot match. Parse at the boundary instead (`Schema.parse(raw)`)."
+  },
+  {
+    "id": "ZS-CODE-054",
+    "domain": "code",
+    "title": "Conditional empty-object spread to omit a field",
+    "summary": "Spreading `{}` to drop a field makes the object's shape vary by an invisible branch; every consumer must model an optional key that is never written. Build the two shapes explicitly or assign `undefined` where the type says so.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\.\\.\\.\\s*\\(\\s*[^()]{1,140}\\?\\s*\\{[^{}]{0,80}\\}\\s*:\\s*\\{\\s*\\}\\s*\\)|\\.\\.\\.\\s*\\(\\s*[^()]{1,140}\\?\\s*\\{\\s*\\}\\s*:\\s*\\{[^{}]{0,80}\\}\\s*\\)"
+    },
+    "source": [
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "reports object spreads that use a conditional `{}` branch to omit fields. It intentionally has no autofix because omission is not equivalent to assigning `undefined`.",
+        "ref": "README.md#rules"
+      },
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "Disallow object spreads that conditionally spread an empty object to omit fields.",
+        "ref": "src/rules/no-conditional-empty-object-spread.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty else-branch spread fails",
+        "input": "const requestOptions: RequestOptions = {\n  method: \"POST\",\n  ...(timeout !== undefined ? { timeout } : {}),\n};",
+        "expect": "fail"
+      },
+      {
+        "label": "two concrete object branches pass",
+        "input": "const requestOptions: RequestOptions = {\n  method: \"POST\",\n  ...(isDark ? { scheme: \"dark\" } : { scheme: \"light\" }),\n  timeout,\n};",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The parenthesized spread is the only legal form of a spread ternary, so the pattern requires `...(` and a `{}` branch. Conditions containing their own parentheses are not inspected (miss, never a false hit)."
+  },
+  {
+    "id": "ZS-CODE-055",
+    "domain": "code",
+    "title": "Open dictionary value type (`Record<string, unknown|any|object>`)",
+    "summary": "A dictionary whose direct value type is `unknown`, `any`, `object`, or `{}` is a property bag with no contract: every read needs a cast and every write is unchecked. Name the value type or keep the inferred shape.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<!extends\\s)\\bRecord<\\s*(?:string|number|symbol)\\s*,\\s*(?:unknown|any|object|\\{\\s*\\})\\s*>"
+    },
+    "source": [
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "rejects dictionary value contracts based on `unknown`, `any`, `object`, `{}`, and semantic equivalents. Generic constraints such as `T extends Record<string, unknown>` are allowed.",
+        "ref": "README.md#rules"
+      },
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "Disallow object-dictionary contracts whose direct value type is unknown, any, object, {}.",
+        "ref": "src/rules/no-unsafe-dictionary-type.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "any-valued dictionary fails",
+        "input": "interface CacheEntry {\n  value: string;\n}\n\nconst cache: Record<string, any> = {};",
+        "expect": "fail"
+      },
+      {
+        "label": "generic constraint and named value type pass",
+        "input": "function merge<T extends Record<string, unknown>>(a: T, b: T): T {\n  return { ...a, ...b };\n}\n\nconst handlers: Record<string, Handler> = { start: startHandler };",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only the direct value type is scanned: `Record<string, Item[]>` and `Record<string, Handler>` are fine. The `T extends Record<string, unknown>` generic-constraint form is exempted by lookbehind, per the upstream allowance."
+  },
+  {
+    "id": "ZS-CODE-056",
+    "domain": "code",
+    "title": "Adjacent `filter()`/`map()` passes over the same array",
+    "summary": "`filter().map()` (or `map().filter()`) walks the collection twice and allocates an intermediate array. Use `flatMap` for the transform-and-drop case or a lazy iterator pipeline.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\.filter\\s*\\([\\s\\S]{0,240}?\\)\\s*\\.map\\s*\\(|\\.map\\s*\\([\\s\\S]{0,240}?\\)\\s*\\.filter\\s*\\("
+    },
+    "source": [
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "rejects adjacent eager array filter/map passes while allowing lazy iterator pipelines.",
+        "ref": "README.md#rules"
+      },
+      {
+        "repo": "vercel-labs/agent-skills",
+        "rule": "Chaining `.map().filter(Boolean)` creates an intermediate array and iterates twice. Use `.flatMap()` to transform and filter in a single pass.",
+        "ref": "skills/react-best-practices/rules/js-flatmap-filter.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "filter then map fails",
+        "input": "const emails = users.filter((user) => user.active).map((user) => user.email);",
+        "expect": "fail"
+      },
+      {
+        "label": "single-pass flatMap passes",
+        "input": "const emails = users.flatMap((user) => (user.active ? [user.email] : []));",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Text-level rule: the two passes must be adjacent members of one chain (whitespace/newlines allowed, any other statement breaks the chain). A deliberate lazy iterator pipeline (`iter.values().filter(...).map(...)`) looks identical in source and is a known false positive — the upstream rule exempts it via type evidence the scanner does not have."
+  },
+  {
+    "id": "ZS-CODE-057",
+    "domain": "code",
+    "title": "Missing blank line between top-level statements",
+    "summary": "Structural blank lines are the cheapest map of a file: one group per declaration, one per logical block. Running a statement straight into the previous one (after a block, or after a lone `const`) erases those boundaries and reads as accreted edits.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?:\\}[ \\t]*;?|import\\b[^\\n]*)\\n(?![ \\t]*\\n)(?!(?:else|catch|finally|import)\\b)([A-Za-z_$][^\\n]{0,80})|^(?:export[ \\t]+)?(?:declare[ \\t]+)?(?:const|let|var|using)\\b[^\\n]*;[ \\t]*(?://[^\\n]*)?\\n(?![ \\t]*\\n)(?!(?:export[ \\t]+)?(?:declare[ \\t]+)?(?:const|let|var|using)\\b)(?!(?:else|catch|finally|import)\\b)([A-Za-z_$][^\\n]{0,80})|^(?:export[ \\t]+)?(?:declare[ \\t]+)?(?:const|let|var|using)\\b[^\\n]*;[ \\t]*(?://[^\\n]*)?\\n(?![ \\t]*\\n)(?=//|/\\*)|^(?![\\t ])[^\\n]*;[ \\t]*(?://[^\\n]*)?\\n(?![ \\t]*\\n)(?:return|if|switch|try|for|while|do)\\b",
+      "params": {
+        "multiLine": true
+      }
+    },
+    "source": [
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "autofixes missing blank lines between top-level declarations, around multiline bindings, before control flow/returns, and after blocks; preserves compact groups of single-line bindings, imports, and overload signatures.",
+        "ref": "README.md#rules"
+      },
+      {
+        "repo": "dmmulroy/anti-slop",
+        "rule": "Require readable spacing between declarations and logical statement groups.",
+        "ref": "src/rules/require-readable-spacing.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "import group not separated from first statement fails",
+        "input": "import { createServer } from \"node:http\";\nconst server = createServer();\n\nserver.listen(3000);",
+        "expect": "fail"
+      },
+      {
+        "label": "binding followed by control flow fails",
+        "input": "const retries = 3;\nif (retries > 0) {\n  attempt();\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "statement before control flow fails",
+        "input": "function drainQueue() {\nflush();\nwhile (queue.length > 0) {\n  queue.pop();\n}\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "spaced file with compact binding groups passes",
+        "input": "import { createServer } from \"node:http\";\n\nconst retries = 3;\nlet server: Server;\n\nif (retries > 0) {\n  server = createServer();\n}\n\nexport { server };",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Executable slice of `require-readable-spacing` (an AST autofix rule upstream; four of its required-blank-line pairs are textually decidable at column 0): a `}`/`};` or single-line import followed by a statement, a single-line `const/let/var/using` followed by anything that is not another single-line binding, a single-line binding followed by an attached comment (the comment starts a new group; a trailing comment on the same line does not), and a statement followed by control flow. Checked against the upstream rule's own test corpus: 0 false positives on all 19 valid snippets and 11/15 invalid snippets caught; the misses are two statements sharing one line, a single-line block or declaration as the previous line (`if (ok) { go(); }`, `export interface A {}`), a previous line with no trailing `;`, and indented non-top-level code (the scanner's top-level proxy is column 0). Multi-line bindings after a binding and `function` overload groups also require the upstream AST rule."
+  },
+  {
+    "id": "ZS-CODE-058",
+    "domain": "code",
+    "title": "Redundant boolean return (`if (c) { return true; } return false;`)",
+    "summary": "Wrapping a boolean expression in an `if`/`return` pair before returning a literal adds a branch that carries no information — the predicate is already the answer.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "if\\s*\\([^\\n]{1,140}\\)\\s*\\{\\s*return\\s+(?:true|false)\\s*;?\\s*\\}\\s*return\\s+(?:true|false)\\s*;?"
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "// SIMPLIFY: Redundant boolean return ... function isValid(input: string): boolean { if (input.length > 0 && input.length < 100) { return true; } return false; } // After: return input.length > 0 && input.length < 100;",
+        "ref": "skills/code-simplification/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "if/return-true then return-false fails",
+        "input": "function isValid(input: string): boolean {\n  if (input.length > 0 && input.length < 100) {\n    return true;\n  }\n  return false;\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "direct predicate return passes",
+        "input": "function isValid(input: string): boolean {\n  return input.length > 0 && input.length < 100;\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The `if` body must contain nothing but the literal return, immediately followed by the opposite literal return. Guard clauses that return a value or call a function in between are untouched."
+  },
+  {
+    "id": "ZS-CODE-059",
+    "domain": "code",
+    "title": "Dead-code markers left in comments",
+    "summary": "`// removed`, `// unused`, `// dead code`, `// might be useful later` and friends are tombstones: they keep the reader paying for code and intent that no longer exists. Delete the code — version control already remembers it.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[ \\t]*(?:\\*[ \\t]*|//+[ \\t]*|#+[ \\t]*)(?:dead code\\b|no longer used\\b|not used(?: anymore)?\\b|unused\\b|removed\\b|might (?:still )?be (?:useful|needed)(?: again)? later\\b|kept for backwards? compat\\w*|legacy shim\\b)",
+      "params": {
+        "multiLine": true,
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Are there dead code artifacts: no-op variables (`_unused`), backwards-compat shims, or `// removed` comments?",
+        "ref": "skills/code-review-and-quality/SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "Dead code | Unreachable branches, unused variables, commented-out blocks | Remove (after confirming it's truly dead)",
+        "ref": "skills/code-simplification/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "removed/no-longer-used comment fails",
+        "input": "export function normalizeUser(raw: unknown): User {\n  // removed: the v1 shape branch is no longer used after the schema bump\n  return UserSchema.parse(raw);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "intent comment passes",
+        "input": "export function normalizeUser(raw: unknown): User {\n  // ISO-8601 only: locale-specific output broke the CSV export contract\n  return UserSchema.parse(raw);\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only line-leading comment markers count (a `//` inside a URL or a string cannot fire). The `_unused`-style no-op variable named in the same upstream checklist item needs scope evidence and is not covered here. Distinct from ZS-CODE-009/021 (placeholders for future work): these markers attest that code was deleted."
+  },
+  {
+    "id": "ZS-CODE-060",
+    "domain": "code",
+    "title": "Await inside a loop body (sequential round trips)",
+    "summary": "Awaited work executed one item at a time inside a loop turns N independent operations into N serialized round trips — the N+1 pattern. Batch them (`Promise.all`, a bulk API) or hoist the await out of the loop.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:for|while)\\s*\\([^)\\n]{0,160}\\)\\s*\\{(?:[^;}]{0,200};){0,3}[^;}]{0,200}?\\bawait\\b"
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "No N+1 query patterns (use eager loading / joins) ... Bulk operations instead of loops of individual calls",
+        "ref": "references/performance-checklist.md"
+      },
+      {
+        "repo": "vercel-labs/agent-skills",
+        "rule": "When async operations have no interdependencies, execute them concurrently using `Promise.all()`. Incorrect (sequential execution, 3 round trips)",
+        "ref": "skills/react-best-practices/rules/async-parallel.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "await per item fails",
+        "input": "async function notifyAll(users: User[]): Promise<void> {\n  for (const user of users) {\n    await sendEmail(user.email);\n  }\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "batched await passes",
+        "input": "async function notifyAll(users: User[]): Promise<void> {\n  await Promise.all(users.map((user) => sendEmail(user.email)));\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The window may not cross a closing brace, so awaits after the loop are never matched (no false hit from the statement that follows a loop); up to three `;`-separated statements inside the body are searched. `for await (... of stream)` iteration is not matched."
+  },
+  {
+    "id": "ZS-CODE-061",
+    "domain": "code",
+    "title": "JSX `&&` rendering of a value that can be falsy (0/NaN)",
+    "summary": "`{count && <Badge />}` renders the literal `0` (or `NaN`) instead of nothing, so zero-count rows gain a stray character. Guard with a comparison and render the fallback explicitly.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\{\\s*(?:[A-Za-z_$][\\w$.]*\\.(?:length|size)|count|total|index|num[A-Za-z]*|length)\\s*&&\\s*[<(]"
+    },
+    "source": [
+      {
+        "repo": "vercel-labs/agent-skills",
+        "rule": "Use explicit ternary operators (`? :`) instead of `&&` for conditional rendering when the condition can be `0`, `NaN`, or other falsy values that render. Incorrect (renders \"0\" when count is 0): {count && <span className=\"badge\">{count}</span>}",
+        "ref": "skills/react-best-practices/rules/rendering-conditional-render.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "numeric && render fails",
+        "input": "function Badge({ count }: { count: number }) {\n  return (\n    <div>\n      {count && <span className=\"badge\">{count}</span>}\n    </div>\n  );\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "explicit ternary passes",
+        "input": "function Badge({ count }: { count: number }) {\n  return (\n    <div>\n      {count > 0 ? <span className=\"badge\">{count}</span> : null}\n    </div>\n  );\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scoped to numeric-shaped operands (`count`, `total`, `index`, `n...`, `.length`, `.size`) because those are the values that render as `0`; a boolean guard with a comparison (`items.length > 0 && (`) is already safe and is not matched."
+  },
+  {
+    "id": "ZS-CODE-062",
+    "domain": "code",
+    "title": "Eager `useState(call())` initializer",
+    "summary": "An initializer expression that is a function call (or `new ...`) runs on every render and is thrown away all but once. Pass a thunk (`useState(() => parseSettings())`) so the work happens on mount only.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\buseState\\(\\s*[A-Za-z_$][\\w$.]*\\s*\\(|\\buseState\\(\\s*new\\s+[A-Za-z_$][\\w$.]*\\s*\\("
+    },
+    "source": [
+      {
+        "repo": "vercel-labs/agent-skills",
+        "rule": "Pass a function to `useState` for expensive initial values. Without the function form, the initializer runs on every render even though the value is only used once. Incorrect (runs on every render): const [searchIndex, setSearchIndex] = useState(buildSearchIndex(items));",
+        "ref": "skills/react-best-practices/rules/rerender-lazy-state-init.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "useState(JSON.parse(...)) fails",
+        "input": "function UserProfile() {\n  const [settings, setSettings] = useState(JSON.parse(localStorage.getItem(\"settings\") || \"{}\"));\n\n  return <SettingsForm settings={settings} onChange={setSettings} />;\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "lazy initializer passes",
+        "input": "function UserProfile() {\n  const [settings, setSettings] = useState(() => {\n    const stored = localStorage.getItem(\"settings\");\n    return stored ? JSON.parse(stored) : {};\n  });\n\n  return <SettingsForm settings={settings} onChange={setSettings} />;\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Direct references, literals and primitives (`useState(0)`, `useState(props.initial)`, `useState(fn)`) do not match; only a call/new expression as the initializer does. `useState<T>(...)` with an explicit generic is out of scope (miss)."
+  },
+  {
+    "id": "ZS-CODE-063",
+    "domain": "code",
+    "title": "Untyped `any` annotations (`: any`, `<any>`)",
+    "summary": "`any` in a type annotation silently disables checking for that value; the caller of the typed surface gets no guarantees. Replace with a specific type or `unknown` plus narrowing.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?::\\s*any\\b|<\\s*any\\s*>)"
+    },
+    "source": [
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'any_type_usage' — pattern: /:\\s*any\\b/g — message: \"Found 'any' type usage. Replace with specific type or unknown.\"",
+        "ref": "ai-slop-detector.ts"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "pattern: /:\\s*any\\b|as\\s+any\\b|<any\\s*>/, messageTemplate: 'TypeScript `any` type bypasses type safety. Use a specific type.'",
+        "ref": "src/rules/ai-tells.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "any-annotated return fails",
+        "input": "export function parseBody(raw: string): any {\n  return JSON.parse(raw);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "unknown-annotated return passes",
+        "input": "export function parseBody(raw: string): unknown {\n  return JSON.parse(raw);\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scope narrowed per upstream: `as any` / `as unknown as T` are ZS-CODE-008; this rule covers annotations and type arguments (`Array<any>` is caught by the `<any>` branch). `unknown` is a compatible fix, not a violation."
+  },
+  {
+    "id": "ZS-CODE-064",
+    "domain": "code",
+    "title": "Hallucinated React/Next imports from `react`",
+    "summary": "`useRouter`, `Link`, `getServerSideProps` etc. do not exist in the `react` package; they come from `next/navigation`, `next/link`, or `next`. An import like this never resolves.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "import\\s*\\{[^}]*\\b(?:useRouter|useParams|useSearchParams|nextRouter|getServerSideProps|getStaticProps|getStaticPaths|Link|Image|Script)\\b[^}]*\\}\\s*from\\s*['\"]react['\"]",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'hallucinated_react_import' — pattern: /import\\s*{\\s*(useRouter|useParams|useSearchParams|Link|Image|Script)\\s*}\\s*from\\s*['\"]react['\"]/gi — message: \"Hallucinated React import — these do NOT exist in 'react'\"",
+        "ref": "ai-slop-detector.ts"
+      },
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'hallucinated_next_import' — pattern: /import\\s*{\\s*(getServerSideProps|getStaticProps|getStaticPaths)\\s*}\\s*from\\s*['\"]react['\"]/gi — message: \"Next.js API imported from 'react' — 100% AI hallucination\"",
+        "ref": "ai-slop-detector.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "useRouter from react fails",
+        "input": "import { useRouter } from 'react';\n\nexport function usePath() {\n  return useRouter().pathname;\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "useRouter from next/navigation passes",
+        "input": "import { useRouter } from 'next/navigation';\n\nexport function usePath() {\n  return useRouter().pathname;\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Upstream severity critical; a nonexistent specifier can never be deliberate. Verify the real import before using: hooks/router from next/navigation, Link from next/link, Image from next/image."
+  },
+  {
+    "id": "ZS-CODE-065",
+    "domain": "code",
+    "title": "Imports of confirmed-nonexistent (hallucinated) packages",
+    "summary": "AI models invent plausible package names that 404 on the registry; the import looks right in review but nothing resolves. This list was verified as nonexistent on npm/PyPI upstream.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:from\\s*|require\\s*\\(\\s*|import\\s*\\(\\s*)['\"](?:@anthropic/sdk|@openai/api|@langchain/agents|@types/react-router-v5|next-auth-prisma|node-cron-scheduler|jwt-decode-utils|prettier-plugin-tailwindcss-v2|webpack-bundle-analyzer-plugin|vite-plugin-react-swc-refresh)['\"]|(?:^|\\s)(?:import|from)\\s+(?:pandas[-_]profiler|langchain[-_]agents|langchain[-_]memory|langchain[-_]vectorstores|openai[-_]embeddings|chromadb[-_]utils|pinecone[-_]utils|flask[-_]cors[-_]headers|django[-_]rest[-_]framework[-_]jwt|anthropic[-_]sdk|requests[-_]toolbelt[-_]session|tensorflow[-_]datasets[-_]nightly)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "Confirmed nonexistent packages that AI models frequently hallucinate. Every entry verified as 404 on npm/PyPI as of April 2026. (jsPackages + pyPackages lists)",
+        "ref": "src/rules/hallucinated-imports.ts"
+      },
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-hallucinated-import-js' — description: \"Detects imports of packages that are known AI hallucinations and don't exist on npm.\"",
+        "ref": "src/rules/hallucinated-imports.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hallucinated @langchain/agents import fails",
+        "input": "import { AgentExecutor } from '@langchain/agents';\n\nexport const executor = new AgentExecutor({ verbose: true });",
+        "expect": "fail"
+      },
+      {
+        "label": "real langchain subpath passes",
+        "input": "import { AgentExecutor } from 'langchain/agents';\n\nexport const executor = new AgentExecutor({ verbose: true });",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Upstream notes the real package for each entry (e.g. '@anthropic/sdk' -> @anthropic-ai/sdk, 'pandas-profiler' -> ydata-profiling). Registry lists drift; re-verify an entry before removing it from the pattern."
+  },
+  {
+    "id": "ZS-CODE-066",
+    "domain": "code",
+    "title": "Hedging comments in code",
+    "summary": "Comments that say the code 'should work', is 'hopefully' correct or 'might not be the best approach' ship the author's uncertainty instead of knowledge; either fix the uncertainty or delete the comment.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:\\/\\/|#)\\s*[^\\n]*(?:should\\s+work|might\\s+not(?:\\s+work)?|hopefully|not\\s+sure\\s+if|probably\\s+(?:not\\s+)?(?:the\\s+)?(?:best|right|correct)|replace\\s+this\\s+with\\s+your\\s+actual|this\\s+(?:may|might|could)\\s+(?:need|require)|i'?m\\s+not\\s+(?:sure|certain)|i\\s+think|seems\\s+to|looks\\s+like|appears\\s+to|might\\s+work|try\\s+this)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-hedging-comments' — description: 'AI writes uncertain comments like \"should work\" or \"might not be the best approach\".'",
+        "ref": "src/rules/ai-tells.ts"
+      },
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'hedging_uncertainty_comment' — pattern: /\\/\\/.*\\b(should work|hopefully|probably|might work|try this|i think|seems to|attempting to|looks like|appears to)\\b/gi — message: \"AI hedging its bets — classic sign of low-confidence generation\"",
+        "ref": "ai-slop-detector.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hedged comment fails",
+        "input": "// should work on the happy path, I did not run the e2e suite\nexport async function syncUser(id: string) {\n  return pushUser(id);\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "factual comment passes",
+        "input": "// Retries three times with exponential backoff before surfacing the error.\nexport async function syncUser(id: string) {\n  return pushUser(id);\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Both upstream engines phrase this as an info-tier tell. Python `#` comments are covered by the same pattern (upstream ships a separate no-py-hedging-comments twin)."
+  },
+  {
+    "id": "ZS-CODE-067",
+    "domain": "code",
+    "title": "Overconfident comments",
+    "summary": "Comments asserting that the code is 'obviously', 'clearly' or 'basically' correct pretend certainty the author never verified; upstream calls it the style/taste axis of AI slop.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:\\/\\/|#)\\s*[^\\n]*\\b(?:obviously|clearly|trivially|basically|literally|of\\s+course|needless\\s+to\\s+say)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'overconfident_comment' — pattern: /\\/\\/.*\\b(obviously|clearly|simply|just|easy|trivial|basically|literally|of course|naturally|certainly|surely)\\b/gi — message: \"Overconfident comment — AI pretending it understands when it doesn't\"",
+        "ref": "ai-slop-detector.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "overconfident comment fails",
+        "input": "// obviously the connection pool is already warm here\nconst pool = getPool();",
+        "expect": "fail"
+      },
+      {
+        "label": "specific comment passes",
+        "input": "// The connection pool is primed by the prefetch worker before this runs.\nconst pool = getPool();",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scope narrowed on purpose: upstream also fires on just/simply/easy/naturally, which false-positive on legitimate comments ('simply call the helper'); the retained set is the unambiguous certainty-asserting vocabulary."
+  },
+  {
+    "id": "ZS-CODE-068",
+    "domain": "code",
+    "title": "Unverified-assumption comments",
+    "summary": "Comments that record a guess — 'assuming the API returns a stable id', 'presumably this path is never taken' — leave reasoning nobody checked; dangerous when the assumption later changes.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:\\/\\/|#)\\s*[^\\n]*\\b(?:assuming|assumes?|presumably|apparently|it\\s+seems|seems\\s+like)\\b[^\\n]{0,50}\\b(?:that|this|the|it)\\b",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'assumption_comment' — pattern: /\\b(assuming|assumes?|presumably|apparently|it seems|seems like)\\b.{0,50}\\b(that|this|the|it)\\b/gi — message: \"AI making unverified assumptions — dangerous in production\"",
+        "ref": "ai-slop-detector.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "assumption comment fails",
+        "input": "// assuming the audit table exists on every tenant schema\nconst rows = await auditRepo.list(tenantId);",
+        "expect": "fail"
+      },
+      {
+        "label": "verified statement passes",
+        "input": "// The audit table exists on every tenant schema (created by migration 0042).\nconst rows = await auditRepo.list(tenantId);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Comment-scoped (upstream matches prose anywhere, which catches identifiers like `assumedName`). Replace the guess with the verified fact or the check that proves it."
+  },
+  {
+    "id": "ZS-CODE-069",
+    "domain": "code",
+    "title": "Numbered step comments",
+    "summary": "'// Step 1: initialize the pool' style scaffolding comments narrate a procedure with a list marker; the code already sequences the steps. AI generates these constantly.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:\\/\\/|#)\\s*(?:step\\s+\\d+\\s*[:.-])",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-step-comments' — description: 'AI generates numbered step comments like \"Step 1: Initialize\" that add noise.'",
+        "ref": "src/rules/ai-tells.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "step comment fails",
+        "input": "// Step 1: initialize the connection pool\nconst pool = createPool(config);",
+        "expect": "fail"
+      },
+      {
+        "label": "descriptive comment passes",
+        "input": "// Create the pool once and share it across requests.\nconst pool = createPool(config);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Covers `//` and Python `#` prefixes (upstream ships both). A real ordered procedure belongs in a docstring or README, not in per-line markers."
+  },
+  {
+    "id": "ZS-CODE-070",
+    "domain": "code",
+    "title": "Nested ternary chains",
+    "summary": "A ternary inside a ternary branch (`active ? 'On' : disabled ? 'Off' : 'Auto'`) is the classic 'looks clever' one-liner; a switch, lookup map or early returns read better.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\?[^?:\\n]{1,60}:[^?:\\n]{0,60}\\?[^?:\\n]{1,60}:"
+    },
+    "source": [
+      {
+        "repo": "KarpeSlop",
+        "rule": "id: 'vibe_coded_ternary_abuse' — pattern: /\\?\\s*['\"][^'\"]+['\"]\\s*:\\s*['\"][^'\"]+['\"]\\s*\\?\\s*['\"][^'\"]+['\"]\\s*:\\s*['\"][^'\"]+['\"]/g — message: \"Nested ternary hell — AI trying to look clever\"",
+        "ref": "ai-slop-detector.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "chained ternary fails",
+        "input": "const label = active ? \"On\" : disabled ? \"Off\" : \"Auto\";",
+        "expect": "fail"
+      },
+      {
+        "label": "single ternary passes",
+        "input": "const label = active ? \"On\" : \"Off\";",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Generalized from the upstream string-literal form to any two chained ternaries on one line (bounded to a single line, optional chaining `?.` does not match). One nested ternary is a smell; a cluster is a confession."
+  },
+  {
+    "id": "ZS-CODE-071",
+    "domain": "code",
+    "title": "AI attribution comments",
+    "summary": "Comments that record model provenance ('Generated by ChatGPT', 'Generated with Claude Code', 'co-authored-by: claude') leak tooling into the repository and often violate internal policy; upstream ships them as auto-fixable.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:\\/\\/|#|\\*)\\s*[^\\n]{0,40}?(?:generated\\s+(?:by|with|using)\\s+(?:chatgpt|gpt-?\\d?|\\[?claude(?:\\s+code)?\\]?|anthropic(?:\\s+claude)?|openai|github\\s+copilot|copilot|gemini)|(?:ai|llm)[-\\s]generated|co-?authored-by:\\s*(?:claude|chatgpt|openai|anthropic|copilot|gemini))",
+      "params": {
+        "caseSensitive": false
+      }
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-ai-attribution' — description: 'AI attribution comments leak model provenance into repos and often violate internal policies.' — severity: 'warn' — fix: 'remove-line'",
+        "ref": "src/rules/code-quality.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "generated-by comment fails",
+        "input": "// Generated by ChatGPT\nexport function normalize(input: string) {\n  return input.trim();\n}",
+        "expect": "fail"
+      },
+      {
+        "label": "tool-generated comment passes",
+        "input": "// Generated by the CLI scaffolding script; edit by hand.\nexport function normalize(input: string) {\n  return input.trim();\n}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Wrapper/banner characters before the phrase are allowed (e.g. '// 🤖 Generated with [Claude Code]'). A generator script that is not a model ('Generated by scripts/gen-x.ts') is out of scope."
+  },
+  {
+    "id": "ZS-CODE-072",
+    "domain": "code",
+    "title": "Mutable default arguments (Python)",
+    "summary": "`def f(items=[])` / `= {}` / `= set()` shares one mutable object across calls — a classic gotcha AI generates; use `None` and assign inside the body.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "def\\s+\\w+\\s*\\([^)]*(?:=\\s*\\[\\s*\\]|=\\s*\\{\\s*\\}|=\\s*set\\s*\\(\\s*\\))"
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-mutable-default' — description: 'Mutable default arguments (list, dict, set) are shared across calls. Classic Python gotcha AI generates.' — pattern: /def\\s+\\w+\\s*\\([^)]*(?:=\\s*\\[\\s*\\]|=\\s*\\{\\s*\\}|=\\s*set\\s*\\(\\s*\\))/",
+        "ref": "src/rules/python.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "mutable defaults fail",
+        "input": "def collect_errors(items=[], seen={}):\n    items.append(\"checked\")\n    return items, seen",
+        "expect": "fail"
+      },
+      {
+        "label": "None sentinel passes",
+        "input": "def collect_errors(items=None, seen=None):\n    items = items if items is not None else []\n    seen = seen if seen is not None else {}\n    return items, seen",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Upstream also excludes pydantic `Field(...)` defaults; that exemption is a repo-level call (allowlist if the codebase is declarative-model heavy)."
+  },
+  {
+    "id": "ZS-CODE-073",
+    "domain": "code",
+    "title": "Blanket `# type: ignore` without an error code",
+    "summary": "A bare `# type: ignore` silences every diagnostic on the line, not just the intended one; upstream flags it as an AI tell because models use it to quiet mypy wholesale.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "#\\s*type:\\s*ignore\\b(?!\\s*\\[)"
+    },
+    "source": [
+      {
+        "repo": "vibecheck",
+        "rule": "id: 'no-type-ignore-blanket' — description: 'Blanket # type: ignore suppresses all type errors. AI uses this to silence mypy.' — pattern: /#\\s*type:\\s*ignore\\s*$/ with antiPattern /#\\s*type:\\s*ignore\\s*\\[/",
+        "ref": "src/rules/python.ts"
+      }
+    ],
+    "tests": [
+      {
+        "label": "blanket ignore fails",
+        "input": "result = client.fetch(url)  # type: ignore\nreturn result",
+        "expect": "fail"
+      },
+      {
+        "label": "coded ignore passes",
+        "input": "result = client.fetch(url)  # type: ignore[attr-defined]\nreturn result",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Upstream's line-end anchor is replaced by a `\\b` + lookahead so trailing commentary after the ignore is still caught while `type: ignore[...]` stays clean. Same family as ZS-CODE-008/ZS-CODE-041 for JS/Python lints."
+  },
+  {
+    "id": "ZS-CODE-074",
+    "domain": "code",
+    "title": "RAW_SCROLL_LISTENER: raw scroll listener in script",
+    "summary": "auteur's slopscan fails any script that reads scroll position through addEventListener('scroll') or an onscroll= attribute; the maintained replacement is IntersectionObserver or a CSS animation-timeline.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:addEventListener\\s*\\(\\s*['\"]scroll['\"]|\\bon[Ss]croll\\s*=)"
+    },
+    "source": [
+      {
+        "repo": "agiwhitelist/auteur",
+        "rule": "const re = /addEventListener\\s*\\(\\s*['\"]scroll['\"]/g; ... const re2 = /\\bonscroll\\s*=/g; findings.push({ rule: 'RAW_SCROLL_LISTENER', severity: 'fail', ... detail: `onscroll= attribute — use IntersectionObserver or animation-timeline` })",
+        "ref": "scripts/slopscan.mjs:246-255"
+      }
+    ],
+    "tests": [
+      {
+        "label": "fail - scroll listener",
+        "input": "window.addEventListener('scroll', onScroll);",
+        "expect": "fail"
+      },
+      {
+        "label": "fail - onScroll JSX attribute",
+        "input": "<div onScroll={handleScroll} className=\"pane\" />",
+        "expect": "fail"
+      },
+      {
+        "label": "pass - intersection observer",
+        "input": "const observer = new IntersectionObserver(onEnter);\nobserver.observe(sentinel);",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose-gate (warning): a scroll listener that measures one element is a legitimate choice; the tell is scroll-driven layout or animation that the browser cannot optimize. Also the ui-domain form for markup (ZS-UI-121) stays in the ui engine."
   }
 ]

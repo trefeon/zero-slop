@@ -1,8 +1,8 @@
 # Ship Plan: zero-slop to Public
 
 Executable checklist to take zero-slop from private repo to publicly usable.
-State: 2026-08-17. Rules DB 389 rules, engines done (408 tests), adoption
-research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
+State: 2026-10-16. Rules DB 520 rules, engines done (549 tests), corpus synced
+via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
 
 ## Milestones
 
