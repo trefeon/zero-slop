@@ -1,5 +1,7 @@
 // Normalizes corpus citations in this repo to the flat `reference/<manifest-name>:<path>` form.
-// Usage: node tools/fix-citations.mjs [--apply]   (run from the repo root; the corpus lives in the main checkout)
+// Usage: node scripts/fix-citations.mjs [--apply]   (run from the repo root)
+// Needs the research corpus: reference/ in the main checkout, or ZS_CORPUS=<dir>.
+// Dry run by default; --apply rewrites the citing files.
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import path from "node:path";
 

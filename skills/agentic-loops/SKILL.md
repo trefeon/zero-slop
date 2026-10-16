@@ -1,6 +1,6 @@
 ---
 name: agentic-loops
-description: Use when a task repeats or runs long: chartering a loop's objective, budget, and stop condition, checkpointing so an interrupted run resumes, spotting drift when the loop is busy while its acceptance check stays red, deciding what escalates to a human, choosing an unattended or interactive posture, supervising workers with heartbeats and deadlines, or gating a self-improvement loop on a baseline and a hold-out split.
+description: "Use when a task repeats or runs long: chartering a loop's objective, budget, and stop condition, checkpointing so an interrupted run resumes, spotting drift when the loop is busy while its acceptance check stays red, deciding what escalates to a human, choosing an unattended or interactive posture, supervising workers with heartbeats and deadlines, or gating a self-improvement loop on a baseline and a hold-out split."
 ---
 
 # agentic-loops

@@ -8,7 +8,7 @@ The standard for agentic AI work: a rule engine that scans what agents produce, 
   <img src="https://img.shields.io/github/actions/workflow/status/trefeon/zero-slop/ci.yml?branch=main" alt=CI>
 </p>
 
-zero-slop applies 569 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start. Alongside the engine it ships 23 portable Agent Skills: 10 that audit a finished artifact against the rule database, and 13 that teach the agentic workflow (framing, planning, delegation, context, verification, debugging, review, git, security, memory, skill authoring, harnesses, loops), every one of them compiled from the 84-repo research corpus and gated by the engine itself.
+zero-slop applies 570 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start. Alongside the engine it ships 23 portable Agent Skills: 10 that audit a finished artifact against the rule database, and 13 that teach the agentic workflow (framing, planning, delegation, context, verification, debugging, review, git, security, memory, skill authoring, harnesses, loops), every one of them compiled from the 84-repo research corpus and gated by the engine itself.
 
 ## Install
 
@@ -32,7 +32,7 @@ Publishing is wired in `.github/workflows/publish.yml` and runs on a `v*` tag.
 
 ## What it catches
 
-The rule database holds 569 rules in 9 domains. Every rule has a tier (error, warning, info), a source attribution, and pass/fail fixtures.
+The rule database holds 570 rules in 9 domains. Every rule has a tier (error, warning, info), a source attribution, and pass/fail fixtures.
 
 | Domain | Rules | What it checks |
 | --- | --- | --- |
@@ -43,7 +43,7 @@ The rule database holds 569 rules in 9 domains. Every rule has a tier (error, wa
 | integrity | 33 | invented stats, unsourced percentages, fake social proof, unlabeled placeholders |
 | a11y | 49 | contrast thresholds, focus visibility, keyboard support, hit targets |
 | chat | 34 | negation framing, filler openers, summary-stamp closings, answer-first shape |
-| skill | 30 | instruction-file frontmatter contract, context budgets, railroading, missing definition of done |
+| skill | 31 | instruction-file frontmatter contract, context budgets, railroading, missing definition of done |
 | config | 19 | floating action refs, script injection, secret exposure, masked failures in CI manifests |
 
 Example hits per domain:
@@ -271,6 +271,7 @@ From the repo root:
 ```bash
 pnpm install
 pnpm validate:rules
+pnpm check:skills
 pnpm typecheck
 pnpm --filter @zero-slop/core test
 pnpm --filter @zero-slop/cli test

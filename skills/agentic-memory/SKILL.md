@@ -1,6 +1,6 @@
 ---
 name: agentic-memory
-description: Use when knowledge must outlive the session: deciding what to persist from a finished task, recalling an earlier decision before starting ("like last time", "we already settled this"), correcting a record the repository now contradicts, scoping a fact to the project or the global store, or writing resume state for a handoff after compaction. Route live session-window context to agentic-context and instruction-file authoring to agentic-skill.
+description: "Use when knowledge must outlive the session: deciding what to persist from a finished task, recalling an earlier decision before starting (\"like last time\", \"we already settled this\"), correcting a record the repository now contradicts, scoping a fact to the project or the global store, or writing resume state for a handoff after compaction. Route live session-window context to agentic-context and instruction-file authoring to agentic-skill."
 ---
 
 # Agentic Memory

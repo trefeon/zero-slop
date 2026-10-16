@@ -1,6 +1,6 @@
 ---
 name: agentic-frame
-description: Use when a raw request arrives and no work has started: state the goal in one sentence, acceptance as observable outcomes, the exclusions, and whether the repo can answer the ambiguity or the user must.
+description: "Use when a raw request arrives and no work has started: state the goal in one sentence, acceptance as observable outcomes, the exclusions, and whether the repo can answer the ambiguity or the user must."
 ---
 
 # Agentic Frame

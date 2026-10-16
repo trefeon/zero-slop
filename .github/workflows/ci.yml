@@ -37,6 +37,11 @@ jobs:
       - name: CLI tests
         run: pnpm --filter @zero-slop/cli test
 
+      # Reads skills/ only: no research corpus, no build output, so it holds
+      # no dependency on the install or build steps above.
+      - name: Skill library contract
+        run: pnpm check:skills
+
       # Dogfood: zero-slop gates its own docs. The repo passes at 0 error-tier
       # findings; this gate keeps it there. `gate` takes a single path, so run
       # it once per target.

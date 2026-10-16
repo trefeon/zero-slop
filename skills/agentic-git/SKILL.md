@@ -1,6 +1,6 @@
 ---
 name: agentic-git
-description: Use when an agent changes a repository: before the first edit in a checkout it may share with another session, when picking a branch or worktree, when writing a commit message or opening a pull request, when a landed commit turns out to be wrong, and when cleaning up merged branches or finished worktrees.
+description: "Use when an agent changes a repository: before the first edit in a checkout it may share with another session, when picking a branch or worktree, when writing a commit message or opening a pull request, when a landed commit turns out to be wrong, and when cleaning up merged branches or finished worktrees."
 ---
 
 Isolate before the first edit, and leave history readable to the next agent.

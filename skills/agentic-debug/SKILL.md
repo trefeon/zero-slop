@@ -1,6 +1,6 @@
 ---
 name: agentic-debug
-description: Use when behavior is unexplained, wrong, or newly broken: a failing test, a stack trace, a regression in something that worked yesterday, a build error, or a bug report filed against code that used to behave. For the moment of diagnosis, before any fix is proposed.
+description: "Use when behavior is unexplained, wrong, or newly broken: a failing test, a stack trace, a regression in something that worked yesterday, a build error, or a bug report filed against code that used to behave. For the moment of diagnosis, before any fix is proposed."
 ---
 
 # Agentic Debug

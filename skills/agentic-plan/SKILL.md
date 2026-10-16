@@ -1,6 +1,6 @@
 ---
 name: agentic-plan
-description: Use when a framed goal needs an execution shape: whether a plan is worth writing, slicing work into independently verifiable pieces, freezing shared interfaces, or ordering by dependency and risk before implementation begins.
+description: "Use when a framed goal needs an execution shape: whether a plan is worth writing, slicing work into independently verifiable pieces, freezing shared interfaces, or ordering by dependency and risk before implementation begins."
 ---
 
 # Agentic Plan
