@@ -98,6 +98,20 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Dot-prefixed entries that can hold scannable artifacts. Every other dot
+ * entry (VCS metadata, caches, editor state) stays pruned so a default scan
+ * never walks into `.git`. `.cursorrules` is a file; the rest are directories.
+ */
+const DOT_ENTRY_ALLOWLIST: Record<string, true> = {
+  ".github": true,
+  ".cursorrules": true,
+  ".claude": true,
+  ".agents": true,
+  ".omp": true,
+  ".cursor": true,
+};
+
 export async function walkDirectory(
   dir: string,
   excludes: string[],
@@ -116,7 +130,7 @@ export async function walkDirectory(
     }
 
     for (const entry of entries) {
-      if (entry.name.startsWith(".")) {
+      if (entry.name.startsWith(".") && DOT_ENTRY_ALLOWLIST[entry.name] !== true) {
         continue;
       }
 

@@ -7,9 +7,12 @@
  * domain core does not know, or when the two domain lists drift apart.
  */
 import { describe, expect, it } from "vitest";
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { DOMAINS } from "@zero-slop/core";
 import { VALID_DOMAINS, type Domain } from "../src/types.js";
-import { getFileDispatch } from "../src/walk.js";
+import { collectFilesToScan, getFileDispatch } from "../src/walk.js";
 
 /** One representative path per dispatcher branch (see walk.ts). */
 const PATHS: Array<{ path: string; domains: Domain[]; isMarkdown: boolean }> = [
@@ -93,5 +96,32 @@ describe("CLI file dispatch", () => {
 
   it("keeps VALID_DOMAINS in exact sync with the core registry", () => {
     expect([...VALID_DOMAINS].sort()).toEqual([...DOMAINS].sort());
+  });
+});
+
+describe("CLI walker collection", () => {
+  it("collects scannable dot entries and still prunes VCS metadata", async () => {
+    const root = await mkdtemp(path.join(tmpdir(), "zs-walk-"));
+    await mkdir(path.join(root, ".github", "workflows"), { recursive: true });
+    await mkdir(path.join(root, ".git"), { recursive: true });
+    await mkdir(path.join(root, "src"), { recursive: true });
+    await writeFile(path.join(root, ".github", "workflows", "ci.yml"), "on: push\n");
+    await writeFile(path.join(root, ".cursorrules"), "Prefer edits.\n");
+    await writeFile(path.join(root, "SKILL.md"), "---\nname: x\n---\n");
+    await writeFile(path.join(root, "src", "app.ts"), "export const x = 1;\n");
+    await writeFile(path.join(root, ".git", "AGENTS.md"), "never collected\n");
+
+    const collected = (await collectFilesToScan(root, [], root))
+      .map((file) => path.relative(root, file).split(path.sep).join("/"))
+      .sort();
+
+    // A default `scan .` must reach the config and skill artifacts, and must
+    // not walk into VCS metadata even when it holds a dispatchable filename.
+    expect(collected).toEqual([
+      ".cursorrules",
+      ".github/workflows/ci.yml",
+      "SKILL.md",
+      "src/app.ts",
+    ]);
   });
 });
