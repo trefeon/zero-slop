@@ -1,6 +1,6 @@
 ---
 name: zero-slop
-description: Audit AI-generated copy, UI, code, commits, accessibility, or credibility for generic slop tells. Use when reviewing docs, pages, diffs, commit messages, PRs, or landing pages for unchosen defaults, when asking whether a diff is sloppy, before committing, when gating a merge on slop, or when unsure which slop domain applies.
+description: Audit AI-generated copy, UI, code, commits, accessibility, credibility, agent instructions, or CI configuration for generic slop tells. Use when reviewing docs, pages, diffs, commit messages, PRs, landing pages, skill files, or CI manifests for unchosen defaults, when asking whether a diff is sloppy, before committing, when gating a merge on slop, or when unsure which slop domain applies.
 ---
 
 # Zero-slop (universal router)
@@ -31,6 +31,8 @@ Tiers come from the rules DB schema: `error` means always fail; `warning` means 
 | Commit subjects, PR descriptions, diff scope | `rules/commit.json#ZS-COMMIT-001` (conventional type enum), `rules/commit.json#ZS-COMMIT-005` (header length), `rules/commit.json#ZS-COMMIT-014` (emoji cap). Read references/commit.md when the signal is a commit message, PR title, or PR description. |
 | Contrast, focus, keyboard, hit targets, motion fallback | `rules/a11y.json#ZS-A11Y-001` (text contrast 4.5:1), `rules/a11y.json#ZS-A11Y-006` (never remove focus outline), `rules/a11y.json#ZS-A11Y-010` (44px targets). Read references/a11y.md when the signal is a barrier for keyboard, screen-reader, or low-vision users. |
 | Numbers, testimonials, logos, citations, placeholders presented as real | `rules/integrity.json#ZS-INTEGRITY-001` (invented multipliers), `rules/integrity.json#ZS-INTEGRITY-005` (fabricated testimonials), `rules/integrity.json#ZS-INTEGRITY-012` (vague citations). Read references/integrity.md when the signal is a credibility claim. |
+| Agent instruction artifacts: SKILL.md, AGENTS.md, CLAUDE.md, .cursorrules, subagent and command definitions that mis-trigger, bloat context, or break the frontmatter contract | `rules/skill.json#ZS-SKILL-001` (name field), `rules/skill.json#ZS-SKILL-007` (trigger phrase), `rules/skill.json#ZS-SKILL-012` (1000-token body), `rules/skill.json#ZS-SKILL-028` (definition of done). Read references/skill.md when the signal is an instruction file. |
+| CI manifests: GitHub Actions workflows and action manifests, `.gitlab-ci.yml`, CircleCI config, pre-commit config | `rules/config.json#ZS-CONFIG-001` (floating ref), `rules/config.json#ZS-CONFIG-003` (untrusted context in `run:`), `rules/config.json#ZS-CONFIG-007` (secret in `run:`), `rules/config.json#ZS-CONFIG-015` (`continue-on-error`). Read references/config.md when the signal is a pipeline. |
 
 When two domains match, load both; overlapping flags merge on rule ID, never on prose description.
 

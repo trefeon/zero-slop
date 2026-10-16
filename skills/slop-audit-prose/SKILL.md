@@ -13,31 +13,58 @@ Deterministic layer: `zero-slop scan` plus `rules/prose.json` and `rules/chat.js
 
 Banned lexicon — one sighting flags (all `caseSensitive: false` unless noted):
 
-- AI verbs (rules/prose.json#ZS-PROSE-001): delve, leverage, utilize, facilitate, foster, bolster, underscore, unveil, navigate, streamline, enhance, endeavour/endeavor, ascertain, elucidate, harness, embark, supercharge, elevate, spearhead, commence, optimise/optimize, encompass, garner, showcase, highlighting, emphasizing, enhancing.
-- AI adjectives (rules/prose.json#ZS-PROSE-002): robust, comprehensive, pivotal, crucial, vital, transformative, cutting-edge, groundbreaking, innovative, seamless, intricate, nuanced, multifaceted, holistic, paramount, meticulous, vibrant, renowned, profound, epic, unprecedented, remarkable, stunning, game-changing.
-- Metaphor nouns (rules/prose.json#ZS-PROSE-003): tapestry, realm, beacon, testament, symphony, ecosystem, landscape, interplay. False gravitas on ordinary facts.
-- Intensifiers/filler adverbs (rules/prose.json#ZS-PROSE-004, warning): extremely, dramatically, truly, literally, very, really, simply, actually, honestly, fundamentally, clearly, obviously, essentially, basically, certainly, undoubtedly, quite, ultimately, just. Cut; keep only when the degree is the claim.
-- Academic filler (rules/prose.json#ZS-PROSE-005): shed light on, pave/paving the way, a myriad/plethora of, pertaining to, prior/subsequent to, in light of, with respect to, in terms of, the fact that.
-- Marketing cliches (rules/prose.json#ZS-PROSE-013): unlock the power of, elevate your, bridge the gap, move the needle, and kin. Source: reference/anti-slop sales-language lists.
-- Inflated symbolism (rules/prose.json#ZS-PROSE-017): provide(s) a valuable insight, left an indelible mark, and kin — ordinary points dressed as legacies.
-- Importance puffery (rules/prose.json#ZS-PROSE-029): stands as a testament, marks a pivotal moment, plays a vital role. Announce significance instead of stating the fact.
-- Hedges and weasels (rules/prose.json#ZS-PROSE-041, ZS-PROSE-043, ZS-PROSE-044): helps ensure, may be able to, can potentially, plus weakening very/really/extremely/simply/only (write-good lineage). Equal-weight seesaw that never commits is the tell; pick a side. Source: reference/humanizer §inflation.
-- Wordy phrases (rules/prose.json#ZS-PROSE-045): as a matter of fact, in order to, due to the fact that. Cliches (rules/prose.json#ZS-PROSE-046): tired idioms. Repeated word (rules/prose.json#ZS-PROSE-047, `caseSensitive: true`): the the.
-- Redundancy, three separate scans: RAS syndrome (PIN number; rules/prose.json#ZS-PROSE-136), pleonasms (end result, true fact; rules/prose.json#ZS-PROSE-137), intensifier plus absolute (very unique; rules/prose.json#ZS-PROSE-138, warning). Source: reference/languagetool-org/languagetool:redundancies.txt;reference/vale-cli/vale:testdata/styles/vale/Redundancy.yml;reference/amperser/proselint:proselint/checks/uncomparables.py.
-- Register slips (rules/prose.json#ZS-PROSE-134, ZS-PROSE-135, ZS-PROSE-144, warning): commercialese letter-speak, chatspeak abbreviations and archaic diction are reported as register, never as fabrication. Source: reference/amperser/proselint:proselint/checks/industrial_language/chatspeak.py.
-- Non-English shells (rules/prose.json#ZS-PROSE-132, warning): Indonesian `Di era modern ini`, `dapat dilihat bahwa`, `dengan demikian, dapat disimpulkan`, `tidak hanya … tetapi juga` — the same tells as the English openers, keyed to language. Source: reference/adenaufal/anti-slop-writing:indonesian/references/structural-patterns.md.
+| Family | Flagged tokens | Cite and note |
+|---|---|---|
+| AI verbs | delve, leverage, utilize, facilitate, foster, bolster, underscore, unveil, navigate, streamline, enhance, endeavour/endeavor, ascertain, elucidate, harness, embark, supercharge, elevate, spearhead, commence, optimise/optimize, encompass, garner, showcase, highlighting, emphasizing, enhancing | rules/prose.json#ZS-PROSE-001 |
+| AI adjectives | robust, comprehensive, pivotal, crucial, vital, transformative, `cutting-edge`, groundbreaking, innovative, seamless, intricate, nuanced, multifaceted, holistic, paramount, meticulous, vibrant, renowned, profound, epic, unprecedented, remarkable, stunning, game-changing | rules/prose.json#ZS-PROSE-002 |
+| Metaphor nouns | tapestry, realm, beacon, testament, symphony, ecosystem, landscape, interplay | rules/prose.json#ZS-PROSE-003. False gravitas on ordinary facts |
+| Intensifiers/filler adverbs | extremely, dramatically, truly, literally, very, really, simply, actually, honestly, fundamentally, clearly, obviously, essentially, basically, certainly, undoubtedly, quite, ultimately, just | rules/prose.json#ZS-PROSE-004, warning. Cut; keep only when the degree is the claim |
+| Academic filler | shed light on, pave/paving the way, a myriad/plethora of, pertaining to, prior/subsequent to, in light of, with respect to, in terms of, the fact that | rules/prose.json#ZS-PROSE-005 |
+| Marketing cliches | unlock the power of, elevate your, bridge the gap, move the needle, and kin | rules/prose.json#ZS-PROSE-013. Source: reference/anti-slop sales-language lists |
+| Inflated symbolism | provide(s) a valuable insight, left an indelible mark, and kin | rules/prose.json#ZS-PROSE-017. Ordinary points dressed as legacies |
+| Importance puffery | stands as a testament, marks a pivotal moment, plays a vital role | rules/prose.json#ZS-PROSE-029. Announce significance instead of stating the fact |
+| Hedges and weasels | helps ensure, may be able to, can potentially, plus weakening very/really/extremely/simply/only (write-good lineage) | rules/prose.json#ZS-PROSE-041, ZS-PROSE-043, ZS-PROSE-044. Equal-weight seesaw that never commits is the tell; pick a side. Source: reference/humanizer §inflation |
+| Wordy phrases | as a matter of fact, in order to, due to the fact that | rules/prose.json#ZS-PROSE-045 |
+| Cliches | tired idioms | rules/prose.json#ZS-PROSE-046 |
+| Repeated word | the the | rules/prose.json#ZS-PROSE-047, `caseSensitive: true` |
+| Redundancy, three separate scans | RAS syndrome (PIN number), pleonasms (end result, true fact), intensifier plus absolute (very unique) | rules/prose.json#ZS-PROSE-136, ZS-PROSE-137, ZS-PROSE-138, warning. Source: reference/languagetool-org/languagetool:redundancies.txt;reference/vale-cli/vale:testdata/styles/vale/Redundancy.yml;reference/amperser/proselint:proselint/checks/uncomparables.py |
+| Register slips | commercialese letter-speak, chatspeak abbreviations and archaic diction | rules/prose.json#ZS-PROSE-134, ZS-PROSE-135, ZS-PROSE-144, warning. Reported as register, never as fabrication. Source: reference/amperser/proselint:proselint/checks/industrial_language/chatspeak.py |
+| Non-English shells | Indonesian `Di era modern ini`, `dapat dilihat bahwa`, `dengan demikian, dapat disimpulkan`, `tidak hanya … tetapi juga` | rules/prose.json#ZS-PROSE-132, warning. The same tells as the English openers, keyed to language. Source: reference/adenaufal/anti-slop-writing:indonesian/references/structural-patterns.md |
 
 Staged openers, transitions, closers — one sighting flags:
 
-- Opening phrases (rules/prose.json#ZS-PROSE-006): in today's fast-paced world, in today's digital age, in an era of, in the ever-evolving landscape of, it's important to note that, let's delve/dive in, imagine a world where, when it comes to.
-- Transitions (rules/prose.json#ZS-PROSE-007): furthermore, moreover, that being said, with that in mind, it's worth noting/mentioning, to put it simply, in essence, this begs the question, additionally, firstly/secondly/thirdly.
-- Conclusions (rules/prose.json#ZS-PROSE-008): in conclusion, to sum up, in the final analysis, all things considered, at the end of the day, ultimately, the bottom line is.
-- Throat-clearing (rules/prose.json#ZS-PROSE-009): here's the thing, let me be clear, I'll be honest. Faux-insight setups (rules/prose.json#ZS-PROSE-010): what most people get wrong, the part everyone misses, here's what nobody tells you. Rhetorical setups (rules/prose.json#ZS-PROSE-011): what if I told you, think about it, plot twist, self-answered questions. Response openers (rules/prose.json#ZS-PROSE-018): Certainly, Great question!, As an AI, leading Moreover. Role openers (rules/prose.json#ZS-PROSE-040): As a developer, I... Email formulas (rules/prose.json#ZS-PROSE-014, warning): I hope this email finds you well, as per my last email. Collaborative narrator (rules/prose.json#ZS-PROSE-015): let's explore, we will examine, as we can see.
-- Whether/By openers (rules/prose.json#ZS-PROSE-016): Whether you're a X, Y, or Z; By understanding/leveraging X. Colon reveals (rules/prose.json#ZS-PROSE-022, warning; ZS-PROSE-076): The answer is: [reveal], The key takeaway is:. Fake kickers (rules/prose.json#ZS-PROSE-035, warning): closing mic-drop metaphor. Future-narrative closers (rules/prose.json#ZS-PROSE-079): may become the most important story. Key-takeaways sections (rules/prose.json#ZS-PROSE-066): recap blocks instead of an ending. Challenges-and-prospects endings (rules/prose.json#ZS-PROSE-071). Real-is closers (rules/prose.json#ZS-PROSE-075): the struggle/stakes are real.
-- So openers (rules/prose.json#ZS-PROSE-048, `caseSensitive: true`), There-is openers (rules/prose.json#ZS-PROSE-049, `caseSensitive: true`), passive voice (rules/prose.json#ZS-PROSE-042, `caseSensitive: true`), reference narration (rules/prose.json#ZS-PROSE-038): as discussed above, as we will see. Research narration (rules/prose.json#ZS-PROSE-037): could not be located, as of my last update. Process and structure talk, not content.
-- Paragraph openers (rules/prose.json#ZS-PROSE-140, info, `caseSensitive: true`): a paragraph that starts with 'But' is a hard edit rule, not a sentence-level one. Source: reference/amperser/proselint:proselint/checks/misc/but.py.
-- Interpretive metadiscourse (rules/prose.json#ZS-PROSE-030, warning): lines telling readers what to notice. Copula avoidance (rules/prose.json#ZS-PROSE-078): constitutes, functions as, operates as, acts as for plain is. Fake-strong copulas (rules/prose.json#ZS-PROSE-031, warning): serves/stands as, boasts, ventured into. False agency (rules/prose.json#ZS-PROSE-073): inanimate subject with a human verb. Tool anthropomorphism (rules/prose.json#ZS-PROSE-074). Escape-hatch family (rules/prose.json#ZS-PROSE-077): less about X than Y, the real X is.
-- Weasel attribution (rules/prose.json#ZS-PROSE-012): experts agree, studies show, industry reports suggest — unverifiable backing. Urgency without consequence (rules/prose.json#ZS-PROSE-036, warning): act now, don't miss out. Generic filler (rules/prose.json#ZS-PROSE-072): any sentence portable unchanged to another company or country. Repeated talking points (rules/prose.json#ZS-PROSE-069): same point twice is padding.
+| Family | Flagged tokens | Cite and note |
+|---|---|---|
+| Opening phrases | in today's fast-paced world, in today's digital age, in an era of, in the ever-evolving landscape of, it's important to note that, let's delve/dive in, imagine a world where, when it comes to | rules/prose.json#ZS-PROSE-006 |
+| Transitions | furthermore, moreover, that being said, with that in mind, it's worth noting/mentioning, to put it simply, in essence, this begs the question, additionally, firstly/secondly/thirdly | rules/prose.json#ZS-PROSE-007 |
+| Conclusions | in conclusion, to sum up, in the final analysis, all things considered, at the end of the day, ultimately, the bottom line is | rules/prose.json#ZS-PROSE-008 |
+| Throat-clearing | here's the thing, let me be clear, I'll be honest | rules/prose.json#ZS-PROSE-009 |
+| Faux-insight setups | what most people get wrong, the part everyone misses, here's what nobody tells you | rules/prose.json#ZS-PROSE-010 |
+| Rhetorical setups | what if I told you, think about it, plot twist, self-answered questions | rules/prose.json#ZS-PROSE-011 |
+| Response openers | Certainly, Great question!, As an AI, leading Moreover | rules/prose.json#ZS-PROSE-018 |
+| Role openers | As a developer, I... | rules/prose.json#ZS-PROSE-040 |
+| Email formulas | I hope this email finds you well, as per my last email | rules/prose.json#ZS-PROSE-014, warning |
+| Collaborative narrator | let's explore, we will examine, as we can see | rules/prose.json#ZS-PROSE-015 |
+| Whether/By openers | Whether you're a X, Y, or Z; By understanding/leveraging X | rules/prose.json#ZS-PROSE-016 |
+| Colon reveals | The answer is: [reveal], The key takeaway is: | rules/prose.json#ZS-PROSE-022, warning; ZS-PROSE-076 |
+| Fake kickers | closing mic-drop metaphor | rules/prose.json#ZS-PROSE-035, warning |
+| Future-narrative closers | may become the most important story | rules/prose.json#ZS-PROSE-079 |
+| Key-takeaways sections | recap blocks instead of an ending | rules/prose.json#ZS-PROSE-066 |
+| Challenges-and-prospects endings | — | rules/prose.json#ZS-PROSE-071 |
+| Real-is closers | the struggle/stakes are real | rules/prose.json#ZS-PROSE-075 |
+| So / There-is / passive voice / reference + research narration | So openers; There-is openers; passive voice; as discussed above, as we will see; could not be located, as of my last update | rules/prose.json#ZS-PROSE-048, ZS-PROSE-049, ZS-PROSE-042 (`caseSensitive: true`); ZS-PROSE-038; ZS-PROSE-037. Process and structure talk, not content |
+| Paragraph openers | a paragraph that starts with 'But' | rules/prose.json#ZS-PROSE-140, info, `caseSensitive: true`. A hard edit rule, not a sentence-level one. Source: reference/amperser/proselint:proselint/checks/misc/but.py |
+| Interpretive metadiscourse | lines telling readers what to notice | rules/prose.json#ZS-PROSE-030, warning |
+| Copula avoidance | constitutes, functions as, operates as, acts as for plain is | rules/prose.json#ZS-PROSE-078 |
+| Fake-strong copulas | serves/stands as, boasts, ventured into | rules/prose.json#ZS-PROSE-031, warning |
+| False agency | inanimate subject with a human verb | rules/prose.json#ZS-PROSE-073 |
+| Tool anthropomorphism | — | rules/prose.json#ZS-PROSE-074 |
+| Escape-hatch family | less about X than Y, the real X is | rules/prose.json#ZS-PROSE-077 |
+| Weasel attribution | experts agree, studies show, industry reports suggest | rules/prose.json#ZS-PROSE-012. Unverifiable backing |
+| Urgency without consequence | act now, don't miss out | rules/prose.json#ZS-PROSE-036, warning |
+| Generic filler | any sentence portable unchanged to another company or country | rules/prose.json#ZS-PROSE-072 |
+| Repeated talking points | same point twice is padding | rules/prose.json#ZS-PROSE-069 |
+
 - Exclusion zones (rules/prose.json#ZS-PROSE-067): never flag quoted sources, code, paths, data, or link targets.
 
 Contrast and parallelism formulas — one sighting flags:

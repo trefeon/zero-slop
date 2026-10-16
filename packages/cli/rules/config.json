@@ -1,0 +1,968 @@
+[
+  {
+    "id": "ZS-CONFIG-001",
+    "domain": "config",
+    "title": "No floating branch refs in uses:/ref:/rev:",
+    "summary": "A workflow that consumes an action, reusable workflow, template or hook by branch name runs whatever that branch holds at build time — the \"mutable tag, can be hijacked\" failure mode. Pin to a commit SHA or a full version tag.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:uses:\\s*[^\\s#]+@|rev:\\s*|ref:\\s*)(?:main|master|HEAD|develop|dev)\\b"
+    },
+    "source": [
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "# BAD: mutable tag, can be hijacked",
+        "ref": "security/scanning/supply-chain-attack-response/SKILL.md"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "uses: sonarsource/sonarqube-quality-gate-action@master",
+        "ref": "security/scanning/sast-scanning/SKILL.md"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "uses: trufflesecurity/trufflehog@main",
+        "ref": "security/ai/ai-coding-agent-guardrails/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "action pinned to main branch fails",
+        "input": "    steps:\n      - uses: actions/checkout@main\n      - run: npm ci",
+        "expect": "fail"
+      },
+      {
+        "label": "gitlab include pinned to master fails",
+        "input": "include:\n  - project: 'group/shared-ci'\n    ref: master\n    file: '/templates/deploy.yml'",
+        "expect": "fail"
+      },
+      {
+        "label": "pre-commit hook on dev branch fails",
+        "input": "repos:\n  - repo: https://github.com/pre-commit/pre-commit-hooks\n    rev: dev",
+        "expect": "fail"
+      },
+      {
+        "label": "SHA-pinned action passes",
+        "input": "    steps:\n      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1\n      - run: npm ci",
+        "expect": "pass"
+      },
+      {
+        "label": "tag-pinned ref passes",
+        "input": "    steps:\n      - uses: reviewdog/action-actionlint@v1.55.0\n      - run: npm ci",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Also catches reusable-workflow calls (uses: org/repo/.github/workflows/x.yml@main), GitLab include ref:, and pre-commit rev:. Tag/SHA pins, local ./ refs and docker:// refs are unaffected."
+  },
+  {
+    "id": "ZS-CONFIG-002",
+    "domain": "config",
+    "title": "No @latest / :latest floating versions",
+    "summary": "Installing a tool with @latest or tagging/pulling a container as :latest resolves to whatever the registry holds now: non-reproducible and untraceable. Pin an explicit version, a digest, or the build's commit SHA.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[@:]latest\\b"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "不要安装 @latest 工具",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "1. **Use specific action versions** (@v4, not @latest)",
+        "ref": "plugins/cicd-automation/skills/github-actions-templates/SKILL.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "| `latest` tag in production | Non-reproducible, untraceable | Use SHA or semver tags |",
+        "ref": "skills/devops-pipeline-builder/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "npm install @latest fails",
+        "input": "      - name: Install commitlint\n        run: npm install commitlint@latest",
+        "expect": "fail"
+      },
+      {
+        "label": "image tag latest fails",
+        "input": "        with:\n          push: true\n          tags: |\n            ghcr.io/acme/api:latest",
+        "expect": "fail"
+      },
+      {
+        "label": "pinned npm version passes",
+        "input": "      - name: Install commitlint\n        run: npm install commitlint@19.6.0",
+        "expect": "pass"
+      },
+      {
+        "label": "sha-tagged image passes",
+        "input": "        with:\n          push: true\n          tags: ghcr.io/acme/api:${{ github.sha }}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Matches @latest refs and :latest container tags anywhere in the line, comments included — a comment that quotes the anti-pattern will also trip it."
+  },
+  {
+    "id": "ZS-CONFIG-003",
+    "domain": "config",
+    "title": "No untrusted github context interpolated into run:",
+    "summary": "Title/body/branch fields from issues and pull requests are attacker-controlled; splicing them into a shell command with ${{ }} lets a crafted title or branch run arbitrary commands. Pass them through an env: variable and reference the quoted $VAR instead.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|\\n)(?![ \\t]*(?!(?:run|script|command|shell)\\s*:)[\\w.-]+:[ \\t]*['\\\"]?\\$\\{\\{)[^\\n]*\\$\\{\\{\\s*github\\.(?:head_ref\\b|event\\.(?:issue\\.title|pull_request\\.(?:title|body|head\\.ref)|comment\\.body|review\\.body|discussion\\.(?:title|body)|pages\\.|head_commit\\.message))"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "# ❌ 脚本注入\n- run: echo \"${{ github.event.issue.title }}\"  # 用户输入 → shell",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "使用环境变量传递秘密，不把 Actions 表达式直接插入 shell 代码",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "BRANCH=\"${{ github.head_ref }}\"",
+        "ref": "security/ai/ai-coding-agent-guardrails/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "PR title interpolated into run fails",
+        "input": "      - name: Greet\n        run: echo \"Welcome, ${{ github.event.pull_request.title }}\"",
+        "expect": "fail"
+      },
+      {
+        "label": "head_ref spliced into script fails",
+        "input": "      - run: |\n          BRANCH=\"${{ github.head_ref }}\"\n          echo \"$BRANCH\"",
+        "expect": "fail"
+      },
+      {
+        "label": "issue title as whole command fails",
+        "input": "      - run: ${{ github.event.issue.title }}",
+        "expect": "fail"
+      },
+      {
+        "label": "env-var indirection passes",
+        "input": "      - name: Greet\n        env:\n          PR_TITLE: ${{ github.event.pull_request.title }}\n        run: echo \"Welcome, $PR_TITLE\"",
+        "expect": "pass"
+      },
+      {
+        "label": "safe context values pass",
+        "input": "      - run: echo \"event=${{ github.event_name }} sha=${{ github.sha }}\"",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Key/value lines whose whole value is the expression (env:, with: inputs) are treated as the recommended indirection and are not flagged; run:/script: lines are flagged even when the expression is the whole command."
+  },
+  {
+    "id": "ZS-CONFIG-004",
+    "domain": "config",
+    "title": "No pull_request_target trigger",
+    "summary": "pull_request_target runs with the base repository's token and secrets while the PR's code decides what the workspace contains — a single checkout of the PR head upgrades it to \"attacker code with write token\". Prefer pull_request; add pull_request_target only with an explicit, reviewed threat model.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|\\n)[ \\t]*(?:-\\s*)?pull_request_target\\s*:"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "pull_request_target:  # 可访问 secrets 的 PR 触发",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "super-linter/super-linter",
+        "rule": "* do not run by pull request from fork",
+        "ref": "CHANGELOG.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "pull_request_target trigger fails",
+        "input": "on:\n  pull_request_target:\n    types: [opened, synchronize]",
+        "expect": "fail"
+      },
+      {
+        "label": "plain pull_request passes",
+        "input": "on:\n  pull_request:\n    types: [opened, synchronize]",
+        "expect": "pass"
+      },
+      {
+        "label": "push trigger passes",
+        "input": "on:\n  push:\n    branches: [main]",
+        "expect": "pass"
+      }
+    ],
+    "notes": "If a workflow must use pull_request_target (labels, comments), never combine it with a checkout of the PR head ref — that is the combination this rule and the head-ref rule exist to stop."
+  },
+  {
+    "id": "ZS-CONFIG-005",
+    "domain": "config",
+    "title": "No PR-head ref in checkout",
+    "summary": "ref: resolved from the pull-request head checks out fork-controlled code. Harmless under pull_request (no secrets), fatal under pull_request_target; keep head-ref checkouts out of privileged workflows.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "ref:\\s*['\\\"]?\\$\\{\\{\\s*github\\.(?:head_ref|event\\.pull_request\\.head)"
+    },
+    "source": [
+      {
+        "repo": "guardrails-ai/guardrails",
+        "rule": "ref: ${{ github.head_ref }}",
+        "ref": ".github/workflows/examples_check.yml"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "BRANCH=\"${{ github.head_ref }}\"",
+        "ref": "security/ai/ai-coding-agent-guardrails/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "checkout of PR head fails",
+        "input": "      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11\n        with:\n          ref: ${{ github.head_ref }}",
+        "expect": "fail"
+      },
+      {
+        "label": "checkout of PR head SHA fails",
+        "input": "      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11\n        with:\n          ref: ${{ github.event.pull_request.head.sha }}\n          fetch-depth: 0",
+        "expect": "fail"
+      },
+      {
+        "label": "release-tag checkout passes",
+        "input": "      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11\n        with:\n          ref: ${{ github.event.release.tag_name }}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Promote to error when the same workflow declares a pull_request_target trigger (rule 4). Legitimate uses: fork-PR diff tooling that never runs privileged steps."
+  },
+  {
+    "id": "ZS-CONFIG-006",
+    "domain": "config",
+    "title": "No permissions: write-all",
+    "summary": "write-all grants every scope to every step of the workflow, including steps that only read code. Default to no access and grant per-job read/write scopes.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "permissions:\\s*['\\\"]?write-all\\b"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "# ❌ 不受限的 token 权限\npermissions: write-all",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "# Never grant write permissions globally; scope them per job",
+        "ref": "security/scanning/supply-chain-attack-response/SKILL.md"
+      },
+      {
+        "repo": "super-linter/super-linter",
+        "rule": "# Don't grant any access by default",
+        "ref": ".github/workflows/ci.yml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "write-all fails",
+        "input": "permissions: write-all\n\njobs:\n  build:\n    runs-on: ubuntu-latest",
+        "expect": "fail"
+      },
+      {
+        "label": "least-privilege permissions pass",
+        "input": "permissions: {}\n\njobs:\n  build:\n    permissions:\n      contents: read\n    runs-on: ubuntu-latest",
+        "expect": "pass"
+      },
+      {
+        "label": "read-all passes",
+        "input": "permissions: read-all\n\njobs:\n  analysis:\n    runs-on: ubuntu-latest",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-007",
+    "domain": "config",
+    "title": "No secret expression inside run: commands",
+    "summary": "Referring to ${{ secrets.* }} directly inside a run step leaks the value into process arguments and logs; register it through env: and reference the variable so the runtime can keep it masked.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|\\n)(?![ \\t]*(?!(?:run|script|command|shell)\\s*[=:])[\\w.-]+[=:][ \\t]*['\\\"]?\\$\\{\\{)[^\\n]*\\$\\{\\{\\s*secrets\\."
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "使用环境变量传递秘密，不把 Actions 表达式直接插入 shell 代码",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "# Secrets are injected as env vars — never print them to logs",
+        "ref": "plugins/cicd-automation/skills/secrets-management/SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "- **Never log sensitive data** (passwords, tokens, full credit card numbers)",
+        "ref": "skills/security-and-hardening/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "token interpolated into curl fails",
+        "input": "      - name: Deploy\n        run: curl -H \"Authorization: token ${{ secrets.API_TOKEN }}\" https://api.example.com/deploy",
+        "expect": "fail"
+      },
+      {
+        "label": "echoing a secret fails",
+        "input": "      - name: Debug\n        run: echo \"key=${{ secrets.DEPLOY_KEY }}\"",
+        "expect": "fail"
+      },
+      {
+        "label": "run step using the whole secret as command fails",
+        "input": "      - run: ${{ secrets.DEPLOY_COMMAND }}",
+        "expect": "fail"
+      },
+      {
+        "label": "env indirection passes",
+        "input": "      - name: Deploy\n        env:\n          API_TOKEN: ${{ secrets.API_TOKEN }}\n        run: curl -H \"Authorization: token $API_TOKEN\" https://api.example.com/deploy",
+        "expect": "pass"
+      },
+      {
+        "label": "secrets in with: inputs pass",
+        "input": "      - uses: docker/login-action@v3\n        with:\n          username: ${{ secrets.DOCKER_USERNAME }}\n          password: ${{ secrets.DOCKER_PASSWORD }}",
+        "expect": "pass"
+      },
+      {
+        "label": "buildkit secret block passes",
+        "input": "      - uses: docker/build-push-action@v6\n        with:\n          context: .\n          push: false\n          secrets: |\n            GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Key/value lines whose whole value is ${{ secrets.* }} (env:, with: inputs, and BuildKit-style NAME=${{ ... }} secret blocks) are the recommended indirection and are not flagged; the shell command line itself is."
+  },
+  {
+    "id": "ZS-CONFIG-008",
+    "domain": "config",
+    "title": "No hardcoded credential values in CI config",
+    "summary": "Literal passwords, tokens and keys committed in workflow YAML are readable by anyone with repo access and survive in history after rotation. CI test credentials included — route everything through the secret store.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?<![A-Za-z0-9])(?:password|passwd|token|secret|client[_-]?secret|api[_-]?key|access[_-]?key)(?:[_-]?(?:id|value))?\\s*[:=]\\s*(?![ \\t]*['\\\"]?\\$\\{\\{)(?!['\\\"]?\\$[A-Za-z_({])(?!['\\\"]?\\s*inherit\\b)['\\\"]?[A-Za-z0-9][A-Za-z0-9_.+/=-]{5,}"
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "use GitHub Secrets for credentials rather than hardcoding values.",
+        "ref": "skills/ci-cd-and-automation/SKILL.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "□ 密钥管理（Actions Secrets / Vault，禁止硬编码）",
+        "ref": "skills/supply-chain-security/SKILL.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "1. **Never commit secrets** to Git",
+        "ref": "plugins/cicd-automation/skills/secrets-management/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "literal db password fails",
+        "input": "      - name: Integration tests\n        env:\n          POSTGRES_PASSWORD: supersecret123\n        run: npm run test:integration",
+        "expect": "fail"
+      },
+      {
+        "label": "quoted literal password fails",
+        "input": "jobs:\n  integration:\n    env:\n      DB_PASSWORD: \"ci-pass-2024\"",
+        "expect": "fail"
+      },
+      {
+        "label": "aws access key literal fails",
+        "input": "        env:\n          AWS_ACCESS_KEY_ID: AKIAIOSFODNN7EXAMPLE\n          AWS_SECRET_ACCESS_KEY: wJalrXUtnFEMI",
+        "expect": "fail"
+      },
+      {
+        "label": "secret reference passes",
+        "input": "      - name: Integration tests\n        env:\n          POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}\n        run: npm run test:integration",
+        "expect": "pass"
+      },
+      {
+        "label": "variable reference passes",
+        "input": "        env:\n          NPM_TOKEN: $NPM_TOKEN\n          AWS_DEFAULT_REGION: us-east-1",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Flags common credential keys only when the value is a literal of 6+ characters; ${{ secrets.* }}, $VAR and ${VAR} forms are not flagged."
+  },
+  {
+    "id": "ZS-CONFIG-009",
+    "domain": "config",
+    "title": "No credentials on the command line in CI",
+    "summary": "Tokens and passwords passed as flags (-p/--password/-t) land in CI logs, process listings and shell history. Use stdin or a credentials file (--password-stdin, --with-token).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:docker\\s+login|npm\\s+login|gh\\s+auth\\s+login|apify\\s+login|vault\\s+login)\\b[^\\n]*(?:\\s-p\\s+\\S|\\s--password(?:=|\\s+)\\S|\\s-t\\s+\\$)"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "which places the token on the command line where it can be exposed via process listings or shell history",
+        "ref": "docs/maintainers/security-findings-triage-2026-03-15.csv"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "Remove or redact token-like command-line examples.",
+        "ref": "docs/users/faq.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY",
+        "ref": "plugins/cicd-automation/skills/gitlab-ci-patterns/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "docker login -p fails",
+        "input": "      - name: Login\n        run: docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY",
+        "expect": "fail"
+      },
+      {
+        "label": "apify login -t fails",
+        "input": "      - name: Login\n        run: apify login -t $APIFY_TOKEN",
+        "expect": "fail"
+      },
+      {
+        "label": "password on stdin passes",
+        "input": "      - name: Login\n        run: echo \"$CI_REGISTRY_PASSWORD\" | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY",
+        "expect": "pass"
+      },
+      {
+        "label": "gh auth with token file passes",
+        "input": "      - name: Auth\n        run: gh auth login --with-token < token.txt",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-010",
+    "domain": "config",
+    "title": "No curl/wget piped into a shell",
+    "summary": "Piping a remote script straight into bash/sh executes whatever the URL serves at run time, with no integrity check. Download to a file, verify a checksum, then execute.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:curl|wget)\\b[^\\n|]*\\|\\s*(?:sudo\\s+)?(?:bash|zsh|ksh|fish|sh)\\b|\\b(?:irm|iwr|Invoke-WebRequest|Invoke-RestMethod)\\b[^\\n|]*\\|\\s*(?:iex|Invoke-Expression)\\b"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "Do not pipe remote content into a shell",
+        "ref": "docs/users/security-and-antivirus.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "(`curl|bash`, `wget|sh`, etc.) must use explicit allowlisting comments",
+        "ref": "docs/contributors/security-guardrails.md"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin",
+        "ref": "security/scanning/sbom-supply-chain/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "curl into bash fails",
+        "input": "      - name: Install\n        run: curl -fsSL https://install.example.com/setup.sh | bash",
+        "expect": "fail"
+      },
+      {
+        "label": "curl into sh with args fails",
+        "input": "          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin",
+        "expect": "fail"
+      },
+      {
+        "label": "powershell irm piped to iex fails",
+        "input": "      - shell: pwsh\n        run: irm https://install.example.com/setup.ps1 | iex",
+        "expect": "fail"
+      },
+      {
+        "label": "download, verify, then run passes",
+        "input": "      - name: Install\n        run: |\n          curl -fsSL -o /tmp/install.sh https://example.com/install.sh\n          echo \"$CHECKSUM  /tmp/install.sh\" | sha256sum -c\n          bash /tmp/install.sh",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Windows runners: irm/iwr piped into iex/Invoke-Expression is the same failure. Deliberate lab-only examples annotated with an explicit security-allowlist comment are the documented exception upstream."
+  },
+  {
+    "id": "ZS-CONFIG-011",
+    "domain": "config",
+    "title": "No unpinned global npm install in CI",
+    "summary": "npm install -g / yarn global add fetch whatever the registry holds today. Pin the version explicitly, or install from the lockfile (npm ci) so CI is reproducible.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:npm|pnpm)\\s+(?:i|install|add)\\b[^\\n]*\\s(?:-g|--global)\\b(?![^\\n]*[^\\s@]+@[\\d~^])|\\byarn\\s+global\\s+add\\b(?![^\\n]*[^\\s@]+@[\\d~^])"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "不要安装 @latest 工具、执行未固定 Action 或默认上传结果",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "# Pin the last known-good version immediately in package.json",
+        "ref": "security/scanning/supply-chain-attack-response/SKILL.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "1. **Use specific action versions** (@v4, not @latest)",
+        "ref": "plugins/cicd-automation/skills/github-actions-templates/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "unpinned npm -g fails",
+        "input": "      - name: Install CLI\n        run: npm install -g serverless",
+        "expect": "fail"
+      },
+      {
+        "label": "unpinned yarn global add fails",
+        "input": "      - name: Install ts-node\n        run: yarn global add ts-node",
+        "expect": "fail"
+      },
+      {
+        "label": "pinned npm -g passes",
+        "input": "      - name: Install CLI\n        run: npm install -g serverless@3.38.0",
+        "expect": "pass"
+      },
+      {
+        "label": "lockfile install passes",
+        "input": "      - name: Install dependencies\n        run: npm ci",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-012",
+    "domain": "config",
+    "title": "No unversioned pip install in CI",
+    "summary": "pip install without == pins or hash verification resolves to the newest release at build time. Install from a frozen, hash-locked requirements file (--require-hashes).",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bpip3?\\s+install\\b(?![^\\n]*(?:==|--require-hashes|\\s-e\\s|--upgrade\\s+(?:pip|setuptools|wheel)\\b))(?!\\s*\\.(?:\\s|$))"
+    },
+    "source": [
+      {
+        "repo": "BagelHole/DevOps-Security-Agent-Skills",
+        "rule": "# Install with mandatory hash verification\npip install --require-hashes -r requirements.txt",
+        "ref": "security/scanning/supply-chain-attack-response/SKILL.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "requirements.txt 是否冻结版本？ 禁止 pip install <未验证来源>",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "bare pip install fails",
+        "input": "      - name: Lint templates\n        run: pip install cfn-lint",
+        "expect": "fail"
+      },
+      {
+        "label": "multiple unpinned packages fail",
+        "input": "      - name: Test deps\n        run: pip install pytest pytest-asyncio openai \".[api]\"",
+        "expect": "fail"
+      },
+      {
+        "label": "hash-checked requirements pass",
+        "input": "      - name: Install\n        run: pip install --require-hashes -r requirements.txt",
+        "expect": "pass"
+      },
+      {
+        "label": "pinned version passes",
+        "input": "      - name: Install\n        run: pip install requests==2.31.0",
+        "expect": "pass"
+      },
+      {
+        "label": "pip upgrade boilerplate passes",
+        "input": "      - name: Upgrade pip\n        run: python -m pip install --upgrade pip",
+        "expect": "pass"
+      },
+      {
+        "label": "installing the local project passes",
+        "input": "      - name: Install\n        run: pip install .",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Excepts: pinned (==), hash-locked (--require-hashes), editable (-e), local target (.), and pip/setuptools/wheel self-upgrades."
+  },
+  {
+    "id": "ZS-CONFIG-013",
+    "domain": "config",
+    "title": "No unpinned npx --yes fetch in CI",
+    "summary": "npx --yes installs the package from the registry without prompting when it is not installed locally; without an @version the build gets a different tool every run. Pin the version or install it from the lockfile first.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bnpx\\s+(?:-y|--yes)\\s+(?![^\\s]*@[\\d~^])\\S+"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "不要安装 @latest 工具",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "commitizen/cz-cli",
+        "rule": "- run: npx semantic-release",
+        "ref": ".github/workflows/release.yml"
+      },
+      {
+        "repo": "semantic-release/semantic-release",
+        "rule": "- run: npx semantic-release@25.0.1",
+        "ref": ".github/workflows/release.yml"
+      }
+    ],
+    "tests": [
+      {
+        "label": "npx --yes without version fails",
+        "input": "      - name: Update deps\n        run: npx --yes npm-check-updates -u",
+        "expect": "fail"
+      },
+      {
+        "label": "npx -y create tool fails",
+        "input": "      - name: Scaffold\n        run: npx -y create-something my-app",
+        "expect": "fail"
+      },
+      {
+        "label": "pinned npx --yes passes",
+        "input": "      - name: Update deps\n        run: npx --yes npm-check-updates@19.1.0 -u",
+        "expect": "pass"
+      },
+      {
+        "label": "local-only npx passes",
+        "input": "      - name: Lint commit\n        run: npx --no-install commitlint --edit \"$1\"",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only the explicit auto-confirm form (npx -y/--yes) is flagged; bare `npx <tool>` may resolve a locally installed binary and is left alone."
+  },
+  {
+    "id": "ZS-CONFIG-014",
+    "domain": "config",
+    "title": "No floating toolchain version selectors",
+    "summary": "lts/*, 20.x ranges and checkLatest: true let the runner image resolve a different compiler or runtime on every run, so a green build does not prove the same toolchain as last time. Pin an exact version.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:node-version|python-version|go-version|ruby-version|versionSpec)\\s*:\\s*['\\\"]?(?:lts\\/\\*|\\d+\\.\\d+x|\\d+\\.x)|checkLatest\\s*:\\s*true"
+    },
+    "source": [
+      {
+        "repo": "conventional-changelog/commitlint",
+        "rule": "node-version: lts/*",
+        "ref": "docs/guides/ci-setup.md"
+      },
+      {
+        "repo": "conventional-changelog/commitlint",
+        "rule": "versionSpec: \"20.x\"",
+        "ref": "docs/guides/ci-setup.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "1. **Use specific image tags** (node:20, not node:latest)",
+        "ref": "plugins/cicd-automation/skills/gitlab-ci-patterns/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "lts/* node version fails",
+        "input": "      - uses: actions/setup-node@v4\n        with:\n          node-version: lts/*",
+        "expect": "fail"
+      },
+      {
+        "label": "checkLatest true fails",
+        "input": "  - task: NodeTool@0\n    inputs:\n      versionSpec: \"20.x\"\n      checkLatest: true",
+        "expect": "fail"
+      },
+      {
+        "label": "exact node version passes",
+        "input": "      - uses: actions/setup-node@v4\n        with:\n          node-version: 22.11.0",
+        "expect": "pass"
+      },
+      {
+        "label": "exact python version passes",
+        "input": "      - uses: actions/setup-python@v5\n        with:\n          python-version: \"3.13\"",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-015",
+    "domain": "config",
+    "title": "No continue-on-error on verification steps",
+    "summary": "continue-on-error: true turns a failing lint/test step into a green run — failures are silenced instead of fixed. Allowed only for explicitly experimental jobs.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "continue-on-error\\s*:\\s*true\\b"
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "**No gate can be skipped.** If lint fails, fix lint — don't disable the rule. If a test fails, fix the code — don't skip the test.",
+        "ref": "skills/ci-cd-and-automation/SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "- CI failures ignored or silenced",
+        "ref": "skills/ci-cd-and-automation/SKILL.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "扫描失败保持非零退出，不将失败当作成功",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "continue-on-error on test step fails",
+        "input": "      - name: Run tests\n        continue-on-error: true\n        run: npm test",
+        "expect": "fail"
+      },
+      {
+        "label": "continue-on-error on lint job fails",
+        "input": "  experimental-lint:\n    runs-on: ubuntu-latest\n    continue-on-error: true\n    steps:\n      - run: npm run lint:experimental",
+        "expect": "fail"
+      },
+      {
+        "label": "plain test step passes",
+        "input": "      - name: Run tests\n        run: npm test",
+        "expect": "pass"
+      },
+      {
+        "label": "artifact upload on failure passes",
+        "input": "      - name: Upload report\n        if: failure()\n        uses: actions/upload-artifact@v4\n        with:\n          name: playwright-report\n          path: playwright-report/",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-016",
+    "domain": "config",
+    "title": "No allow_failure: true on verification jobs",
+    "summary": "allow_failure: true makes a red security/lint/test job non-blocking, so the pipeline stays green while findings accumulate. Reserve it for genuinely optional jobs.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "allow_failure\\s*:\\s*true\\b"
+    },
+    "source": [
+      {
+        "repo": "wshobson/agents",
+        "rule": "allow_failure: true",
+        "ref": "plugins/cicd-automation/skills/gitlab-ci-patterns/SKILL.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "- Tests disabled in CI to make the pipeline pass",
+        "ref": "skills/ci-cd-and-automation/SKILL.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "扫描失败保持非零退出，不将失败当作成功",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "security scan with allow_failure fails",
+        "input": "trivy-scan:\n  stage: test\n  image: aquasec/trivy:0.58.0\n  script:\n    - trivy image --exit-code 1 --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA\n  allow_failure: true",
+        "expect": "fail"
+      },
+      {
+        "label": "blocking scan passes",
+        "input": "trivy-scan:\n  stage: test\n  image: aquasec/trivy:0.58.0\n  script:\n    - trivy image --exit-code 1 --severity HIGH,CRITICAL $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA",
+        "expect": "pass"
+      },
+      {
+        "label": "manual deploy gate passes",
+        "input": "deploy:production:\n  stage: deploy\n  script:\n    - kubectl apply -f k8s/ -n production\n  when: manual\n  only:\n    - main",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-017",
+    "domain": "config",
+    "title": "No `|| true` after verification commands",
+    "summary": "Attaching || true to a test/lint/build command forces exit status 0, so the pipeline reports success while the check failed. Fix or delete the check; do not disarm it.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|\\n)[ \\t]*(?:-\\s*)?(?:run:[ \\t]*)?(?:sudo\\s+)?(?:npm|pnpm|yarn|pytest|jest|vitest|mocha|tsc|eslint|ruff|flake8|mypy|make|cargo|go|dotnet|mvn|gradle)\\b[^\\n|]*\\|\\|\\s*true\\b"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "扫描失败保持非零退出，不将失败当作成功",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "- CI failures ignored or silenced",
+        "ref": "skills/ci-cd-and-automation/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "npm test || true fails",
+        "input": "      - name: Run tests\n        run: npm test || true",
+        "expect": "fail"
+      },
+      {
+        "label": "make lint || true fails",
+        "input": "      - name: Lint\n        run: make lint || true",
+        "expect": "fail"
+      },
+      {
+        "label": "plain test command passes",
+        "input": "      - name: Run tests\n        run: npm test",
+        "expect": "pass"
+      },
+      {
+        "label": "cleanup || true passes",
+        "input": "      - name: Cleanup\n        run: docker system prune -f --volumes 2>/dev/null || true",
+        "expect": "pass"
+      },
+      {
+        "label": "free-disk cleanup passes",
+        "input": "      - name: Free Disk space\n        run: |\n          sudo rm -rf /usr/local/lib/android || true\n          sudo rm -rf /usr/share/dotnet || true",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scoped to a verification command in command position; best-effort cleanup lines (rm/kill/docker prune) keep their || true."
+  },
+  {
+    "id": "ZS-CONFIG-018",
+    "domain": "config",
+    "title": "Self-hosted runner needs isolation",
+    "summary": "Fork PRs on a self-hosted runner reach a persistent machine with its credentials and caches — the upstream guidance calls this extremely high risk. Run fork PRs on GitHub-hosted runners; isolate self-hosted ones in an ephemeral VM/container.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "runs-on\\s*:\\s*[^\\n]*\\bself-hosted\\b"
+    },
+    "source": [
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "□ 是否运行过 fork PR？（self-hosted runner 风险极高）",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      },
+      {
+        "repo": "sickn33/agentic-awesome-skills",
+        "rule": "□ Self-hosted runner: 是否在隔离的 VM/容器中运行？",
+        "ref": "skills/supply-chain-security/references/cicd-pipeline-security.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "self-hosted runner job fails",
+        "input": "jobs:\n  build:\n    runs-on: [self-hosted, linux]\n    steps:\n      - uses: actions/checkout@v4",
+        "expect": "fail"
+      },
+      {
+        "label": "single self-hosted label fails",
+        "input": "jobs:\n  build:\n    runs-on: self-hosted\n    steps:\n      - run: make build",
+        "expect": "fail"
+      },
+      {
+        "label": "hosted runner passes",
+        "input": "jobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - run: make build",
+        "expect": "pass"
+      }
+    ]
+  },
+  {
+    "id": "ZS-CONFIG-019",
+    "domain": "config",
+    "title": "No environment dumps in CI steps",
+    "summary": "printenv / `env | ...` dump every variable the step received — on CI that is the secret surface, and masking only covers values the platform knows to mask. Print the single variable you need instead.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|\\n)[ \\t]*(?:-\\s*)?(?:run:[ \\t]*)?printenv\\b|\\benv\\s*\\|\\s*(?:sort|grep|head|cat|less|more|uniq|awk|sed)\\b"
+    },
+    "source": [
+      {
+        "repo": "addyosmani/agent-skills",
+        "rule": "- **Never log sensitive data** (passwords, tokens, full credit card numbers)",
+        "ref": "skills/security-and-hardening/SKILL.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "7. **Mask secrets in logs**",
+        "ref": "plugins/cicd-automation/skills/secrets-management/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "printenv fails",
+        "input": "      - name: Debug\n        run: printenv",
+        "expect": "fail"
+      },
+      {
+        "label": "env piped to sort fails",
+        "input": "      - name: Debug\n        run: env | sort",
+        "expect": "fail"
+      },
+      {
+        "label": "printing one variable passes",
+        "input": "      - name: Debug\n        run: echo \"ref=$GITHUB_REF node=$(node --version)\"",
+        "expect": "pass"
+      },
+      {
+        "label": "env: block passes",
+        "input": "      - name: Deploy\n        env:\n          NODE_ENV: production\n        run: ./deploy.sh",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Warning tier on purpose: a full env dump is sometimes a deliberate one-off debug step — the undisguised form of the secret-exposure family (secret expression on a command line) is error-tier in this set; error here would misfire on triage workflows."
+  }
+]

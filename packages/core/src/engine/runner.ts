@@ -3,10 +3,17 @@ import { scanProse } from "./prose.js";
 import { scanUi } from "./ui.js";
 import { scanCode } from "./code.js";
 import { scanCommit } from "./commit.js";
+import { DOMAIN_ROUTE, type DomainRoute } from "./routes.js";
 import type { Finding, ScanOptions } from "./types.js";
-import type { Rule, Tier } from "../rules.js";
+import type { Domain, Rule, Tier } from "../rules.js";
 
-const TEXT_DOMAINS = new Set<string>(["prose", "chat", "integrity"]);
+export { DOMAIN_ROUTE } from "./routes.js";
+export type { DomainRoute } from "./routes.js";
+
+/** Rules handled by one engine bucket, per the single route table (routes.ts). */
+function rulesFor(rules: Rule[], route: DomainRoute): Rule[] {
+  return rules.filter((r) => DOMAIN_ROUTE[r.domain] === route);
+}
 
 function atOrAbove(f: Finding, minTier?: Tier): boolean {
   if (!minTier) return true;
@@ -26,33 +33,48 @@ function sortFindings(findings: Finding[]): Finding[] {
   });
 }
 
-/** Scan free text (copy, docs, chat output) with prose/chat/integrity rules. */
+/** Scan free text (copy, docs, chat output) with every text-route rule. */
 export function scanText(rules: Rule[], content: string, opts: ScanOptions = {}): Finding[] {
   const ctx = buildContext(content, { isMarkdown: opts.isMarkdown });
-  const textRules = rules.filter((r) => TEXT_DOMAINS.has(r.domain));
-  return scanProse(textRules, ctx, opts);
+  return scanProse(rulesFor(rules, "text"), ctx, opts);
+}
+
+/** Options for scanFile: engine options plus per-file domain routing. */
+export interface ScanFileOptions extends ScanOptions {
+  /** Source file path attached to findings. */
+  file?: string;
+  /**
+   * When provided, exactly these domains run (routes resolved via DOMAIN_ROUTE).
+   * The CLI passes a file's dispatched domains so text-shaped domains such as
+   * `config` also run for non-markdown files.
+   */
+  domains?: Domain[];
 }
 
 /**
  * Scan a file's content with the engines matching its surface:
- * - markdown/plain text: prose + chat + integrity (+ ui tells)
- * - code/markup: ui + a11y + code (+ prose ONLY when markdown)
+ * - markdown/plain text: text route (prose + chat + integrity + skill + config)
+ * - code/markup: ui route (ui + a11y) + code route
+ *
+ * With `opts.domains`, only rules of those domains run (routes resolved via
+ * DOMAIN_ROUTE); without it the default buckets above apply (text only for
+ * markdown).
  */
-export function scanFile(
-  rules: Rule[],
-  content: string,
-  opts: ScanOptions & { file?: string } = {},
-): Finding[] {
+export function scanFile(rules: Rule[], content: string, opts: ScanFileOptions = {}): Finding[] {
   const ctx = buildContext(content, { file: opts.file, isMarkdown: opts.isMarkdown });
-  const isMarkdown = ctx.isMarkdown;
-  const textRules = isMarkdown ? rules.filter((r) => TEXT_DOMAINS.has(r.domain)) : [];
-  const uiRules = rules.filter((r) => r.domain === "ui" || r.domain === "a11y");
-  const codeRules = rules.filter((r) => r.domain === "code");
-  const findings = [
-    ...scanProse(textRules, ctx, opts),
-    ...scanUi(uiRules, content, opts),
-    ...scanCode(codeRules, content, opts),
-  ];
+  const domains = opts.domains;
+  const allowed = domains ? new Set(domains) : null;
+  const scoped = allowed ? rules.filter((r) => allowed.has(r.domain)) : rules;
+  const routes: ReadonlySet<DomainRoute> = domains
+    ? new Set(domains.map((d) => DOMAIN_ROUTE[d]))
+    : new Set<DomainRoute>(ctx.isMarkdown ? ["text", "ui", "code"] : ["ui", "code"]);
+
+  const findings: Finding[] = [];
+  if (routes.has("text")) findings.push(...scanProse(rulesFor(scoped, "text"), ctx, opts));
+  if (routes.has("ui")) findings.push(...scanUi(rulesFor(scoped, "ui"), content, opts));
+  if (routes.has("code")) findings.push(...scanCode(rulesFor(scoped, "code"), content, opts));
+  if (routes.has("commit"))
+    findings.push(...scanCommit(rulesFor(scoped, "commit"), content, opts));
   return sortFindings(findings.filter((f) => atOrAbove(f, opts.minTier)));
 }
 
@@ -62,7 +84,7 @@ export function scanCommitMessage(
   message: string,
   opts: ScanOptions = {},
 ): Finding[] {
-  return scanCommit(rules.filter((r) => r.domain === "commit"), message, opts);
+  return scanCommit(rulesFor(rules, "commit"), message, opts);
 }
 
 export { buildContext, scanProse, scanUi, scanCode, scanCommit };

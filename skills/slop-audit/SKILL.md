@@ -1,6 +1,6 @@
 ---
 name: slop-audit
-description: Use when auditing AI-generated copy, UI, code, commits, accessibility, or credibility for generic slop tells, when unsure which slop-audit-* domain skill applies, or when a review needs the flag-vs-intent triage rule.
+description: Use when auditing AI-generated copy, UI, code, commits, accessibility, credibility, agent instructions, or CI configuration for generic slop tells, when unsure which slop-audit-* domain skill applies, or when a review needs the flag-vs-intent triage rule.
 ---
 
 # Slop Audit (core router)
@@ -29,6 +29,8 @@ Point every verdict at the machine-readable source, never at memory: the canonic
 | Commit subjects, PR descriptions, diff scope | `slop-audit-commit` | `rules/commit.json#ZS-COMMIT-001` (conventional type enum), `rules/commit.json#ZS-COMMIT-005` (header length), `rules/commit.json#ZS-COMMIT-014` (emoji cap) |
 | Contrast, focus, keyboard, hit targets, motion fallback | `slop-audit-a11y` | `rules/a11y.json#ZS-A11Y-001` (text contrast 4.5:1), `rules/a11y.json#ZS-A11Y-006` (never remove focus outline), `rules/a11y.json#ZS-A11Y-010` (44px targets) |
 | Numbers, testimonials, logos, citations, placeholders presented as real | `slop-audit-integrity` | `rules/integrity.json#ZS-INTEGRITY-001` (invented multipliers), `rules/integrity.json#ZS-INTEGRITY-005` (fabricated testimonials), `rules/integrity.json#ZS-INTEGRITY-012` (vague citations) |
+| Agent instruction artifacts: SKILL.md, AGENTS.md, CLAUDE.md, .cursorrules, subagent and command definitions that mis-trigger, bloat context, or break the frontmatter contract | `slop-audit-skill` | `rules/skill.json#ZS-SKILL-001` (name field), `rules/skill.json#ZS-SKILL-007` (trigger phrase), `rules/skill.json#ZS-SKILL-012` (1000-token body), `rules/skill.json#ZS-SKILL-028` (definition of done) |
+| CI manifests: GitHub Actions workflows and action manifests, `.gitlab-ci.yml`, CircleCI config, pre-commit config | `slop-audit-config` | `rules/config.json#ZS-CONFIG-001` (floating ref), `rules/config.json#ZS-CONFIG-003` (untrusted context in `run:`), `rules/config.json#ZS-CONFIG-007` (secret in `run:`), `rules/config.json#ZS-CONFIG-015` (`continue-on-error`) |
 
 When two domains match, invoke both; overlapping flags merge on rule ID, never on prose description (rules/README.md: deduplication rule).
 

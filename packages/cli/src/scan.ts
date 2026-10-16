@@ -48,6 +48,7 @@ export async function scanSingleFile(
     minTier: opts.minTier,
     maxFindingsPerRule: opts.maxFindingsPerRule,
     isMarkdown: dispatch.isMarkdown,
+    domains: dispatch.domains,
   });
 
   const domainFilter = opts.domains.length > 0 ? opts.domains : null;

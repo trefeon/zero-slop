@@ -1,20 +1,20 @@
-# UI reference (from slop-audit-ui)
-# Slop audit — UI
+# UI reference, mirrored from slop-audit-ui
+# Slop audit: UI
 
 ## Goal
 
 Judge whether a UI's visual choices are deliberate or unchosen defaults.
 The deterministic layer is `zero-slop scan` plus `rules/ui.json` (141 checks,
 `ZS-UI-001`–`ZS-UI-141`); the CLI flags candidates, you judge intentionality.
-A flag is slop only when the pattern carries no brief-backed reason — a purple
-brand, a food site in warm tones, a genuinely ordered 3-step flow all pass.
+A flag is slop only when the pattern carries no brief-backed reason: a purple
+brand, a food site in warm tones, an ordered 3-step flow all pass.
 Deep copy-voice issues (chat/caption tone, banned openers beyond UI labels)
 belong to the prose skill; this skill covers what is seen and laid out.
 
 ## Constraints
 
 - Cite every finding as `rules/ui.json#<rule-id>` (budgets below carry cites).
-- Quote the concrete budget (hex, count, ms, ch) — never "too many" or "too slow".
+- Quote the concrete budget (hex, count, ms, ch); never "too many" or "too slow".
 - One finding per pattern instance; group repeats by rule, not by element.
 - Purpose-gate each flag: name the brief reason that would excuse it, then
   rule it slop only when no such reason exists.
@@ -110,7 +110,7 @@ belong to the prose skill; this skill covers what is seen and laid out.
 | Endless pulses, scroll-jacking everything, wobbling spinners | Loops only for true loading; hero speaks, the rest stays calm; center art outside the animated transform | `rules/ui.json#ZS-UI-054` · `rules/ui.json#ZS-UI-055` · `rules/ui.json#ZS-UI-053` |
 | No `prefers-reduced-motion` fallback | Every transform/animation gets a reduced-motion alternative | `rules/ui.json#ZS-UI-056` · `reference/hallmark/skills/hallmark/references/slop-test.md` (gate 27) |
 
-### Page copy and proof (UI-visible; voice depth defers to prose)
+### Page copy and proof, UI-visible; voice depth defers to prose
 
 | Tell | Budget | Cite |
 |---|---|---|
@@ -128,15 +128,15 @@ belong to the prose skill; this skill covers what is seen and laid out.
 ## Gotchas
 
 - **Gradient text is a hard fail, not a taste call.** `rules/ui.json#ZS-UI-002`
-  is tier error and no Hallmark genre allows it — do not "soften" it to a
+  is tier error and no Hallmark genre allows it; do not "soften" it to a
   warning because the hero looks nice otherwise.
 - **Budgets combine: a 4-line hero headline is a font-size error**, never a
-  copy-length error — shrink the size before cutting words
-  (`rules/ui.json#ZS-UI-078`). Same logic for accent > 5%: retreat the fill,
+  copy-length error; shrink the size before cutting words
+  (`rules/ui.json#ZS-UI-078`). Same logic for accent > `5%`: retreat the fill,
   don't re-hue it (`rules/ui.json#ZS-UI-012`).
 - **`ease-in` versus `ease-in-out`.** Only the plain `ease-in` keyword on
   enter/state-change is banned (`rules/ui.json#ZS-UI-101`); `ease-in-out` is
-  not flagged — don't expand the ban.
+  not flagged; don't expand the ban.
 - **Two overlapping rules are not double counts.** Gray-on-color
   (`rules/ui.json#ZS-UI-094`) vs. the warm-ramp sibling
   (`rules/ui.json#ZS-UI-003`); default-set (`rules/ui.json#ZS-UI-100`) vs.
@@ -145,11 +145,11 @@ belong to the prose skill; this skill covers what is seen and laid out.
   Cite the narrower one.
 - **Genre exemptions are real.** Modern-minimal may use pure `#fff` paper and
   zero-chroma neutrals (`rules/ui.json#ZS-UI-007`, `rules/ui.json#ZS-UI-008`);
-  atmospheric may center a hero and bloom to ~20% (`rules/ui.json#ZS-UI-047`,
+  atmospheric may center a hero and bloom to `~20%` (`rules/ui.json#ZS-UI-047`,
   `rules/ui.json#ZS-UI-012` notes). Check the genre before failing.
 - **The CLI cannot see layout.** Eyebrow density, layout-family diversity,
   hero line-counts, and dark-elevation (`rules/ui.json#ZS-UI-077`,
-  `#ZS-UI-078`, `#ZS-UI-080`, `#ZS-UI-099`) need eyes on the render — count
+  `#ZS-UI-078`, `#ZS-UI-080`, `#ZS-UI-099`) need eyes on the render; count
   them visually instead of grepping.
 - **Heavy animation libraries for a still job** (Lottie/Three.js for a
   spinner or checkmark) lose to CSS/SVG (`rules/ui.json#ZS-UI-064`); and a

@@ -8,6 +8,8 @@ export const DOMAINS = [
   "integrity",
   "a11y",
   "chat",
+  "skill",
+  "config",
 ] as const;
 export type Domain = (typeof DOMAINS)[number];
 
