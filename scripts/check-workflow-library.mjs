@@ -1,5 +1,6 @@
 // Integration checks for the agentic-* workflow library.
-// Usage: node tools/check-workflow-library.mjs  (run from the repo worktree root)
+// Usage: node scripts/check-workflow-library.mjs  (run from the repo root)
+// Needs no research corpus and no build output: it reads skills/ only.
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 
 const dirs = readdirSync("skills").filter((d) => d.startsWith("agentic-")).sort();
@@ -10,6 +11,14 @@ let problems = 0;
 const note = (m) => {
   problems += 1;
   console.log(`  PROBLEM ${m}`);
+};
+
+/** Frontmatter scalar -> value, so a quoted description reads as its text. */
+const scalar = (raw = "") => {
+  const v = raw.trim();
+  if (v.length > 1 && v.startsWith('"') && v.endsWith('"')) return v.slice(1, -1).replace(/\\(["\\])/g, "$1");
+  if (v.length > 1 && v.startsWith("'") && v.endsWith("'")) return v.slice(1, -1).replace(/''/g, "'");
+  return v;
 };
 
 console.log(`skills: ${dirs.length} (${dirs.join(", ")})`);
@@ -27,7 +36,7 @@ for (const dir of dirs) {
     if (keys.join(",") !== "name,description") note(`${dir}: frontmatter keys ${keys.join(",")}`);
     const name = /^name:\s*(\S+)/m.exec(fm[1])?.[1];
     if (name !== dir) note(`${dir}: name field is ${name}`);
-    const desc = /^description:\s*([\s\S]*)$/m.exec(fm[1])?.[1] ?? "";
+    const desc = scalar(/^description:[ \t]*(.*)$/m.exec(fm[1])?.[1]);
     if (!desc.startsWith("Use when")) note(`${dir}: description does not start with "Use when"`);
     if (desc.length > 1024) note(`${dir}: description ${desc.length} chars`);
     const prev = descriptions.get(desc);
@@ -53,3 +62,4 @@ for (const dir of dirs) {
   }
 }
 console.log(problems ? `${problems} problem(s)` : "library checks clean");
+process.exitCode = problems ? 1 : 0;

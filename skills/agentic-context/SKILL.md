@@ -1,6 +1,6 @@
 ---
 name: agentic-context
-description: Use when the context window is the binding constraint: what stays inline versus what moves to a file, size budgets for instruction files and tool output, spilling oversized results and paging them back, persisting plan and findings so compaction cannot erase them, layering instructions so the outer contract survives detail, or recovering when output quality drops mid-task.
+description: "Use when the context window is the binding constraint: what stays inline versus what moves to a file, size budgets for instruction files and tool output, spilling oversized results and paging them back, persisting plan and findings so compaction cannot erase them, layering instructions so the outer contract survives detail, or recovering when output quality drops mid-task."
 ---
 
 # Agentic Context

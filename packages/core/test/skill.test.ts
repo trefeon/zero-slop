@@ -32,7 +32,7 @@ describe("skill domain: fixture coverage", () => {
   const semantic = SKILL_RULES.filter((r) => r.matcher.type === "semantic");
 
   it("pins the rule count, the executable majority and the semantic minority", () => {
-    expect(SKILL_RULES).toHaveLength(30);
+    expect(SKILL_RULES).toHaveLength(31);
     expect(executable.length).toBeGreaterThanOrEqual(SKILL_RULES.length * 0.75);
     expect(semantic).toHaveLength(2);
   });

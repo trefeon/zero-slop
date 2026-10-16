@@ -1,6 +1,6 @@
 ---
 name: agentic-delegate
-description: Use when work moves to another agent: deciding whether a slice is worth handing off, cutting self-contained slices with disjoint file ownership, writing the child's brief and context contract, fanning independent children out in one batch, coordinating them while they run, and reviewing their output before integrating.
+description: "Use when work moves to another agent: deciding whether a slice is worth handing off, cutting self-contained slices with disjoint file ownership, writing the child's brief and context contract, fanning independent children out in one batch, coordinating them while they run, and reviewing their output before integrating."
 ---
 
 # agentic-delegate

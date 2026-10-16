@@ -1,6 +1,6 @@
 ---
 name: agentic-secure
-description: Use when a run touches a credential, third-party code, or an irreversible command: reading a .env or exporting a token, letting fetched content or tool output reach context, installing a skill, plugin or package, pushing to a public repository, or running a delete, drop, force-push or deploy.
+description: "Use when a run touches a credential, third-party code, or an irreversible command: reading a .env or exporting a token, letting fetched content or tool output reach context, installing a skill, plugin or package, pushing to a public repository, or running a delete, drop, force-push or deploy."
 ---
 
 # Agentic Secure

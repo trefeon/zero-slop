@@ -1299,5 +1299,91 @@
       }
     ],
     "notes": "Hygiene tier: flag the decoration, not a quoted product string or an explicitly playful tone the user asked for."
+  },
+  {
+    "id": "ZS-SKILL-031",
+    "domain": "skill",
+    "title": "Unquoted frontmatter description contains a colon",
+    "summary": "A plain (unquoted) YAML scalar may not contain a colon followed by whitespace; a strict frontmatter parser aborts with a scanner error and the client never loads the skill at all, while lenient clients silently truncate the description at the colon.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[ \\t]*description:[ \\t]+(?![ \\t]*[\"'|>])[^\\n]*:[\\t ]",
+      "params": {
+        "flags": "m",
+        "caseSensitive": true
+      }
+    },
+    "source": [
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "Skill files authored for other clients may contain technically invalid YAML that their parsers happen to accept. The most common issue is unquoted values containing colons:",
+        "ref": "reference/agentskills:docs/client-implementation/adding-skills-support.mdx"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "# Technically invalid YAML — the colon breaks parsing",
+        "ref": "reference/agentskills:docs/client-implementation/adding-skills-support.mdx"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "description: Use this skill when: the user asks about PDFs",
+        "ref": "reference/agentskills:docs/client-implementation/adding-skills-support.mdx"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "Consider a fallback that wraps such values in quotes or converts them to YAML block scalars before retrying. This improves cross-client compatibility at minimal cost.",
+        "ref": "reference/agentskills:docs/client-implementation/adding-skills-support.mdx"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "parsed = strictyaml.load(frontmatter_str)",
+        "ref": "reference/agentskills:skills-ref/src/skills_ref/parser.py"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "except strictyaml.YAMLError as e:\n            raise ParseError(f\"Invalid YAML in frontmatter: {e}\")",
+        "ref": "reference/agentskills:skills-ref/src/skills_ref/parser.py"
+      }
+    ],
+    "tests": [
+      {
+        "label": "spec example: unquoted description with a colon",
+        "input": "---\nname: pdf-tasks\ndescription: Use this skill when: the user asks about PDFs\n---\n\nRead the PDF and summarize it.",
+        "expect": "fail"
+      },
+      {
+        "label": "shipped defect: unquoted description with a colon-space",
+        "input": "---\nname: copy-audit\ndescription: Use when auditing: copy, UI, and code\n---\n\nAudit the copy.",
+        "expect": "fail"
+      },
+      {
+        "label": "double-quoted description",
+        "input": "---\nname: copy-audit\ndescription: \"Use when auditing: copy, UI, and code\"\n---\n\nAudit the copy.",
+        "expect": "pass"
+      },
+      {
+        "label": "single-quoted description",
+        "input": "---\nname: copy-audit\ndescription: 'Use when auditing: copy, UI, and code'\n---\n\nAudit the copy.",
+        "expect": "pass"
+      },
+      {
+        "label": "no colon in the description",
+        "input": "---\nname: copy-audit\ndescription: Use when auditing copy, UI, and code for generic phrasing\n---\n\nAudit the copy.",
+        "expect": "pass"
+      },
+      {
+        "label": "literal block scalar description",
+        "input": "---\nname: copy-audit\ndescription: |\n  Use when auditing: copy, UI, and code\n---\n\nAudit the copy.",
+        "expect": "pass"
+      },
+      {
+        "label": "folded block scalar description with chomping",
+        "input": "---\nname: copy-audit\ndescription: >-\n  Use when auditing: copy, UI, and code\n---\n\nAudit the copy.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Error tier: the skills-ref CLI parses frontmatter with strictyaml.load and turns the YAMLError into ParseError(\"Invalid YAML in frontmatter: ...\") — the defect rejects the file outright, so the skill is missing from the client rather than merely misdescribed. Only a colon followed by whitespace counts (the fixture-confirmed ScannerError \"mapping values are not allowed here\", at the column of the colon); a colon with no space after it, as in `description: See https://example.com`, stays a valid plain scalar and passes. Quoted values and `|` / `>` block scalars are excluded by the lookahead, so the pass fixtures for those forms hold even when the quoted text carries the same colon. Set `caseSensitive: true` so the YAML key name must be lowercase exactly as the spec spells it. Line-oriented: a `description:` line that only appears inside a fenced code block is skipped by the text engine's code-zone rule, so a skill documenting the bad form in an example fence is not flagged."
   }
 ]

@@ -1,7 +1,7 @@
 # Ship Plan: zero-slop to Public
 
 Executable checklist to take zero-slop from private repo to publicly usable.
-State: 2026-10-16. Rules DB 569 rules in 9 domains, engines done (614 tests), corpus synced
+State: 2026-10-16. Rules DB 570 rules in 9 domains, engines done (615 tests), corpus synced
 via scripts/sync-reference.mjs, skill library at 23 portable packs (10 audit + 13 agentic
 workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
 
@@ -40,11 +40,12 @@ workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKI
 - [ ] `npm pack --dry-run` verified: dist + rules only, no junk
 
 ### M2.7: skills.sh
-- [ ] `skills/slop-audit*` package committed (9 portable skills per
-      docs/MULTI_AGENT_SKILLS.md)
-- [ ] `skills-ref validate` passes on every folder
-- [ ] Repo public → auto-indexed; `npx skills add <owner>/zero-slop -g`
-      installs on all 4 harnesses
+- [x] 23 portable packs committed (10 audit + 13 workflow) per
+      docs/MULTI_AGENT_SKILLS.md
+- [x] `skills-ref validate` passes on every folder (23/23, 2026-10-16)
+- [x] `npx skills add` installs the whole library (project-scope run: 23 packs
+      into `.agents/skills`, universal + a Claude Code symlink); re-run against
+      the GitHub source after each publish
 
 ### M2.8: GitHub Action
 - [ ] `packages/action`: Node action, defaults-first (`zero-slop gate` on PR

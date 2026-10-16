@@ -19,9 +19,10 @@
   },
   "scripts": {
     "validate:rules": "tsx packages/core/src/validate.ts",
+    "check:skills": "node scripts/check-workflow-library.mjs",
     "typecheck": "tsc -p packages/core/tsconfig.json --noEmit",
-    "build": "pnpm --filter @zero-slop/core build && pnpm --filter @zero-slop/cli build",
-    "build:core": "pnpm --filter @zero-slop/core build"
+    "build": "tsc -p packages/core/tsconfig.json && tsc -p packages/cli/tsconfig.json",
+    "build:core": "tsc -p packages/core/tsconfig.json"
   },
   "devDependencies": {
     "tsx": "^4.23.12",
