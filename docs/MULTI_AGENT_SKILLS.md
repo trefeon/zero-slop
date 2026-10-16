@@ -17,8 +17,17 @@ skills/
 ├── slop-audit-a11y/       WCAG 2.2 thresholds, focus, sr-only, reflow
 ├── slop-audit-integrity/  fabricated data, fingerprints, citation verification
 ├── slop-audit-skill/      instruction artifacts: frontmatter contract, context budgets, railroading
-└── slop-audit-config/     CI manifests: floating refs, injection, secret exposure, masked failures
+├── slop-audit-config/     CI manifests: floating refs, injection, secret exposure, masked failures
+└── agentic-*/             the workflow family (13): one skill per decision an agent makes on a
+                           task, compiled from the corpus: frame, plan, delegate, context, verify,
+                           debug, review, git, secure, memory, skill, harness, loops
 ```
+
+The two families split by intent: `slop-audit*` judges a finished artifact
+against the rules DB, `agentic-*` instructs the work before the artifact
+exists. The router (`skills/zero-slop`) routes both, and every file in the
+library passes the repo's own scanner, which is what keeps the library
+honest as it grows.
 
 Each skill: minimal frontmatter (`name`, `description`: trigger-first), body
 <5000 tokens, references/ point to `rules/<domain>.json` + `zero-slop scan`

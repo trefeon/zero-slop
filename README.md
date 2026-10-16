@@ -1,30 +1,34 @@
 # zero-slop
 
-A CLI that scans prose, UI, and code for the generic, repetitive patterns of AI-generated work.
+The standard for agentic AI work: a rule engine that scans what agents produce, and a skill library that governs how they work.
 
 <p>
-  <img src="https://img.shields.io/npm/v/@zero-slop/cli.svg" alt=NPM>
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt=MIT>
   <img src="https://img.shields.io/badge/node-%3E%3D22-3c873a" alt=Node22>
   <img src="https://img.shields.io/github/actions/workflow/status/trefeon/zero-slop/ci.yml?branch=main" alt=CI>
 </p>
 
-zero-slop applies 569 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start.
+zero-slop applies 569 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start. Alongside the engine it ships 23 portable Agent Skills: 10 that audit a finished artifact against the rule database, and 13 that teach the agentic workflow (framing, planning, delegation, context, verification, debugging, review, git, security, memory, skill authoring, harnesses, loops), every one of them compiled from the 84-repo research corpus and gated by the engine itself.
 
 ## Install
 
-Requires Node.js 22 or newer. Run zero-slop from your project root:
+Requires Node.js 22 or newer. The CLI is not on the npm registry yet, so run it from a clone:
 
 ```bash
-npm install -g @zero-slop/cli
-zero-slop scan .
+git clone https://github.com/trefeon/zero-slop
+cd zero-slop
+corepack pnpm install
+corepack pnpm build
+node packages/cli/dist/index.js scan .
 ```
 
-Or run it once without installing anything:
+The skills install today, straight from this repo:
 
 ```bash
-npx -y zero-slop@latest scan .
+npx skills add trefeon/zero-slop -g
 ```
+
+Publishing is wired in `.github/workflows/publish.yml` and runs on a `v*` tag.
 
 ## What it catches
 
@@ -177,6 +181,28 @@ SKILL.md, AGENTS.md, CLAUDE.md, .cursorrules, commands/*, agents/*   skill
 
 The scanner skips the directories listed in `exclude` and reports nothing for unrecognized extensions.
 
+## The workflow library
+
+Thirteen `agentic-*` skills cover the decisions an agent makes on a task. Each owns exactly one decision, names the sibling to use instead, cites the corpus for its claims, and passes the repo's own scanner.
+
+| Skill | Fires when |
+| --- | --- |
+| agentic-frame | a request needs framing first: goal, acceptance criteria, scope boundary |
+| agentic-plan | the goal is fixed and the execution shape is open: slices, contracts, ordering |
+| agentic-delegate | work splits across agents: slice design, context contracts, isolation |
+| agentic-context | the window is the constraint: budgets, progressive disclosure, files as memory |
+| agentic-verify | work claims to be done: evidence classes, falsification, regression proof |
+| agentic-debug | behavior is wrong or unexplained: reproduce, narrow, bisect, root cause |
+| agentic-review | a diff needs judgment: review axes, receiving review, merge gate |
+| agentic-git | workspace and history: worktrees, branches, commits, PR flow |
+| agentic-secure | secrets and supply chain: approval gates, scanning, untrusted content |
+| agentic-memory | knowledge must outlive the session: what to save, where, when to distrust it |
+| agentic-skill | authoring an instruction artifact: frontmatter, triggers, budgets, testing |
+| agentic-harness | the agent's environment: tool design, permissions, hosted runtimes, observability |
+| agentic-loops | work runs over time: budgets, stop conditions, drift, escalation |
+
+The audit family is the other half: `slop-audit*` judges a finished artifact against `rules/*.json` and reports findings with a tier, and the `zero-slop` router routes both families.
+
 ## Before and after
 
 A prose line:
@@ -238,7 +264,7 @@ The workspace is a pnpm monorepo with three parts:
 - `rules/`: the rule database, one JSON file per domain
 - `packages/core`: the check engines for prose, ui, code, and commit
 - `packages/cli`: the commander-based CLI
-- `scripts/`: rule bundling, plus `sync-reference.mjs`, which refreshes the gitignored research corpus listed in `scripts/reference-corpus.json`
+- `scripts/`: rule bundling, plus `sync-reference.mjs` (refreshes the gitignored research corpus listed in `scripts/reference-corpus.json`) and `fix-citations.mjs` (rewrites corpus citations to the flat `reference/<manifest-name>:<path>` form)
 
 From the repo root:
 
@@ -265,7 +291,7 @@ The long-form docs live in docs/:
 
 ## Roadmap
 
-The plan adds a GitHub Action, a portable Agent Skills package, and an MCP server. The release sequence is in docs/SHIP_PLAN.md.
+The engine and the skill library ship today. The plan adds the `zero-slop-action` GitHub Action (gate a PR diff, post the report), the MCP server, and the npm publish. The release sequence is in docs/SHIP_PLAN.md.
 
 ## License
 

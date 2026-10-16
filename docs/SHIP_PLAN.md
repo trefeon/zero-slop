@@ -2,9 +2,19 @@
 
 Executable checklist to take zero-slop from private repo to publicly usable.
 State: 2026-10-16. Rules DB 569 rules in 9 domains, engines done (614 tests), corpus synced
-via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
+via scripts/sync-reference.mjs, skill library at 23 portable packs (10 audit + 13 agentic
+workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
 
 ## Milestones
+
+### M1.8: Agentic workflow library [IN PROGRESS]
+- [x] 13 `agentic-*` skills compiled from the corpus, one owner per decision, sibling
+      boundaries stated, corpus citations that resolve on disk
+- [x] Every file gated to 0 errors by the repo's own scanner; CI self-scan covers `skills/`
+- [x] Router (`skills/zero-slop`) routes both families; README and
+      docs/MULTI_AGENT_SKILLS.md document the audit-versus-workflow split
+- [ ] Re-run `npx skills add trefeon/zero-slop -g` after this lands and confirm all 23
+      packs install on the four harnesses
 
 ### M2: CLI, the Anchor Artifact [IN PROGRESS]
 - [ ] `packages/cli`: `zero-slop scan|check|gate|report` with config, JSON
@@ -26,7 +36,7 @@ via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md,
 - [ ] `npm login` (2FA or granular access token)
 - [ ] `@zero-slop/cli` published with `--provenance` (trusted publishing via
       GitHub Actions OIDC: no tokens in CI)
-- [ ] `npx -y zero-slop@latest scan .` works from a fresh clone
+- [ ] `npx -y @zero-slop/cli@latest scan .` works from a fresh clone
 - [ ] `npm pack --dry-run` verified: dist + rules only, no junk
 
 ### M2.7: skills.sh
@@ -62,7 +72,7 @@ via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md,
 ## Publishing decisions: Locked
 - License: **MIT** (max corporate adoption; AGPL costs it: peakoss counterexample)
 - npm package bundles skills + rules in `files` (install never depends on GitHub)
-- `npx zero-slop` picker (antislop-ai pattern) added after CLI traction
+- `npx @zero-slop/cli` picker (antislop-ai pattern) added after CLI traction
 - Rules as shareable configs (`@zero-slop/config-recommended`) after core ships
 - Zero-config defaults everywhere; `zero-slop.json` optional
 - Self-dogfooded CI: the repo's own docs scanned by zero-slop
@@ -73,7 +83,8 @@ via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md,
    7. MCP registry (M4) → 8. side-channels on demand.
 
 ## Ship acceptance
-- [ ] `npx -y zero-slop@latest scan .` returns findings on a fresh repo, no config
+- [ ] `npx -y @zero-slop/cli@latest scan .` returns findings on a fresh repo, no config
+      (blocked on the npm publish; the unscoped `zero-slop` name belongs to another project)
 - [ ] `npx skills add <owner>/zero-slop -g` installs on Claude Code + Codex +
       opencode + Cursor
 - [ ] `- uses: <owner>/zero-slop-action@v1` posts a report on the first PR

@@ -2,7 +2,7 @@
   "name": "zero-slop",
   "version": "0.1.0",
   "private": true,
-  "description": "Anti-AI-slop framework: rules database, check engines, CLI, CI action, agent.",
+  "description": "Agentic AI work standard: rules database, check engines, CLI, CLI gate, and the portable workflow skill library.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   "scripts": {
     "validate:rules": "tsx packages/core/src/validate.ts",
     "typecheck": "tsc -p packages/core/tsconfig.json --noEmit",
+    "build": "pnpm --filter @zero-slop/core build && pnpm --filter @zero-slop/cli build",
     "build:core": "pnpm --filter @zero-slop/core build"
   },
   "devDependencies": {
