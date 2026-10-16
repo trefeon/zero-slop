@@ -16,11 +16,11 @@ same artifact.
 
 | Channel | Publish cost | Review? | First-timer experience |
 |---|---|---|---|
-| **npm / npx** | Low: account + 2FA or GAT; trusted publishing via OIDC | No | `npx -y zero-slop scan .`: zero install, findings in seconds |
+| **npm / npx** | Low: account + 2FA or GAT; trusted publishing via OIDC | No | `npx -y @zero-slop/cli scan .`: zero install, findings in seconds |
 | **skills.sh** | Low: push public repo with `skills/<name>/SKILL.md` | **No (auto-indexed)** | `npx skills add <owner>/zero-slop -g` → agent self-triggers |
 | **Claude marketplace** | Low-med: `.claude-plugin/plugin.json` + `marketplace.json` in repo; `claude plugin validate`; community submit optional | Self-serve; community = review | `/plugin marketplace add <owner>/zero-slop` → `/plugin install` |
 | **GitHub Action** | Low: `action.yml` at repo root + release with "Publish to Marketplace" checked | No (listing instant) | `- uses: <owner>/zero-slop-action@v1`: works even unlisted |
-| **MCP Registry** | Low-med: `server.json` (`io.github.<user>/zero-slop`), `mcp-publisher login github`, `mcpName` in package.json | Preview; may reset | install = `npx -y zero-slop-mcp@latest` (same npm artifact) |
+| **MCP Registry** | Low-med: `server.json` (`io.github.<user>/zero-slop`), `mcp-publisher login github`, `mcpName` in package.json | Preview; may reset | install = `npx -y @zero-slop/mcp@latest` (same npm artifact) |
 | **Agent Plugins v1.0** | Low: `plugin.json` + `skills/` + `mcp.json` folder | No registry exists; client-dependent | bundle skills+MCP as one canonical artifact |
 | **curl\|sh + Docker (ghcr.io)** | Low |: | non-Node/offline side-channel |
 | **Homebrew core** | Med: gated on popularity + maintainer review | Yes | `brew install zero-slop` (own tap = no review) |
@@ -28,7 +28,7 @@ same artifact.
 
 ## Launch sequence: Cheapest to fastest value
 
-1. **Day 0: Public repo + npm**: `@zero-slop/cli` published (`npx zero-slop`),
+1. **Day 0: Public repo + npm**: `@zero-slop/cli` published (`npx -y @zero-slop/cli@latest`),
    MIT license, trusted publishing (provenance), README with the install command
    in the first 60 lines. This is the anchor: every other channel points here.
 2. **Day 1: skills.sh**: commit `skills/slop-audit-*/SKILL.md`; auto-indexed,
@@ -52,7 +52,7 @@ same artifact.
   maximizes reach.
 - **npm package bundles the skills** (like anti-slop's `prepublishOnly: sync-skills`):
   `files: ["dist", "skills/"]`: install never depends on GitHub.
-- **`npx zero-slop` picker** (like `npx antislop-ai`): interactive, detects
+- **`npx @zero-slop/cli` picker** (like `npx antislop-ai`): interactive, detects
   Claude Code/Codex/opencode/Cursor, installs skills into the right dirs,
   injects `CLAUDE.md`/`AGENTS.md` pointers.
 - **Rules as shareable configs** (commitlint's `extend` pattern):
@@ -66,16 +66,16 @@ same artifact.
 
 ## README structure: Adoption-driven
 
-1. Banner + badges (MIT, version, npm, tests): first 20 lines
-2. **Install: one command** (`npx -y zero-slop scan .`): first 60 lines
+1. Banner + badges (MIT, node, CI): first 20 lines
+2. **Install: one command** (`npx -y @zero-slop/cli scan .` once published; clone today): first 60 lines
 3. What it catches (569 rules across 9 domains, with 3 examples)
-4. Usage: CLI (`scan/check/gate/report`), CI action, agent skills, MCP
+4. Usage: CLI (`scan/check/gate/report`), CI action, agent skills (23 packs), MCP
 5. Before/after proof (demo screenshots like hallmark)
 6. Config reference → Contributing → License
 
 ## Acceptance criteria
 
-- `npx -y zero-slop@latest scan .` returns findings on a fresh repo with no config.
+- `npx -y @zero-slop/cli@latest scan .` returns findings on a fresh repo with no config.
 - `npx skills add <owner>/zero-slop -g` installs skills on all 4 harnesses.
 - `- uses: <owner>/zero-slop-action@v1` posts a report on the first PR.
 - `claude plugin validate ./` passes; `skills-ref validate` passes on every skill.

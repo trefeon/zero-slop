@@ -1,6 +1,6 @@
 ---
 name: zero-slop
-description: Audit AI-generated copy, UI, code, commits, accessibility, credibility, agent instructions, or CI configuration for generic slop tells. Use when reviewing docs, pages, diffs, commit messages, PRs, landing pages, skill files, or CI manifests for unchosen defaults, when asking whether a diff is sloppy, before committing, when gating a merge on slop, or when unsure which slop domain applies.
+description: Audit AI-generated copy, UI, code, commits, accessibility, credibility, agent instructions, or CI configuration for generic slop tells, and route an agentic workflow decision to the skill that owns it. Use when reviewing docs, pages, diffs, commit messages, PRs, landing pages, skill files, or CI manifests for unchosen defaults, when asking whether a diff is sloppy, before committing, when gating a merge on slop, when unsure which slop domain applies, or when choosing how to frame, plan, delegate, verify, debug, review, secure, or persist agentic work.
 ---
 
 # Zero-slop (universal router)
@@ -15,7 +15,7 @@ Run `zero-slop scan` against the canonical rules DB in `rules/*.json` first; tre
 
 ## Without the CLI
 
-When `zero-slop scan` is not installed in the current harness, work the routing table manually: load the one matching `references/<domain>.md`, apply its checks by quoting each threshold verbatim, and cite `rules/<domain>.json#<rule-id>` exactly as the output template demands. A manual pass judges the same way — the CLI only automates candidate flagging, never the verdict. Install the runner with `npx -y zero-slop@latest scan .` when the harness allows npm execution.
+When `zero-slop scan` is not installed in the current harness, work the routing table manually: load the one matching `references/<domain>.md`, apply its checks by quoting each threshold verbatim, and cite `rules/<domain>.json#<rule-id>` exactly as the output template demands. A manual pass judges the same way; the CLI only automates candidate flagging, never the verdict. The runner is not on the npm registry yet, so install it from a clone (`corepack pnpm install && corepack pnpm build`, then `node packages/cli/dist/index.js scan .`) or from a global install once published.
 
 ## Tier discipline
 
@@ -36,6 +36,26 @@ Tiers come from the rules DB schema: `error` means always fail; `warning` means 
 
 When two domains match, load both; overlapping flags merge on rule ID, never on prose description.
 
+## Workflow routing
+
+The `agentic-*` family owns the work itself, one decision per skill. Read the sibling named here before answering a question about how to run a task.
+
+| Decision in front of the agent | Skill |
+|---|---|
+| The request is raw: what is the goal, what counts as done, what is out of scope | `agentic-frame` |
+| The goal is fixed: slice it, fix interfaces, order by dependency and risk | `agentic-plan` |
+| More than one writer: slice design, context contracts, isolation, integration | `agentic-delegate` |
+| The window is the constraint: budgets, progressive disclosure, files as memory | `agentic-context` |
+| A claim of done: evidence classes, falsification, regression proof | `agentic-verify` |
+| Behavior is wrong or unexplained: reproduce, narrow, bisect, root cause | `agentic-debug` |
+| A diff needs judgment: review axes, receiving review, merge gate | `agentic-review` |
+| Workspace and history: worktrees, branches, commit subjects, PR flow | `agentic-git` |
+| Secrets, supply chain, untrusted content, destructive commands | `agentic-secure` |
+| Knowledge must outlive the session: what to save, where, when to distrust it | `agentic-memory` |
+| Authoring an instruction artifact: frontmatter, triggers, budgets, testing | `agentic-skill` |
+| The agent's environment: tool design, permissions, hosted runtimes, observability | `agentic-harness` |
+| Work runs over time: budgets, stop conditions, drift, escalation | `agentic-loops` |
+
 ## Output template
 
 Report each finding as:
@@ -45,7 +65,7 @@ Report each finding as:
 - **Verdict:** slop (unchosen default) or intentional (brief-backed reason kept).
 - **Fix:** delete, fold into the existing helper, or replace with a token change — minimal, no invented replacement content.
 
-Report every finding verdict-first: each line is a verdict, a finding with `path:line`, or a check you ran — no preamble, no process narration, no closing summary. Source: reference/obra/superpowers:skills/subagent-driven-development/task-reviewer-prompt.md.
+Report every finding verdict-first: each line is a verdict, a finding with `path:line`, or a check you ran — no preamble, no process narration, no closing summary. Source: reference/superpowers:skills/subagent-driven-development/task-reviewer-prompt.md.
 
 ## Gotchas
 
@@ -55,6 +75,6 @@ Report every finding verdict-first: each line is a verdict, a finding with `path
 - Thresholds that look improvable are quoted from sources; re-deriving them per review invents rules.
 - When two domains flag the same text, merge on rule ID — overlapping prose descriptions are not double counts.
 - Prefer deletion or a token change over a redesign; never invent replacement copy, stats, testimonials, or logos to "fix" a section.
-- Quote-or-drop: every finding cites `path:line`, and numbers you did not compute from the transcript are invented — a claim without a resolvable citation is deleted, not argued (Source: reference/obra/superpowers:skills/diagnosing-superpowers/SKILL.md).
-- A subagent's or implementer's self-report is an unverified claim: a green self-assessment never upgrades a verdict and never substitutes for the diff (Source: reference/obra/superpowers:skills/subagent-driven-development/task-reviewer-prompt.md).
-- Keep tooling meta-commentary out of the deliverable — a report states what was found, not which pass produced it; engine health belongs in diagnostics (Source: reference/mvanhorn/last30days-skill:skills/last30days/SKILL.md).
+- Quote-or-drop: every finding cites `path:line`, and numbers you did not compute from the transcript are invented — a claim without a resolvable citation is deleted, not argued (Source: reference/superpowers:skills/diagnosing-superpowers/SKILL.md).
+- A subagent's or implementer's self-report is an unverified claim: a green self-assessment never upgrades a verdict and never substitutes for the diff (Source: reference/superpowers:skills/subagent-driven-development/task-reviewer-prompt.md).
+- Keep tooling meta-commentary out of the deliverable — a report states what was found, not which pass produced it; engine health belongs in diagnostics (Source: reference/last30days-skill:skills/last30days/SKILL.md).
