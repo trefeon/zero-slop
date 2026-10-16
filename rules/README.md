@@ -1,6 +1,6 @@
 # Zero-Slop Rules Database
 
-Canonical, machine-readable consolidation of the anti-slop tells extracted from the reference corpus (`reference/`, refreshed through `scripts/sync-reference.mjs`; 520 rules as of 2026-10-16). This is the **knowledge layer** (Layer 0): consumed by the check engines (`packages/core`, M1+), the CLI, MCP server, and the agent.
+Canonical, machine-readable consolidation of the anti-slop tells extracted from the reference corpus (`reference/`, refreshed through `scripts/sync-reference.mjs`; 569 rules as of 2026-10-16). This is the **knowledge layer** (Layer 0): consumed by the check engines (`packages/core`, M1+), the CLI, MCP server, and the agent.
 
 ## Domains
 
@@ -13,6 +13,8 @@ Canonical, machine-readable consolidation of the anti-slop tells extracted from 
 | `rules/integrity.json` | integrity | Honesty: fake stats, fabricated testimonials/logos/attributions, unlabeled placeholders |
 | `rules/a11y.json` | a11y | Accessibility: contrast, focus, keyboard, hit targets |
 | `rules/chat.json` | chat | Agent output shape: negation framing, filler openers, summary stamps, brevity |
+| `rules/skill.json` | skill | Agent instruction artifacts (`SKILL.md`, `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, command/agent definitions): frontmatter contract, description triggers, context budgets, instruction discipline |
+| `rules/config.json` | config | CI/CD manifests (workflows, action manifests, GitLab/CircleCI/pre-commit): floating refs, script injection, secret exposure, unmasked failures |
 
 ## Rule schema: V1
 
@@ -45,7 +47,7 @@ One JSON array per domain file. Each rule:
 ### Fields
 
 - **id**: `ZS-<DOMAIN-UPPER>-<NNN>` sequential per domain.
-- **domain**: one of `prose | ui | code | commit | integrity | a11y | chat`.
+- **domain**: one of `prose | ui | code | commit | integrity | a11y | chat | skill | config`.
 - **title**: short imperative or descriptive name.
 - **summary**: why this is slop (evidence-based, 1-2 sentences).
 - **tier**: `error` (hard ban: always fail) | `warning` (purpose-gate: fail only when used as an unchosen default) | `info` (quality lock / consistency). Map from source: hard bans → `error`; "allowed with reason" → `warning`; consistency/hygiene → `info`.

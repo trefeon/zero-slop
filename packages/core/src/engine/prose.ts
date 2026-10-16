@@ -1,8 +1,9 @@
 /**
- * Zero-slop TEXT-domain engine (M1): prose + chat + integrity rules.
+ * Zero-slop TEXT-domain engine (M1): every rule on the `text` route.
  *
- * scanProse() runs every rule whose domain is prose, chat, or integrity and
- * emits at most ONE finding per rule (count = total occurrences).
+ * scanProse() runs every rule whose DOMAIN_ROUTE is "text" (currently prose,
+ * chat, integrity, skill, config) and emits at most ONE finding per rule
+ * (count = total occurrences).
  *
  * Matcher coverage (rules/prose.json + chat.json + integrity.json, 102 rules):
  *   - regex (35 rules), list (31 rules), statistical (12 rules): implemented.
@@ -50,6 +51,7 @@
  */
 import type { Finding, ScanContext, ScanOptions, Sentence, Token } from "./types.js";
 import type { Rule, Tier } from "../rules.js";
+import { DOMAIN_ROUTE } from "./routes.js";
 import { TRANSITION_MARKERS, computeStats } from "./tokenize.js";
 
 const TIER_ORDER: Record<Tier, number> = { error: 0, warning: 1, info: 2 };
@@ -99,7 +101,8 @@ export function scanProse(rules: Rule[], ctx: ScanContext, opts: ScanOptions = {
   const maxFindings = opts.maxFindingsPerRule ?? 50;
   const findings: Finding[] = [];
   for (const rule of rules) {
-    if (rule.domain !== "prose" && rule.domain !== "chat" && rule.domain !== "integrity") continue;
+    // Route guard derived from the single route table (never a second domain list).
+    if (DOMAIN_ROUTE[rule.domain] !== "text") continue;
     const finding = runRule(rule, ctx);
     if (!finding) continue;
     if (TIER_ORDER[finding.tier] > TIER_ORDER[minTier]) continue; // below minTier

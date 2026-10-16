@@ -18,15 +18,8 @@ export function computeSummary(findings: Finding[]): JsonSummary {
     warning: 0,
     info: 0,
   };
-  const byDomain: Record<Domain, number> = {
-    prose: 0,
-    ui: 0,
-    code: 0,
-    commit: 0,
-    integrity: 0,
-    a11y: 0,
-    chat: 0,
-  };
+  // Derived from VALID_DOMAINS so a new domain can never silently drop counts.
+  const byDomain = Object.fromEntries(VALID_DOMAINS.map((d) => [d, 0])) as Record<Domain, number>;
 
   for (const f of findings) {
     const currentTierCount = byTier[f.tier];

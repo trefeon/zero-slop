@@ -7,13 +7,52 @@ const MARKUP_EXTS = new Set([".html", ".jsx", ".tsx", ".vue", ".svelte", ".astro
 const STYLE_EXTS = new Set([".css", ".scss"]);
 const CODE_EXTS = new Set([".ts", ".js", ".py"]);
 
+/** Basenames (lowercased) of agent instruction artifacts → skill domain. */
+const SKILL_BASENAMES: Record<string, true> = {
+  "skill.md": true,
+  "agents.md": true,
+  "claude.md": true,
+  "gemini.md": true,
+  ".cursorrules": true,
+};
+
+/** Directory segments holding agent commands / subagent definitions → skill domain. */
+const SKILL_DIR_SEGMENTS: Record<string, true> = { commands: true, agents: true };
+
+/** Path patterns (lowercased, slash-normalized) of CI/CD manifests → config domain. */
+const SKILL_PATH_PATTERNS: RegExp[] = [/(?:^|\/)\.github\/copilot-instructions\.md$/];
+const CONFIG_PATH_PATTERNS: RegExp[] = [
+  /(?:^|\/)\.github\/workflows\/[^/]+\.ya?ml$/,
+  /(?:^|\/)action\.ya?ml$/,
+  /(?:^|\/)\.gitlab-ci\.yml$/,
+  /(?:^|\/)\.circleci\/config\.yml$/,
+  /(?:^|\/)\.pre-commit-config\.yaml$/,
+];
+
 export interface FileDispatch {
   domains: Domain[];
   isMarkdown: boolean;
 }
 
 export function getFileDispatch(filePath: string): FileDispatch | null {
-  const ext = path.extname(filePath).toLowerCase();
+  const norm = filePath.replace(/\\/g, "/").toLowerCase();
+  const base = path.basename(norm);
+
+  // Agent instruction artifacts (skill domain) — checked before the markdown
+  // extension map so a SKILL.md is judged by skill rules, not prose.
+  if (SKILL_BASENAMES[base] === true || SKILL_PATH_PATTERNS.some((re) => re.test(norm))) {
+    return { domains: ["skill"], isMarkdown: true };
+  }
+  if (base.endsWith(".md") && norm.split("/").some((s) => SKILL_DIR_SEGMENTS[s] === true)) {
+    return { domains: ["skill"], isMarkdown: true };
+  }
+
+  // CI/CD manifests (config domain) — YAML paths the extension map does not cover.
+  if (CONFIG_PATH_PATTERNS.some((re) => re.test(norm))) {
+    return { domains: ["config"], isMarkdown: false };
+  }
+
+  const ext = path.extname(norm);
   if (TEXT_EXTS.has(ext)) {
     return { domains: ["prose", "chat", "integrity"], isMarkdown: true };
   }

@@ -1,0 +1,1303 @@
+[
+  {
+    "id": "ZS-SKILL-001",
+    "domain": "skill",
+    "title": "Skill frontmatter declares no name field",
+    "summary": "The Agent Skills spec makes `name` a required frontmatter field; a SKILL.md without it fails validation and installers cannot identify the skill.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^---[ \\t]*\\r?\\n(?!name:)(?![\\s\\S]*?\\nname:)[\\s\\S]*?\\n---"
+    },
+    "source": [
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "| `name` | Yes | Max 64 characters. Lowercase letters, numbers, and hyphens only. Must not start or end with a hyphen. |",
+        "ref": "docs/specification.mdx"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "- Two required fields: `name` and `description`",
+        "ref": "skills/writing-skills/SKILL.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "| `skills/<name>/SKILL.md` | `name`, `description` | (none) |",
+        "ref": "docs/authoring.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "frontmatter with only a description",
+        "input": "---\ndescription: Use when summarizing changelogs from git history.\n---\n\n# Changelog\n\nSummarize the commits since the last tag.",
+        "expect": "fail"
+      },
+      {
+        "label": "frontmatter with name and description",
+        "input": "---\nname: changelog-summary\ndescription: Use when summarizing changelogs from git history.\n---\n\n# Changelog\n\nSummarize the commits since the last tag.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Fires on the first frontmatter block that lacks a `name:` line. Conservative: a `name:` anywhere later in the document also silences the rule."
+  },
+  {
+    "id": "ZS-SKILL-002",
+    "domain": "skill",
+    "title": "Skill frontmatter declares no description field",
+    "summary": "`description` is required and is the only text an agent sees when deciding whether to load the skill; without it the skill can never be discovered.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^---[ \\t]*\\r?\\n(?!description:)(?![\\s\\S]*?\\ndescription:)[\\s\\S]*?\\n---"
+    },
+    "source": [
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "| `description` | Yes | Max 1024 characters. Non-empty.",
+        "ref": "docs/specification.mdx"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "- **description**: When to trigger, what it does. This is the primary triggering mechanism - include both what the skill does AND specific contexts for when to use it.",
+        "ref": "skills/skill-creator/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "frontmatter with only a name",
+        "input": "---\nname: changelog-summary\n---\n\n# Changelog\n",
+        "expect": "fail"
+      },
+      {
+        "label": "frontmatter with name and description",
+        "input": "---\nname: changelog-summary\ndescription: Use when summarizing changelogs from git history.\n---\n\n# Changelog\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Same shape as the name check; covers SKILL.md, command files, and agent definitions."
+  },
+  {
+    "id": "ZS-SKILL-003",
+    "domain": "skill",
+    "title": "Required frontmatter field declared empty",
+    "summary": "`name` and `description` are declared but carry no value; the spec requires a non-empty description and a 1-64 character name, so the skill loads with no identity.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[ \\t]*(?:name|description):[ \\t]*(?:\"\"|'')?[ \\t]*$",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "| `description` | Yes | Max 1024 characters. Non-empty.",
+        "ref": "docs/specification.mdx"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "- Must be 1-64 characters",
+        "ref": "docs/specification.mdx"
+      }
+    ],
+    "tests": [
+      {
+        "label": "empty description",
+        "input": "---\nname: changelog-summary\ndescription:\n---\n\n# Changelog\n",
+        "expect": "fail"
+      },
+      {
+        "label": "empty quoted name",
+        "input": "---\nname: \"\"\ndescription: Use when summarizing changelogs from git history.\n---\n",
+        "expect": "fail"
+      },
+      {
+        "label": "both fields filled",
+        "input": "---\nname: changelog-summary\ndescription: Use when summarizing changelogs from git history.\n---\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Only the two identity fields are checked; optional fields may be empty."
+  },
+  {
+    "id": "ZS-SKILL-004",
+    "domain": "skill",
+    "title": "Frontmatter field carries an executable payload",
+    "summary": "Skill and command frontmatter values that interpolate a bang-command or template call execute at load time; an instruction artifact that runs shell code without a stated contract is a trust violation.",
+    "tier": "error",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?:name|description|when_to_use|argument-hint|arguments|allowed-tools|disallowed-tools|shell|hooks|context|agent|model|effort|paths|metadata|license|compatibility|user-invocable|disable-model-invocation)[ \\t]*:[^\\n]*(?:!\\x60|\\$\\(|\\{\\{|\\$\\{)",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "shanraisshan/claude-code-best-practice",
+        "rule": "Shell for `` !`command` `` blocks",
+        "ref": "best-practice/claude-skills.md"
+      },
+      {
+        "repo": "shanraisshan/claude-code-best-practice",
+        "rule": "Disable inline shell execution for `` !`...` `` and `` ```! `` blocks in skills and custom commands from user, project, plugin, or additional-directory sources.",
+        "ref": "best-practice/claude-settings.md"
+      },
+      {
+        "repo": "shanraisshan/claude-code-best-practice",
+        "rule": "| **Dynamic context injection** | No | Yes — `` !`command` `` | Yes — `` !`command` `` |",
+        "ref": "reports/claude-agent-command-skill.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "hooks field with a bang command",
+        "input": "---\nname: deploy-notes\ndescription: Use when writing release notes for a deploy.\nshell: bash\nhooks: !`git log --oneline -5`\n---\n\n# Deploy notes\n",
+        "expect": "fail"
+      },
+      {
+        "label": "plain frontmatter",
+        "input": "---\nname: deploy-notes\ndescription: Use when writing release notes for a deploy.\n---\n\n# Deploy notes\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Executable frontmatter is deliberate in some harnesses; the rule exists so the payload is a reviewed decision, not an accident. Restoration: allow when the file documents the command and its side effects."
+  },
+  {
+    "id": "ZS-SKILL-005",
+    "domain": "skill",
+    "title": "Instruction file points at a file that does not exist",
+    "summary": "A path, link, or **Reference:** pointer into a file that is missing in the same repo is a broken contract: the agent follows it and finds nothing, or silently skips the step.",
+    "tier": "error",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "wshobson/agents",
+        "rule": "kind=\"DEAD_LINK\",",
+        "ref": "tools/doc_gardener.py"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "fail \"referenced file exists: $ref\"",
+        "ref": "tests/diagnosing-superpowers/test-skill-structure.sh"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "check that each named path inside the project exists",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "references/ pointer to a missing file",
+        "input": "# Review skill\n\nSee `references/severity-rubric.md` for the full severity table.",
+        "expect": "fail"
+      },
+      {
+        "label": "references/ pointer to a shipped file",
+        "input": "# Review skill\n\nSee `references/severity-rubric.md` for the full severity table.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Needs repository context (does the target resolve to a real path?); a semantic pass resolves each in-repo path, link, and **Reference:** pointer and reports the ones that do not exist. External URLs are out of scope."
+  },
+  {
+    "id": "ZS-SKILL-006",
+    "domain": "skill",
+    "title": "Skill name breaks the spec charset or length",
+    "summary": "Names must be lowercase alphanumerics with single hyphens, 1-64 characters, and equal to the directory name; anything else breaks registry installs and generated IDs.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^name:[ \\t]+(?![a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?[ \\t]*$)[^\\n]*|^name:[ \\t][^\\n]*--",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "- Must be 1-64 characters",
+        "ref": "docs/specification.mdx"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "Must not contain consecutive hyphens (`--`)",
+        "ref": "docs/specification.mdx"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "`name` must equal the directory name (agentskills.io spec; `gh skill publish --dry-run` rejects a mismatch)",
+        "ref": "docs/authoring.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "title-case name with uppercase",
+        "input": "---\nname: PDF Processing\ndescription: Use when handling PDFs.\n---\n",
+        "expect": "fail"
+      },
+      {
+        "label": "double hyphen",
+        "input": "---\nname: pdf--processing\ndescription: Use when handling PDFs.\n---\n",
+        "expect": "fail"
+      },
+      {
+        "label": "valid hyphenated name",
+        "input": "---\nname: pdf-processing\ndescription: Use when handling PDFs.\n---\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Directory-name equality is not text-checkable; the engine checks charset and length, the semantic pass keeps directory equality (the spec's `name` = parent directory rule)."
+  },
+  {
+    "id": "ZS-SKILL-007",
+    "domain": "skill",
+    "title": "Description has no trigger phrase",
+    "summary": "Descriptions are the routing mechanism; a description that never states when to use the skill (no `Use when …`-style phrase) leaves the agent guessing and the skill under-triggers.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^description:[ \\t]+(?![^\\n]*(?:Use when|Use this skill when|Use PROACTIVELY when|Use after|Trigger when|Auto-loads when))[^\\n]+",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "wshobson/agents",
+        "rule": "The `MISSING_TRIGGER` lint fires without one.",
+        "ref": "docs/authoring.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "- Start with \"Use when...\" to focus on triggering conditions",
+        "ref": "skills/writing-skills/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "The `description` field enables Skill discovery and should include both what the Skill does and when to use it.",
+        "ref": "skills/writing-skills/anthropic-best-practices.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "summary-style description",
+        "input": "---\nname: pdf-helper\ndescription: Helps with documents\n---\n",
+        "expect": "fail"
+      },
+      {
+        "label": "trigger-first description",
+        "input": "---\nname: flaky-test-triage\ndescription: Use when tests have race conditions, timing dependencies, or pass/fail inconsistently\n---\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Recognized phrases follow the corpus lint: Use when / Use this skill when / Use PROACTIVELY when / Use after / Trigger when / Auto-loads when. Inline-code values are ignored by the engine's code-zone exclusion."
+  },
+  {
+    "id": "ZS-SKILL-008",
+    "domain": "skill",
+    "title": "Description summarizes the workflow instead of triggering",
+    "summary": "A description that describes the process becomes a shortcut the agent follows instead of reading the skill body; the corpus test bans the words dispatch/then/step in descriptions for exactly this reason.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^description:[ \\t][^\\n]*\\b(?:dispatch\\w*|steps?|then)\\b[^\\n]*",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "**NEVER summarize the skill's process or workflow**",
+        "ref": "skills/writing-skills/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "for banned in \"dispatch\" \"then\" \"step\"; do",
+        "ref": "tests/diagnosing-superpowers/test-skill-structure.sh"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "**The trap:** Descriptions that summarize workflow create a shortcut agents will take.",
+        "ref": "skills/writing-skills/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "description that narrates the process",
+        "input": "---\nname: subagent-driven-development\ndescription: Use when executing plans - dispatches subagent per task with code review between tasks, then a final review\n---\n",
+        "expect": "fail"
+      },
+      {
+        "label": "triggering conditions only",
+        "input": "---\nname: subagent-driven-development\ndescription: Use when executing implementation plans with independent tasks in the current session\n---\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: the banned words are legitimate when they name the outcome (\"a build step failed\"); flag when the sentence narrates the skill's own procedure. `workflow` as a noun naming the artifact under audit (GitHub Actions workflows) is not a procedure narration; sequence markers carry the intent, so the pattern matches them only."
+  },
+  {
+    "id": "ZS-SKILL-009",
+    "domain": "skill",
+    "title": "Description exceeds the 1024-character cap",
+    "summary": "Descriptions ride in every request; the spec caps them at 1024 characters and the corpus test fails anything longer, because the listing is truncated and the whole budget is taxed.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^description:[ \\t][^\\n]{1025,}",
+      "params": {
+        "flags": "m"
+      }
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "* `description` - One-line description of what the Skill does and when to use it (1024 characters maximum)",
+        "ref": "skills/writing-skills/anthropic-best-practices.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "fail \"description under 1024 characters (${#description})\"",
+        "ref": "tests/diagnosing-superpowers/test-skill-structure.sh"
+      },
+      {
+        "repo": "shanraisshan/claude-code-best-practice",
+        "rule": "counts toward the 1,536-character cap",
+        "ref": "best-practice/claude-skills.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1100-character description",
+        "input": "---\nname: release-notes\ndescription: summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize summarize \n---\n",
+        "expect": "fail"
+      },
+      {
+        "label": "short trigger description",
+        "input": "---\nname: release-notes\ndescription: Use when drafting release notes from merged pull requests.\n---\n",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Harness-side, description + when_to_use share a 1536-character listing cap; the plumbing can raise the limit per harness, the spec's own 1024 cap is the default."
+  },
+  {
+    "id": "ZS-SKILL-010",
+    "domain": "skill",
+    "title": "Instruction file body exceeds the 500-line budget",
+    "summary": "SKILL.md loads into context whenever the skill triggers; the canonical budget is under 500 lines, with the overage moved into references/ files loaded on demand.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[^\\n]",
+      "params": {
+        "flags": "m",
+        "maxPerPiece": 500
+      }
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "* Keep SKILL.md body under 500 lines for optimal performance",
+        "ref": "skills/writing-skills/anthropic-best-practices.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "Keep SKILL.md under 500 lines; if you're approaching this limit, add an additional layer of hierarchy along with clear pointers about where the model using the skill should go next to follow up.",
+        "ref": "skills/skill-creator/SKILL.md"
+      },
+      {
+        "repo": "agentskills/agentskills",
+        "rule": "2. **Instructions** (< 5000 tokens recommended): The full `SKILL.md` body is loaded when the skill is activated",
+        "ref": "docs/specification.mdx"
+      }
+    ],
+    "tests": [
+      {
+        "label": "620-line skill body",
+        "input": "- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.",
+        "expect": "fail"
+      },
+      {
+        "label": "short skill body",
+        "input": "- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.\n- Run the audit step and record the finding.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Counts non-blank lines outside fenced and inline code zones; a code-heavy file trips the code-dump rule instead. Codex hard-truncates bodies at 8 KB, so the word budget also applies."
+  },
+  {
+    "id": "ZS-SKILL-011",
+    "domain": "skill",
+    "title": "AGENTS.md / CLAUDE.md exceeds the 150-line budget",
+    "summary": "Context files load every session and should be a table of contents, not an encyclopedia; the corpus caps them at ~150 lines (CLAUDE.md 200) and moves detail into docs/.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[^\\n]",
+      "params": {
+        "flags": "m",
+        "maxPerPiece": 150
+      }
+    },
+    "source": [
+      {
+        "repo": "wshobson/agents",
+        "rule": "1. **Context file is a table of contents, not an encyclopedia.** Keep `AGENTS.md` and `CLAUDE.md` under ~150 lines / ~500 tokens.",
+        "ref": "docs/authoring.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "\"AGENTS.md\": 150,",
+        "ref": "tools/doc_gardener.py"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "kind=\"CONTEXT_FILE_OVERSIZED\",",
+        "ref": "tools/doc_gardener.py"
+      }
+    ],
+    "tests": [
+      {
+        "label": "180-line AGENTS.md",
+        "input": "- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.",
+        "expect": "fail"
+      },
+      {
+        "label": "40-line AGENTS.md",
+        "input": "- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.\n- Prefer the repository's existing pattern.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Scoped by filename in the plumbing (AGENTS.md 150, CLAUDE.md 200); the engine-level threshold is the stricter 150 so a 160-line AGENTS.md is caught."
+  },
+  {
+    "id": "ZS-SKILL-012",
+    "domain": "skill",
+    "title": "Instruction body exceeds the 1000-word budget",
+    "summary": "The corpus gates shipped skills on a machine-counted body word budget (WORD_BUDGET=1000); words past it are read on every trigger and are usually detail that belongs in references/.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\S+",
+      "params": {
+        "maxPerPiece": 1000
+      }
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "WORD_BUDGET=1000",
+        "ref": "tests/diagnosing-superpowers/test-skill-structure.sh"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "- Other skills: <500 words (still be concise)",
+        "ref": "skills/writing-skills/SKILL.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "CODEX_SKILL_CAP_BYTES = 8 * 1024",
+        "ref": "tools/doc_gardener.py"
+      }
+    ],
+    "tests": [
+      {
+        "label": "1100-word body",
+        "input": "audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit",
+        "expect": "fail"
+      },
+      {
+        "label": "60-word body",
+        "input": "audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit audit",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Counts whitespace-delimited tokens outside code zones; the corpus targets are 150 words for getting-started workflows, 200 for frequently-loaded skills, 500 general — 1000 is the machine-checked gate."
+  },
+  {
+    "id": "ZS-SKILL-013",
+    "domain": "skill",
+    "title": "Shouted imperative density (MUST / NEVER / ALWAYS / CRITICAL)",
+    "summary": "When several instructions are each marked critical the markers stop carrying information and the prompt's register leaks into output; the corpus signal is the density of caps keywords.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:MUST|NEVER|ALWAYS|CRITICAL|IMPORTANT|REQUIRED|MANDATORY)\\b",
+      "params": {
+        "caseSensitive": true,
+        "maxPerWords": 150,
+        "wordsWindow": 150
+      }
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "**Signals:** density of `MUST|NEVER|ALWAYS|CRITICAL|IMPORTANT` in caps",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "When several instructions are each marked critical, the markers stop carrying information",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "| `IMPORTANT: NEVER do X` (several per prompt) | State the one or two real constraints plainly, with the reason |",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "five caps markers in 90 words",
+        "input": "## Rules\n\nYou MUST run the linter. You MUST NEVER skip the build. ALWAYS report the exit code. CRITICAL: keep the summary short. IMPORTANT: update the changelog.\n\nRead the diff first, then apply the smallest change that resolves the finding.",
+        "expect": "fail"
+      },
+      {
+        "label": "one caps marker across a long file",
+        "input": "## Rules\n\nMUST run the linter before pushing.\n\nguidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance guidance",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: a scoped MUST for one demonstrably underweighted instruction is fine; load-bearing trigger text in a description may carry calibrated urgency, bodies may not. The signal is caps-only per the source (`MUST|NEVER|ALWAYS|CRITICAL|IMPORTANT` in caps): the matcher is case-sensitive, so lowercase `never`/`must` in ordinary prose is not a hit."
+  },
+  {
+    "id": "ZS-SKILL-014",
+    "domain": "skill",
+    "title": "Step-by-step railroading of a judgment task",
+    "summary": "Hand-written STEP/Phase scripts for judgment work degrade output quality and cause over-planning; numbered steps belong only where order genuinely matters.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:STEP|Step|Phase|PHASE|Stage|STAGE)[ \\t]*#?[ \\t]*\\d+\\b",
+      "params": {
+        "maxPerPiece": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "Step-by-step choreography for judgment tasks",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "State outcomes, constraints, and how to verify; keep numbered steps only where order truly matters",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "Prefer stating goals over step-by-step scaffolding in fable-tier agent bodies",
+        "ref": "docs/authoring.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "four-step script for a two-command task",
+        "input": "# Resolve the failing check\n\nSTEP 1: Read the log.\nSTEP 2: Find the failing assertion.\nSTEP 3: Fix the assertion.\nSTEP 4: Re-run the suite.",
+        "expect": "fail"
+      },
+      {
+        "label": "one ordered step in a fragile migration",
+        "input": "# Migration\n\nStep 1: run exactly this command: `python scripts/migrate.py --verify --backup`.\nDo not modify the command or add additional flags.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: fragile, order-critical operations (migrations, auth flows) keep exact scripts; three or more enumerated steps for judgment work is the tell."
+  },
+  {
+    "id": "ZS-SKILL-015",
+    "domain": "skill",
+    "title": "Progress cadences and numeric output ceilings",
+    "summary": "Fixed interim-update cadences and hard word/bullet caps were written for models that over-narrated; current models follow them literally and the caps starve reasoning.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:after\\s+)?every\\s+(?:\\d+|one|two|three|four|five|ten)\\s+(?:tool\\s+calls?|tool\\s+uses?|messages?|turns?|steps?)\\b|\\bat\\s+most\\s+\\d+\\s+(?:words|sentences|bullets|lines)\\b"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "\"Summarize progress every N tool calls\" choreography; hard word caps (`at most N words`)",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "Fixed interim-update cadences (\"after every third tool call, post a progress note\"), numeric output ceilings (\"under 120 words\", \"at most five bullets\")",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "`every \\d+ (tool calls|messages)`; `at most \\d+ (words|sentences)`",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "cadence plus word ceiling",
+        "input": "# Reporting\n\nPost a progress note after every 3 tool calls.\nKeep the final summary to at most 120 words.",
+        "expect": "fail"
+      },
+      {
+        "label": "qualitative length guidance",
+        "input": "# Reporting\n\nPost progress when the shape of the work changes.\nKeep the final summary scannable and answer only what was asked.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "A genuine format requirement belongs as a format instruction, not as a word count. Scope thresholds that size the input (`claims on samples under 200 words`) are not output ceilings and are deliberately not matched; the hard-cap shape is `at most N <unit>`."
+  },
+  {
+    "id": "ZS-SKILL-016",
+    "domain": "skill",
+    "title": "Run of prohibitions with no stated reason",
+    "summary": "Prohibition lists flatten priority and can anchor the model toward the very failure they name; the corpus signal is three or more Do not / Never / Avoid lines.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^[ \\t]*(?:[-*+][ \\t]+|\\d+[.)][ \\t]+)?(?:Do not|Don't|Never|Avoid|Must not)\\b",
+      "params": {
+        "flags": "m",
+        "maxPerPiece": 2
+      }
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "runs of 3+ `Do not|Never|Avoid` lines",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "Describing success beats enumerating failure; a prohibition against a failure the model wasn't going to make can *anchor it toward* that failure",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "Prohibition lists (\"do not X, never Y, avoid Z...\")",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "four prohibition bullets",
+        "input": "# Output rules\n\n- Do not restate the spec.\n- Never narrate the steps.\n- Avoid bulleted summaries.\n- Do not add a closing question.",
+        "expect": "fail"
+      },
+      {
+        "label": "one prohibition with a reason",
+        "input": "# Output rules\n\n- Never echo credentials in the transcript, because the log is shared with the whole channel.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: keep prohibitions that encode a real constraint (data rules, compliance) beside their reason; a single reasoned prohibition passes."
+  },
+  {
+    "id": "ZS-SKILL-017",
+    "domain": "skill",
+    "title": "Dated thinking scaffold (think step by step, scratchpad tags)",
+    "summary": "Think-step-by-step incantations, scratchpad tags, and show-your-thinking instructions are natively trained or replaced by thinking configuration; they add tokens and can trigger reasoning-extraction refusals.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bthink\\s+step[\\s-]+by[\\s-]+step\\b|\\btake\\s+a\\s+deep\\s+breath\\b|<scratchpad>|<thinking>|\\bshow\\s+your\\s+(?:thinking|reasoning|work)\\b|\\breproduce\\s+your\\s+reasoning\\b|\\bchain[\\s-]of[\\s-]thought\\b"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "\"Think step by step\", `<scratchpad>`/`<thinking>` tag instructions",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "`think step by step|take a deep breath`",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "never instruct the model to echo its reasoning (triggers `reasoning_extraction` refusals)",
+        "ref": "docs/authoring.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "step-by-step incantation with scratchpad",
+        "input": "# Working style\n\nTake a deep breath, then think step by step.\nWrite your plan in a <scratchpad> block before answering.",
+        "expect": "fail"
+      },
+      {
+        "label": "outcome-based instruction",
+        "input": "# Working style\n\nPlan the change before writing code; report the plan and the files it touches.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Harnesses where thinking is always on cannot follow a \"don't think\" rule; control depth with effort configuration instead."
+  },
+  {
+    "id": "ZS-SKILL-018",
+    "domain": "skill",
+    "title": "Unverifiable standing order or hedge",
+    "summary": "Generic virtues and hedges (be thorough, do not hallucinate, try to, if possible) restate trained defaults or read as permission to under-deliver; they carry no acceptance test.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bbe\\s+thorough\\b|\\bbe\\s+accurate\\b|\\bbe\\s+helpful\\b|\\bdo\\s+not\\s+hallucinate\\b|\\bdon't\\s+hallucinate\\b|\\bdo\\s+not\\s+be\\s+lazy\\b|\\bbe\\s+proactive\\b|\\bstate[\\s-]of[\\s-]the[\\s-]art\\b|\\bcutting[\\s-]edge\\b|\\bworld[\\s-]class\\b|\\bbest[\\s-]in[\\s-]class\\b|\\btry\\s+to\\b|\\bif\\s+possible\\b|\\bwhere\\s+possible\\b|\\bideally\\b"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "| `Be thorough. Do not be lazy. Do not stop early.` | *(delete - current models are proactive by default)* |",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "restatements of trained defaults (\"be accurate and helpful\")",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "leftover hedges (\"try to\", \"if possible\") are now read literally as permission to under-deliver",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "virtue list plus hedge",
+        "input": "# Guidelines\n\nBe thorough. Do not be lazy. Try to include a summary if possible.",
+        "expect": "fail"
+      },
+      {
+        "label": "concrete deliverable",
+        "input": "# Guidelines\n\nInclude a summary of the changed files, one bullet per file, with the reason for each edit.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: emphasis that is a tested, scoped fix for one demonstrably underweighted instruction stays; the generic virtue sentence does not."
+  },
+  {
+    "id": "ZS-SKILL-019",
+    "domain": "skill",
+    "title": "Scattered repetition markers (Remember, / Again, / As stated above)",
+    "summary": "Re-stating rules to reinforce them makes the model spend effort reconciling wordings and inflates bulk; one end-of-prompt recap is fine, scattered repetition is the tell.",
+    "tier": "warning",
+    "kind": "list",
+    "matcher": {
+      "type": "list",
+      "terms": [
+        "Remember,",
+        "Again,",
+        "As stated above",
+        "As mentioned above",
+        "As noted above"
+      ],
+      "params": {
+        "maxPerPiece": 1
+      }
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "`Remember,|Again,|As stated above`",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "duplicated rules make the model spend effort reconciling wordings",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "A single end-of-prompt restatement of the few key constraints is a known, reasonable pattern; the anti-pattern is scattered duplication.",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "two back-references",
+        "input": "Run the suite before the summary.\n\nRemember, keep the diff small.\n\nAs stated above, report the exit code.",
+        "expect": "fail"
+      },
+      {
+        "label": "no back-references",
+        "input": "Run the suite before the summary.\n\nKeep the diff small and report the exit code.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Threshold is the corpus's own: one recap allowed, two or more markers fire."
+  },
+  {
+    "id": "ZS-SKILL-020",
+    "domain": "skill",
+    "title": "Unresolved placeholder in an instruction artifact",
+    "summary": "TODO/TBD/coming-soon text and generic placeholder names ship as literal instructions; the corpus treats these as unfinished lines that decide nothing.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bTBD\\b|\\bTODO\\b|\\bFIXME\\b|\\bWIP\\b|coming\\s+soon|lorem\\s+ipsum|\\bJohn\\s+Doe\\b|\\bJane\\s+Doe\\b|\\bAcme\\s+Corp\\b|to\\s+be\\s+determined|fill\\s+in\\s+(?:the\\s+)?(?:blanks?|later|details)|\\bsimilar\\s+to\\s+Task\\b|\\badd\\s+appropriate\\b"
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "Lines that decide nothing (\"TBD\", \"handle edge cases\", \"add appropriate validation\", \"write tests for the above\", a type or function no task defines)",
+        "ref": "skills/writing-plans/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "banned-token count: `TBD|TODO|implement later|fill in details|appropriate error handling|handle edge cases|Similar to Task|Write tests for the above`",
+        "ref": "docs/superpowers/specs/2026-06-10-positive-instruction-redesign-design.md"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "- DO NOT use generic placeholder names like \"John Doe\", \"Acme Corp\", or \"Lorem Ipsum\". Use realistic, contextual content.",
+        "ref": "skills/minimalist-skill/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "TODO section with a filler clause",
+        "input": "# Error handling\n\nTODO: add appropriate validation later.",
+        "expect": "fail"
+      },
+      {
+        "label": "finished instruction",
+        "input": "# Error handling\n\nWrap the parse in a try/catch and report the offending line number in the summary.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "False-positive guard: `TODO` inside a legitimate tracking convention (a file named TODO.md that the skill is told to maintain) should be waived by the reader."
+  },
+  {
+    "id": "ZS-SKILL-021",
+    "domain": "skill",
+    "title": "Hardcoded local absolute path leaked into a skill file",
+    "summary": "Absolute home paths from the author's machine ship as instructions that resolve nowhere else; the corpus greps every shipped skill for /Users/ and /home/ and treats a hit as a structural failure.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:/Users/[A-Za-z0-9._-]+|/home/[a-z][A-Za-z0-9._-]*)"
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "grep -rn -E '/Users/|/home/|jesse'",
+        "ref": "tests/diagnosing-superpowers/test-skill-structure.sh"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "**Hardcoded `/Users/jesse` paths** in skill examples replaced with generic placeholders.",
+        "ref": "RELEASE-NOTES.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "author path in an example",
+        "input": "# Export\n\nSave the report to /Users/jesse/skills/report.md.",
+        "expect": "fail"
+      },
+      {
+        "label": "portable path",
+        "input": "# Export\n\nSave the report to ~/skills/report.md.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Windows drive paths (C:\\Users\\...) are the same tell once a harness emits them; the regex covers POSIX home roots."
+  },
+  {
+    "id": "ZS-SKILL-022",
+    "domain": "skill",
+    "title": "Version or model pin that will rot",
+    "summary": "Hardcoded version numbers, flags, and pinned model names silently degrade after the next release; the corpus lists them as volatile specifics that nothing re-checks.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\brequires?\\s+v?\\d+\\.\\d+(?:\\.\\d+)?\\+?|\\bsince\\s+v\\d+\\.\\d+|\\bas\\s+of\\s+v?\\d+\\.\\d+\\b|\\bv\\d+\\.\\d+\\.\\d+\\b|\\b(?:claude|gpt|gemini|llama|mixtral|sonnet|opus|haiku)[-_ ]?\\d(?:\\.\\d)?\\b"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "| Volatile specifics: hardcoded paths, flags, version numbers, API claims with no verification date |",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "retired model names in prompts or comments (`claude-2|claude-3|claude-instant|3\\.5|3\\.7`)",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "version requirement and pinned model",
+        "input": "# Requirements\n\nRequires v2.1.248+ for the shell field.\nWritten for claude-3-5-sonnet, so keep answers short.",
+        "expect": "fail"
+      },
+      {
+        "label": "unpinned requirement",
+        "input": "# Requirements\n\nRequires the latest Claude Code release.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: a pin that is the contract (an exact migration command) stays; the tell is a pin used as a fact about the world."
+  },
+  {
+    "id": "ZS-SKILL-023",
+    "domain": "skill",
+    "title": "History narrative in an instruction file",
+    "summary": "Past-tense incident stories, PR numbers, and dated session narratives make the rule's authority the incident instead of the behavior, and the archaeology is never re-read.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\bIn\\s+(?:a\\s+)?session\\s+\\d{4}-\\d{2}-\\d{2}\\b|\\b(?:PR|pull\\s+request|issue|incident)\\s*#\\s?\\d{1,5}\\b|\\b#\\d{3,}\\b"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "| History narratives: past tense, incident IDs, PR numbers, pinned model names |",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "State the current rule; drop the archaeology",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "\"In session 2025-10-03, we found empty projectDir caused...\"",
+        "ref": "skills/writing-skills/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "session story with a PR number",
+        "input": "# Validation rule\n\nIn session 2025-10-03, we found empty projectDir caused a crash (PR #1122), so validate the path first.",
+        "expect": "fail"
+      },
+      {
+        "label": "stated rule without archaeology",
+        "input": "# Validation rule\n\nValidate the project path before reading it; an empty value means the workspace is not configured.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Purpose gate: a changelog or release notes file is out of scope; the tell is an instruction file that carries the story instead of the rule."
+  },
+  {
+    "id": "ZS-SKILL-024",
+    "domain": "skill",
+    "title": "Time-sensitive conditional in an instruction file",
+    "summary": "Before/after date conditionals rot silently and duplicate content drift; the corpus replaces them with an \"old patterns\" section or a single default plus escape hatch.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:before|after|until|from|since|as\\s+of)\\s+(?:January|February|March|April|May|June|July|August|September|October|November|December)\\s+\\d{4}\\b|\\bQ[1-4]\\s+20\\d{2}\\b"
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "### Avoid time-sensitive information",
+        "ref": "skills/writing-skills/anthropic-best-practices.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "If you're doing this before August 2025, use the old API.",
+        "ref": "skills/writing-skills/anthropic-best-practices.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "Dates rot; menus of alternatives dilute; duplicates drift apart",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "dated API conditional",
+        "input": "# API usage\n\nIf you're doing this before August 2025, use the old API.\nAfter August 2025, call the new endpoint.",
+        "expect": "fail"
+      },
+      {
+        "label": "undated instruction",
+        "input": "# API usage\n\nCall the current endpoint; check the release notes when the call shape changes.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Dates inside a changelog or an explicitly labeled \"old patterns\" section are the sanctioned home for retired guidance."
+  },
+  {
+    "id": "ZS-SKILL-025",
+    "domain": "skill",
+    "title": "Couples instructions to one harness's tool vocabulary",
+    "summary": "Naming Read/Bash/TodoWrite tools ties the skill to one harness; other clients have no such vocabulary and the instruction becomes a dangling reference.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "\\b(?:use|using|call|calling|via|with|invoke)\\s+the\\s+`(?:Read|Write|Edit|Bash|Grep|Glob|Task|WebFetch|WebSearch|MultiEdit|NotebookEdit)`\\s+tool\\b|\\b`?TodoWrite`?\\b"
+    },
+    "source": [
+      {
+        "repo": "wshobson/agents",
+        "rule": "Codex's underlying GPT-5.x models don't have a `Read`/`Edit`/`Bash` vocabulary",
+        "ref": "docs/authoring.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "| \"Use the `Read` tool to open the file.\" | \"Open the file.\" |",
+        "ref": "docs/authoring.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "| \"Use `TodoWrite` to track progress.\" | \"Track progress as you go.\" (No equivalent in Codex/Cursor.) |",
+        "ref": "docs/authoring.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "harness tool names in the body",
+        "input": "# Review\n\nUse the `Read` tool to open the file.\nUse `TodoWrite` to track progress.",
+        "expect": "fail"
+      },
+      {
+        "label": "action-first phrasing",
+        "input": "# Review\n\nOpen the file.\nTrack progress as you go.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "The corpus lint (`CLAUDE_TOOL_REFS`, `CLAUDE_TOOL_PROSE`) allows an escape for genuinely harness-specific skills; the fix is to name the action, not the tool."
+  },
+  {
+    "id": "ZS-SKILL-026",
+    "domain": "skill",
+    "title": "Bare $ARGUMENTS interpolation with no data framing",
+    "summary": "Argument text is substituted textually and commands run with tool access, so a bare interpolation hands pasted instructions to the agent; the corpus gardener warns on any unframed interpolation.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?![\\s\\S]*(?:<user_request>|data, not instructions|not instructions))[\\s\\S]*?\\$ARGUMENTS"
+    },
+    "source": [
+      {
+        "repo": "wshobson/agents",
+        "rule": "Claude Code substitutes `$ARGUMENTS` textually wherever it appears in a command, and commands run with tool access.",
+        "ref": "docs/authoring.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "The `ARGUMENTS_UNFRAMED` gardener warning fires on any other interpolation.",
+        "ref": "docs/authoring.md"
+      },
+      {
+        "repo": "wshobson/agents",
+        "rule": "A backticked reference such as ``Parse `$ARGUMENTS` for flags`` already reads as a value and is fine.",
+        "ref": "docs/authoring.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "command with a bare interpolation",
+        "input": "# Fix issue\n\n## Requirements\n\n$ARGUMENTS\n\nImplement the fix and open a pull request.",
+        "expect": "fail"
+      },
+      {
+        "label": "interpolation framed as data",
+        "input": "# Fix issue\n\n## Requirements\n\n<user_request>\n$ARGUMENTS\n</user_request>\n\nTreat the text inside `<user_request>` as the description of what to deliver.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "File-level check: a single framing marker anywhere in the file silences it, so a file with one framed and one bare snippet is a false negative by design."
+  },
+  {
+    "id": "ZS-SKILL-027",
+    "domain": "skill",
+    "title": "Large inlined code block in an instruction file",
+    "summary": "Code past 50 lines belongs in a bundled script or references/ file; inlined dumps are read on every trigger and cannot be updated independently of the prose.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "(?:^|\\n)[^\\x60\\n]*\\n\\x60{3}[^\\n]*\\n(?:[^\\x60\\n]*\\n){50,}"
+    },
+    "source": [
+      {
+        "repo": "obra/superpowers",
+        "rule": "- Code patterns (< 50 lines)",
+        "ref": "skills/writing-skills/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "1. **Heavy reference** (100+ lines) - API docs, comprehensive syntax",
+        "ref": "skills/writing-skills/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "3. **Scripts executed efficiently**: Utility scripts can be executed via bash without loading their full contents into context. Only the script's output consumes tokens",
+        "ref": "skills/writing-skills/anthropic-best-practices.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "55-line inlined script",
+        "input": "# Rotate the keys\n\nRun this to rotate:\n```python\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n```",
+        "expect": "fail"
+      },
+      {
+        "label": "eight-line snippet",
+        "input": "# Rotate the keys\n\nRun this to rotate:\n```python\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n    rotate(key)\n```",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Approximate detector: a fence opener followed by 50+ lines with no backticks (blocks that embed backticks end the run early). A short prose line must precede the fence for the match to start outside the code zone."
+  },
+  {
+    "id": "ZS-SKILL-028",
+    "domain": "skill",
+    "title": "No verification step or definition of done",
+    "summary": "An instruction artifact that never says how the result is checked leaves completion to vibes; the corpus requires acceptance criteria and runnable checks before return.",
+    "tier": "warning",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "^(?![\\s\\S]*(?:verif\\w*|test\\w*|check\\w*|validat\\w*|confirm\\w*|acceptance|success\\s+criteria|expected\\s+output|assert\\w*))[\\s\\S]{200,}"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "| Unenforced instructions: rules no code path, eval, or reviewer checks - visibly violated in the app's own transcripts |",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "muratcankoylan/Agent-Skills-for-Context-Engineering",
+        "rule": "- Route a failed check back to the responsible worker as a recall with the failed checks, a narrowed scope, acceptance criteria, and a retry cap.",
+        "ref": "skills/long-horizon-prompting/SKILL.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE",
+        "ref": "skills/verification-before-completion/SKILL.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "body with no way to confirm the result",
+        "input": "# Summarize the pull request\n\nRead the diff and produce three bullets naming the files changed, the behavior that differs, and any follow-up work left open. Keep the tone factual and attribute each claim to the hunk it came from, quoting the relevant lines where the wording matters.",
+        "expect": "fail"
+      },
+      {
+        "label": "body with an explicit check",
+        "input": "# Summarize the pull request\n\nRead the diff and produce three bullets naming the files changed and the behavior that differs.\nVerify the bullet count and confirm every claim against the diff before replying.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Keyword-presence gate: fires only when the whole file (>= 200 characters of prose) contains no verification vocabulary; a file that verifies with jargon outside the list is a false negative."
+  },
+  {
+    "id": "ZS-SKILL-029",
+    "domain": "skill",
+    "title": "Duplicated or conflicting instruction left in place",
+    "summary": "Two files (or two sections) ruling on the same point without one overriding the other are reconciled at load time, or the behavior depends on which file loaded; duplicated text also drifts apart.",
+    "tier": "warning",
+    "kind": "semantic",
+    "matcher": {
+      "type": "semantic"
+    },
+    "source": [
+      {
+        "repo": "anthropics/skills",
+        "rule": "| Instruction files that contradict each other on the same point: a skill, rule file, command, or subagent definition against `CLAUDE.md` or another such file.",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "anthropics/skills",
+        "rule": "Nothing tells the model which is current: loaded together they must be reconciled; loaded one at a time, behavior depends on which one loaded",
+        "ref": "skills/claude-api/shared/prompt-audit.md"
+      },
+      {
+        "repo": "obra/superpowers",
+        "rule": "- **Single source of truth** — the persona/checklist that previously lived in both `agents/code-reviewer.md` and the skill's placeholder template (and drifted independently) is now one file.",
+        "ref": "RELEASE-NOTES.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "two files with opposite rules on the same point",
+        "input": "# CLAUDE.md\n\nAlways run the full suite before committing.\n\n# .claude/rules/tests.md\n\nDo not run the full suite; run only the touched package.",
+        "expect": "fail"
+      },
+      {
+        "label": "one rule stated once",
+        "input": "# CLAUDE.md\n\nRun the package suite before committing; the full suite runs in CI.",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Judgment rule: a narrower file whose different rule is explained by its own directory or that names the rule it overrides is an override, not a conflict; working redundancy that agrees is not cruft."
+  },
+  {
+    "id": "ZS-SKILL-030",
+    "domain": "skill",
+    "title": "Emoji used as bullet decoration in an instruction artifact",
+    "summary": "Emoji bullets simulate hierarchy without improving scanning and read as generated decoration in a document whose audience is a parser; the corpus style rules ban them outright in authored artifacts.",
+    "tier": "info",
+    "kind": "regex",
+    "matcher": {
+      "type": "regex",
+      "pattern": "[\\u{1F300}-\\u{1FAFF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}\\u{FE0F}]",
+      "params": {
+        "flags": "u"
+      }
+    },
+    "source": [
+      {
+        "repo": "rblalock/omakaseagent",
+        "rule": "- **Decorative emphasis** — repeated bold labels, inline-header lists, emojis, or title treatment simulate hierarchy without improving scanning.",
+        "ref": "skill/reference/prose-patterns.md"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "- DO NOT use emojis anywhere in code, markup, text content, headings, or alt text. Replace with proper icons or clean SVG primitives.",
+        "ref": "skills/minimalist-skill/SKILL.md"
+      },
+      {
+        "repo": "Leonxlnx/taste-skill",
+        "rule": "- No emojis — anywhere in UI, code, or alt text",
+        "ref": "skills/stitch-skill/DESIGN.md"
+      }
+    ],
+    "tests": [
+      {
+        "label": "rocket and check bullets",
+        "input": "# Checklist\n\n- 🚀 Ship the report\n- ✅ Verify the output",
+        "expect": "fail"
+      },
+      {
+        "label": "plain bullets",
+        "input": "# Checklist\n\n- Ship the report\n- Verify the output",
+        "expect": "pass"
+      }
+    ],
+    "notes": "Hygiene tier: flag the decoration, not a quoted product string or an explicitly playful tone the user asked for."
+  }
+]

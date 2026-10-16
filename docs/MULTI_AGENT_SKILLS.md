@@ -15,7 +15,9 @@ skills/
 ├── slop-audit-code/       swallowed errors, type escapes, line gates, review criteria
 ├── slop-audit-commit/     conventional commits, vague subjects, PR hygiene
 ├── slop-audit-a11y/       WCAG 2.2 thresholds, focus, sr-only, reflow
-└── slop-audit-integrity/  fabricated data, fingerprints, citation verification
+├── slop-audit-integrity/  fabricated data, fingerprints, citation verification
+├── slop-audit-skill/      instruction artifacts: frontmatter contract, context budgets, railroading
+└── slop-audit-config/     CI manifests: floating refs, injection, secret exposure, masked failures
 ```
 
 Each skill: minimal frontmatter (`name`, `description`: trigger-first), body

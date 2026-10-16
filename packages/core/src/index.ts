@@ -4,6 +4,10 @@ import { DOMAINS, RuleSchema, type Domain, type Rule, type Tier } from "./rules.
 
 export * from "./engine/index.js";
 
+/** Domain registry (runtime list) — the parity guard tests compare against it. */
+export { DOMAINS } from "./rules.js";
+export type { Domain } from "./rules.js";
+
 /** Map of domain -> rules JSON file (relative to the rules dir). */
 export const DOMAIN_FILES: Record<Domain, string> = {
   prose: "prose.json",
@@ -13,6 +17,8 @@ export const DOMAIN_FILES: Record<Domain, string> = {
   integrity: "integrity.json",
   a11y: "a11y.json",
   chat: "chat.json",
+  skill: "skill.json",
+  config: "config.json",
 };
 
 /** Load and schema-validate one domain file. Throws on invalid JSON/schema. */

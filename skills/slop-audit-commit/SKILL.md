@@ -1,6 +1,6 @@
 ---
 name: slop-audit-commit
-description: Fires when writing or reviewing commit messages, PR titles, PR descriptions, or changelog entries. Use before committing, opening a PR, or auditing git history for conventional-commit and hygiene slop.
+description: Use when writing or reviewing commit messages, PR titles, PR descriptions, or changelog entries — before committing, opening a PR, or auditing git history for conventional-commit and hygiene slop.
 ---
 
 # Slop Audit: Commit & PR Hygiene
@@ -26,7 +26,7 @@ Constraints: flag candidates with `zero-slop scan` against `rules/commit.json`; 
 
 ## Subject content
 
-- Vague subjects fail: wip, minor fix, fix bug, phase 1, stuff, misc, cleanup, tweak, update stuff — name the changed thing — `#ZS-COMMIT-021`.
+- Vague subjects fail: `wip`, minor fix, fix bug, phase 1, stuff, misc, cleanup, tweak, update stuff — name the changed thing — `#ZS-COMMIT-021`.
 - Imperative, not gerund: `update the client`, never `updating the client` — `#ZS-COMMIT-022`.
 - One dependency per bump, named with versions (`bump lodash 4.17.20 to 4.17.21`), never bulk `bump deps` — `#ZS-COMMIT-024`.
 - A refactor and a behavior change are two commits: `refactor: rename X and add Y` is a mixed-concern subject — `#ZS-COMMIT-025`.

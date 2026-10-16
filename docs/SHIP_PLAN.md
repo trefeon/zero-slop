@@ -1,7 +1,7 @@
 # Ship Plan: zero-slop to Public
 
 Executable checklist to take zero-slop from private repo to publicly usable.
-State: 2026-10-16. Rules DB 520 rules, engines done (549 tests), corpus synced
+State: 2026-10-16. Rules DB 569 rules in 9 domains, engines done (614 tests), corpus synced
 via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
 
 ## Milestones
@@ -20,7 +20,7 @@ via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md,
 - [ ] Badges: MIT, version, tests, npm
 - [ ] `.gitignore` final pass; no secrets; `reference/` stays ignored
 - [ ] CI workflow: `pnpm test` + `pnpm typecheck` + `pnpm validate:rules`
-      + zero-slop self-scan on README/docs (dogfooding gate)
+      + zero-slop self-scan on README/docs/skills (dogfooding gate)
 
 ### M2.6: Publish to npm
 - [ ] `npm login` (2FA or granular access token)
@@ -30,7 +30,7 @@ via scripts/sync-reference.mjs, adoption research done (docs/PUBLIC_ADOPTION.md,
 - [ ] `npm pack --dry-run` verified: dist + rules only, no junk
 
 ### M2.7: skills.sh
-- [ ] `skills/slop-audit*` package committed (7 portable skills per
+- [ ] `skills/slop-audit*` package committed (9 portable skills per
       docs/MULTI_AGENT_SKILLS.md)
 - [ ] `skills-ref validate` passes on every folder
 - [ ] Repo public → auto-indexed; `npx skills add <owner>/zero-slop -g`

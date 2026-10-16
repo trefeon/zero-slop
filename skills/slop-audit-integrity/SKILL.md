@@ -37,7 +37,7 @@ Sources: `rules/integrity.json#ZS-INTEGRITY-008`, `#ZS-INTEGRITY-009`, `#ZS-INTE
 **Pasted-tool fingerprints.** Leaked chat-tool tokens (`citeturn0search1`, `oai_citation`, `[attached_file:1]`, `↩`), auto-appended tracking (`utm_source=chatgpt.com`, `utm_source=openai`, `utm_source=copilot.com`), zero-width characters, and homoglyph swaps are near-definitive evidence of uncleaned pastes or humanizer-bypass tricks — strip and re-verify surrounding claims.
 Sources: `rules/integrity.json#ZS-INTEGRITY-016`, `#ZS-INTEGRITY-017`, `#ZS-INTEGRITY-018`, `#ZS-INTEGRITY-019`.
 
-**Detection humility.** TTR below 0.40 on 200+ words earns a second look, never a verdict. Never make high-confidence AI-authorship claims on texts under 200 words, and never flag on a single indicator — require 2–3 corroborating signals from different categories (4+ for `likely AI`), and never inject a stock voice (manufactured stakes, forced contrarianism, performed candor, fake first person) while rewriting.
+**Detection humility.** TTR below 0.40 on 200+ words earns a second look, never a verdict. Never make high-confidence AI-authorship claims on samples shorter than 200 words, and never flag on a single indicator — require 2–3 corroborating signals from different categories (4+ for `likely AI`), and never inject a stock voice (manufactured stakes, forced contrarianism, performed candor, fake first person) while rewriting.
 Sources: `rules/integrity.json#ZS-INTEGRITY-024`, `#ZS-INTEGRITY-025`, `#ZS-INTEGRITY-026`, `#ZS-INTEGRITY-022`.
 
 **Speculative gap-filling.** `likely founded in the 1990s`, `while details are limited`, `maintains a low profile` — a hedge wrapped around an invented fact is fabrication, not hedging style. Say the record is silent, or cut the sentence.

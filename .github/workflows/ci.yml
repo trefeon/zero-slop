@@ -41,4 +41,4 @@ jobs:
       # findings; this gate keeps it there. `gate` takes a single path, so run
       # it once per target.
       - name: Self-scan
-        run: node packages/cli/dist/index.js gate docs/ && node packages/cli/dist/index.js gate README.md
+        run: node packages/cli/dist/index.js gate docs/ && node packages/cli/dist/index.js gate README.md && node packages/cli/dist/index.js gate skills/

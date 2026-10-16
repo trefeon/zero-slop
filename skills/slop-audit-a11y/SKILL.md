@@ -1,6 +1,6 @@
 ---
 name: slop-audit-a11y
-description: Audit UI for WCAG 2.2 AA failures — contrast, focus, keyboard, targets, reflow — before shipping. Triggers on "audit accessibility", "check a11y", "is this accessible", contrast or focus review requests.
+description: Use when auditing UI for WCAG 2.2 AA failures — contrast, focus, keyboard, targets, reflow — before shipping, or when a request says "audit accessibility", "check a11y", "is this accessible", or asks for a contrast or focus review.
 ---
 
 # Slop Audit A11y

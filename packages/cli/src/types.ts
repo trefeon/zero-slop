@@ -10,7 +10,9 @@ export type Domain =
   | "commit"
   | "integrity"
   | "a11y"
-  | "chat";
+  | "chat"
+  | "skill"
+  | "config";
 
 export type Rule = any;
 
@@ -23,6 +25,8 @@ export const VALID_DOMAINS: Domain[] = [
   "integrity",
   "a11y",
   "chat",
+  "skill",
+  "config",
 ];
 
 export interface CliConfig {

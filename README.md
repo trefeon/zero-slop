@@ -9,7 +9,7 @@ A CLI that scans prose, UI, and code for the generic, repetitive patterns of AI-
   <img src="https://img.shields.io/github/actions/workflow/status/trefeon/zero-slop/ci.yml?branch=main" alt=CI>
 </p>
 
-zero-slop applies 520 rules across 7 domains and reports each hit with a severity tier. It needs no configuration to start.
+zero-slop applies 569 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start.
 
 ## Install
 
@@ -28,7 +28,7 @@ npx -y zero-slop@latest scan .
 
 ## What it catches
 
-The rule database holds 520 rules in 7 domains. Every rule has a tier (error, warning, info), a source attribution, and pass/fail fixtures.
+The rule database holds 569 rules in 9 domains. Every rule has a tier (error, warning, info), a source attribution, and pass/fail fixtures.
 
 | Domain | Rules | What it checks |
 | --- | --- | --- |
@@ -39,6 +39,8 @@ The rule database holds 520 rules in 7 domains. Every rule has a tier (error, wa
 | integrity | 33 | invented stats, unsourced percentages, fake social proof, unlabeled placeholders |
 | a11y | 49 | contrast thresholds, focus visibility, keyboard support, hit targets |
 | chat | 34 | negation framing, filler openers, summary-stamp closings, answer-first shape |
+| skill | 30 | instruction-file frontmatter contract, context budgets, railroading, missing definition of done |
+| config | 19 | floating action refs, script injection, secret exposure, masked failures in CI manifests |
 
 Example hits per domain:
 
@@ -109,6 +111,25 @@ It's not about intelligence, it's about taste.   # ZS-CHAT-001: negation-contras
 In summary, this is a solid approach.            # ZS-CHAT-003: summary-stamp closing
 ```
 
+### skill
+
+Instruction-file contract, context budgets, and procedure railroading.
+
+```text
+description: Audits the repository and then reports findings.   # ZS-SKILL-008: workflow summary instead of a trigger
+You MUST always follow these 12 steps in order.                 # ZS-SKILL-014: step-by-step railroading
+```
+
+### config
+
+CI trust, secret exposure, and masked failures.
+
+```text
+uses: some/action@main                       # ZS-CONFIG-001: floating branch ref
+run: echo "title ${{ github.event.issue.title }}"   # ZS-CONFIG-003: untrusted context in run:
+continue-on-error: true                      # ZS-CONFIG-015: masked failure
+```
+
 ## Usage
 
 All four commands share one set of options.
@@ -147,6 +168,8 @@ Domains run per file type:
 
 ```text
 .md, .mdx, .txt                     prose, chat, integrity
+SKILL.md, AGENTS.md, CLAUDE.md, .cursorrules, commands/*, agents/*   skill
+.github/workflows/*.yml, action.yml, .gitlab-ci.yml, .pre-commit-config.yaml   config
 .html, .jsx, .tsx, .vue, .svelte, .astro   ui, a11y, code
 .css, .scss                         ui, a11y
 .ts, .js, .py                       code
@@ -229,7 +252,7 @@ pnpm --filter @zero-slop/cli test
 
 The rules gate checks the schema and runs every fixture. New rules go in `rules/<domain>.json` with a source attribution, a tier, a matcher, and pass/fail fixtures.
 
-CI runs the rules gate, typecheck, both test suites, and a self-scan that gates `docs/` and this README. The repo enforces its own rules on its own documentation.
+CI runs the rules gate, typecheck, both test suites, and a self-scan that gates `docs/`, `skills/` and this README. The repo enforces its own rules on its own documentation and its own agent packs.
 
 ## Documentation
 
