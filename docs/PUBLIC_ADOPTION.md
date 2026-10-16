@@ -1,16 +1,15 @@
 # Public Adoption Plan: zero-slop
 
-How the public installs and uses zero-slop, grounded in audits of 13 reference
-repos' distribution (`reference/`) + live verification of every channel's
+How the public installs and uses zero-slop, grounded in an audit of how 13
+comparable developer tools distribute + live verification of every channel's
 publish requirements (2026-08-17). Goal: a solo dev can publish and the public
 gets value in one command.
 
 ## The model to copy: one rules DB, many doors
 
-anti-slop (miqdadbadjuber) is the template: an **npm picker that bundles the
-skills in-package and detects the user's agents**, plus skills.sh, a Claude
-plugin (with MCP server), and a single paste-able file. Every door serves the
-same artifact.
+The model is an **npm picker that bundles the skills in-package and detects the
+user's agents**, plus skills.sh, a Claude plugin (with MCP server), and a single
+paste-able file. Every door serves the same artifact.
 
 ## Channel map: Requirements verified
 
@@ -31,14 +30,15 @@ same artifact.
 1. **Day 0: Public repo + npm**: `@zero-slop/cli` published (`npx -y @zero-slop/cli@latest`),
    MIT license, trusted publishing (provenance), README with the install command
    in the first 60 lines. This is the anchor: every other channel points here.
-2. **Day 1: skills.sh**: commit `skills/slop-audit-*/SKILL.md`; auto-indexed,
-   no submission, reaches 20+ agents. Highest distribution-per-effort.
+2. **Day 1: skills.sh**: commit the `skills/zeroslop-audit-*/SKILL.md` packs;
+   auto-indexed, no submission, reaches 20+ agents. Highest
+   distribution-per-effort.
 3. **Day 1–2: Claude marketplace**: `.claude-plugin/` + `marketplace.json`
    (self-serve, no approval). Optional `@claude-community` submission later.
 4. **M2: GitHub Action**: `zero-slop-action` (Node, defaults-first), marketplace
-   checkbox on release. Copy peakoss: all-defaults workflow, `<15s`, exemption
-   knobs; copy commitlint-action: config-conventional-style fallback so it works
-   with zero required inputs.
+   checkbox on release. Best-defaults workflow, every input optional, well under
+   15 seconds, exemption knobs, and a conventional-config fallback so the action
+   works with zero required inputs.
 5. **M4: MCP Registry**: when the MCP server ships: `io.github.<user>/zero-slop`
    reverse-DNS name + `mcpName` in package.json. Registry is preview: listing
    early is cheap and future-proof.
@@ -47,22 +47,22 @@ same artifact.
 
 ## Packaging decisions: From the audits
 
-- **License: MIT**: commitlint, vale, and no-ai-slop all ship MIT, and peakoss's
-  AGPL action is the counterexample that costs it corporate adopters. MIT
+- **License: MIT**: commitlint and vale, the linters this builds on, ship MIT;
+  an AGPL peer action is the counterexample that costs corporate adopters. MIT
   maximizes reach.
-- **npm package bundles the skills** (like anti-slop's `prepublishOnly: sync-skills`):
-  `files: ["dist", "skills/"]`: install never depends on GitHub.
-- **`npx @zero-slop/cli` picker** (like `npx antislop-ai`): interactive, detects
+- **npm package bundles the skills** (a prepublish sync step copies `skills/` into
+  the package): `files: ["dist", "skills/"]`: install never depends on GitHub.
+- **`npx @zero-slop/cli` picker**: interactive, detects
   Claude Code/Codex/opencode/Cursor, installs skills into the right dirs,
   injects `CLAUDE.md`/`AGENTS.md` pointers.
 - **Rules as shareable configs** (commitlint's `extend` pattern):
   `@zero-slop/config-recommended` etc. so teams pin their own severity.
 - **Zero-config defaults everywhere**: `zero-slop scan .` works with no config
   (like `pa11y <url>`); `zero-slop-action` works with zero inputs.
-- **Single-file paste floor**: a condensed `zero-slop.md` rules file (like
-  `antislop.md`) for plain chat windows.
-- **AGENTS.md marker injector** (talk-normal pattern): idempotent
-  BEGIN/END-block installer as the no-skill-system fallback.
+- **Single-file paste floor**: a condensed `zero-slop.md` rules file for plain
+  chat windows.
+- **AGENTS.md marker injector** (idempotent BEGIN/END-block installer as the
+  no-skill-system fallback).
 
 ## README structure: Adoption-driven
 
@@ -70,7 +70,7 @@ same artifact.
 2. **Install: one command** (`npx -y @zero-slop/cli scan .` once published; clone today): first 60 lines
 3. What it catches (570 rules across 9 domains, with 3 examples)
 4. Usage: CLI (`scan/check/gate/report`), CI action, agent skills (23 packs), MCP
-5. Before/after proof (demo screenshots like hallmark)
+5. Before/after proof (demo screenshots)
 6. Config reference → Contributing → License
 
 ## Acceptance criteria

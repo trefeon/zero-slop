@@ -16,7 +16,7 @@ import { collectFilesToScan, getFileDispatch } from "../src/walk.js";
 
 /** One representative path per dispatcher branch (see walk.ts). */
 const PATHS: Array<{ path: string; domains: Domain[]; isMarkdown: boolean }> = [
-  { path: "skills/slop-audit/SKILL.md", domains: ["skill"], isMarkdown: true },
+  { path: "skills/zeroslop-audit/SKILL.md", domains: ["skill"], isMarkdown: true },
   { path: ".github/workflows/ci.yml", domains: ["config"], isMarkdown: false },
   { path: "action.yml", domains: ["config"], isMarkdown: false },
   { path: ".gitlab-ci.yml", domains: ["config"], isMarkdown: false },

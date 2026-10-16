@@ -1,17 +1,17 @@
 # Ship Plan: zero-slop to Public
 
 Executable checklist to take zero-slop from private repo to publicly usable.
-State: 2026-10-16. Rules DB 570 rules in 9 domains, engines done (615 tests), corpus synced
-via scripts/sync-reference.mjs, skill library at 23 portable packs (10 audit + 13 agentic
-workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
+State: 2026-10-16. Rules DB 570 rules in 9 domains, engines done (615 tests),
+skill library at 23 portable packs (13 workflow + 9 audit + 1 router), adoption
+research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKILLS.md).
 
 ## Milestones
 
-### M1.8: Agentic workflow library [IN PROGRESS]
-- [x] 13 `agentic-*` skills compiled from the corpus, one owner per decision, sibling
-      boundaries stated, corpus citations that resolve on disk
+### M1.8: Workflow library [IN PROGRESS]
+- [x] 13 `zeroslop-*` workflow skills, one owner per decision, sibling boundaries
+      stated, every claim traceable to a rule id or a file in this repo
 - [x] Every file gated to 0 errors by the repo's own scanner; CI self-scan covers `skills/`
-- [x] Router (`skills/zero-slop`) routes both families; README and
+- [x] Router (`skills/zeroslop`) routes both families; README and
       docs/MULTI_AGENT_SKILLS.md document the audit-versus-workflow split
 - [ ] Re-run `npx skills add trefeon/zero-slop -g` after this lands and confirm all 23
       packs install on the four harnesses
@@ -28,7 +28,7 @@ workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKI
 - [ ] README restructured: banner → install (first 60 lines) → what it catches →
       usage (CLI / action / skills / MCP) → before-after → config → contributing
 - [ ] Badges: MIT, version, tests, npm
-- [ ] `.gitignore` final pass; no secrets; `reference/` stays ignored
+- [ ] `.gitignore` final pass; no secrets; the cloned research repos stay ignored
 - [ ] CI workflow: `pnpm test` + `pnpm typecheck` + `pnpm validate:rules`
       + zero-slop self-scan on README/docs/skills (dogfooding gate)
 
@@ -40,7 +40,7 @@ workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKI
 - [ ] `npm pack --dry-run` verified: dist + rules only, no junk
 
 ### M2.7: skills.sh
-- [x] 23 portable packs committed (10 audit + 13 workflow) per
+- [x] 23 portable packs committed (13 workflow + 9 audit + 1 router) per
       docs/MULTI_AGENT_SKILLS.md
 - [x] `skills-ref validate` passes on every folder (23/23, 2026-10-16)
 - [x] `npx skills add` installs the whole library (project-scope run: 23 packs
@@ -49,7 +49,7 @@ workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKI
 
 ### M2.8: GitHub Action
 - [ ] `packages/action`: Node action, defaults-first (`zero-slop gate` on PR
-      diff, posts report comment, exemption knobs like peakoss)
+      diff, posts report comment, exemption knobs)
 - [ ] `action.yaml` at action package root; release with "Publish to GitHub
       Marketplace" checked
 
@@ -71,9 +71,9 @@ workflow), adoption research done (docs/PUBLIC_ADOPTION.md, docs/MULTI_AGENT_SKI
 - [ ] Homebrew tap (only on demand)
 
 ## Publishing decisions: Locked
-- License: **MIT** (max corporate adoption; AGPL costs it: peakoss counterexample)
+- License: **MIT** (max corporate adoption; AGPL costs corporate adoption)
 - npm package bundles skills + rules in `files` (install never depends on GitHub)
-- `npx @zero-slop/cli` picker (antislop-ai pattern) added after CLI traction
+- `npx @zero-slop/cli` picker added after CLI traction
 - Rules as shareable configs (`@zero-slop/config-recommended`) after core ships
 - Zero-config defaults everywhere; `zero-slop.json` optional
 - Self-dogfooded CI: the repo's own docs scanned by zero-slop

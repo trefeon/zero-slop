@@ -8,7 +8,7 @@ The standard for agentic AI work: a rule engine that scans what agents produce, 
   <img src="https://img.shields.io/github/actions/workflow/status/trefeon/zero-slop/ci.yml?branch=main" alt=CI>
 </p>
 
-zero-slop applies 570 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start. Alongside the engine it ships 23 portable Agent Skills: 10 that audit a finished artifact against the rule database, and 13 that teach the agentic workflow (framing, planning, delegation, context, verification, debugging, review, git, security, memory, skill authoring, harnesses, loops), every one of them compiled from the 84-repo research corpus and gated by the engine itself.
+zero-slop applies 570 rules across 9 domains and reports each hit with a severity tier. It needs no configuration to start. Alongside the engine it ships 23 portable Agent Skills: 13 that teach the agentic workflow (framing, planning, delegation, context, verification, debugging, review, git, security, memory, skill authoring, harnesses, loops), 9 that audit a finished artifact against the rule database, and 1 router that picks the pack for a request; every pack passes the repo's own scanner and the Agent Skills spec validator.
 
 ## Install
 
@@ -183,25 +183,25 @@ The scanner skips the directories listed in `exclude` and reports nothing for un
 
 ## The workflow library
 
-Thirteen `agentic-*` skills cover the decisions an agent makes on a task. Each owns exactly one decision, names the sibling to use instead, cites the corpus for its claims, and passes the repo's own scanner.
+Thirteen `zeroslop-*` skills cover the decisions an agent makes on a task. Each owns exactly one decision, names the sibling to use instead, cites the rule ids or repo files behind its claims, and passes the repo's own scanner.
 
 | Skill | Fires when |
 | --- | --- |
-| agentic-frame | a request needs framing first: goal, acceptance criteria, scope boundary |
-| agentic-plan | the goal is fixed and the execution shape is open: slices, contracts, ordering |
-| agentic-delegate | work splits across agents: slice design, context contracts, isolation |
-| agentic-context | the window is the constraint: budgets, progressive disclosure, files as memory |
-| agentic-verify | work claims to be done: evidence classes, falsification, regression proof |
-| agentic-debug | behavior is wrong or unexplained: reproduce, narrow, bisect, root cause |
-| agentic-review | a diff needs judgment: review axes, receiving review, merge gate |
-| agentic-git | workspace and history: worktrees, branches, commits, PR flow |
-| agentic-secure | secrets and supply chain: approval gates, scanning, untrusted content |
-| agentic-memory | knowledge must outlive the session: what to save, where, when to distrust it |
-| agentic-skill | authoring an instruction artifact: frontmatter, triggers, budgets, testing |
-| agentic-harness | the agent's environment: tool design, permissions, hosted runtimes, observability |
-| agentic-loops | work runs over time: budgets, stop conditions, drift, escalation |
+| zeroslop-frame | a request needs framing first: goal, acceptance criteria, scope boundary |
+| zeroslop-plan | the goal is fixed and the execution shape is open: slices, contracts, ordering |
+| zeroslop-delegate | work splits across agents: slice design, context contracts, isolation |
+| zeroslop-context | the window is the constraint: budgets, progressive disclosure, files as memory |
+| zeroslop-verify | work claims to be done: evidence classes, falsification, regression proof |
+| zeroslop-debug | behavior is wrong or unexplained: reproduce, narrow, bisect, root cause |
+| zeroslop-review | a diff needs judgment: review axes, receiving review, merge gate |
+| zeroslop-git | workspace and history: worktrees, branches, commits, PR flow |
+| zeroslop-secure | secrets and supply chain: approval gates, scanning, untrusted content |
+| zeroslop-memory | knowledge must outlive the session: what to save, where, when to distrust it |
+| zeroslop-skill | authoring an instruction artifact: frontmatter, triggers, budgets, testing |
+| zeroslop-harness | the agent's environment: tool design, permissions, hosted runtimes, observability |
+| zeroslop-loops | work runs over time: budgets, stop conditions, drift, escalation |
 
-The audit family is the other half: `slop-audit*` judges a finished artifact against `rules/*.json` and reports findings with a tier, and the `zero-slop` router routes both families.
+The audit family is the other half: `zeroslop-audit*` judges a finished artifact against `rules/*.json` and reports findings with a tier, and the `zeroslop` router routes both families. The full catalog is in `skills/README.md`.
 
 ## Before and after
 
@@ -264,7 +264,7 @@ The workspace is a pnpm monorepo with three parts:
 - `rules/`: the rule database, one JSON file per domain
 - `packages/core`: the check engines for prose, ui, code, and commit
 - `packages/cli`: the commander-based CLI
-- `scripts/`: rule bundling, plus `sync-reference.mjs` (refreshes the gitignored research corpus listed in `scripts/reference-corpus.json`) and `fix-citations.mjs` (rewrites corpus citations to the flat `reference/<manifest-name>:<path>` form)
+- `scripts/`: rule bundling, plus `sync-reference.mjs` (refreshes the gitignored research tree) and `check-skills.mjs` (the library contract check behind `pnpm check:skills`)
 
 From the repo root:
 
@@ -287,8 +287,9 @@ The long-form docs live in docs/:
 
 - `docs/ZERO_SLOP_FRAMEWORK.md`: architecture, the five pillars, and the research foundation
 - `docs/PUBLIC_ADOPTION.md`: distribution plan and channel map
-- `docs/MULTI_AGENT_SKILLS.md`: Agent Skills packaging for AI clients
+- `docs/MULTI_AGENT_SKILLS.md`: the portable skill library: families, file tree, install paths
 - `docs/SHIP_PLAN.md`: release plan and milestones
+- `skills/README.md`: the pack catalog, install commands, and naming conventions
 
 ## Roadmap
 

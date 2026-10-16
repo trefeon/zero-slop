@@ -1136,7 +1136,7 @@
         "expect": "pass"
       }
     ],
-    "notes": "ZS-COMMIT-005's summary and the slop-audit-commit checklist claim header-trim is implied by the 100-char cap, but its pattern (^.{101,}$) cannot catch a padded short header — this rule is the missing half, not a duplicate."
+    "notes": "ZS-COMMIT-005's summary and the zeroslop-audit-commit checklist claim header-trim is implied by the 100-char cap, but its pattern (^.{101,}$) cannot catch a padded short header — this rule is the missing half, not a duplicate."
   },
   {
     "id": "ZS-COMMIT-029",

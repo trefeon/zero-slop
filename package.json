@@ -19,7 +19,7 @@
   },
   "scripts": {
     "validate:rules": "tsx packages/core/src/validate.ts",
-    "check:skills": "node scripts/check-workflow-library.mjs",
+    "check:skills": "node scripts/check-skills.mjs",
     "typecheck": "tsc -p packages/core/tsconfig.json --noEmit",
     "build": "tsc -p packages/core/tsconfig.json && tsc -p packages/cli/tsconfig.json",
     "build:core": "tsc -p packages/core/tsconfig.json"

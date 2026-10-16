@@ -1,0 +1,97 @@
+---
+name: zeroslop-audit-prose
+description: Audit prose, docs, chat answers, and agent output for AI-writing tells (banned words, staged openers, contrast formulas, rhythm flatness, chat filler). Use when reviewing or rewriting any paragraph, README, email, post, or chat reply that reads generic, inflated, or robotic.
+---
+
+# Zeroslop Audit: Prose
+
+Goal: flag unchosen defaults in prose — the statistically likely phrasing a model emits when no human chose otherwise. Lexicon drifts with every model release; structure persists. Weight structural tells (contrast formulas, staged run-ups, flat rhythm, chat wrappers) above single words.
+
+Deterministic layer: `zero-slop scan` plus `rules/prose.json` and `rules/chat.json`. Thresholds below are verbatim from those files; rule ids are canonical. CLI flags candidates; the agent judges intentionality. A tell kept on purpose, with a reason, is not slop.
+
+## Constraints
+
+Banned lexicon — one sighting flags (all `caseSensitive: false` unless noted):
+
+| Family | Flagged tokens | Cite and note |
+|---|---|---|
+| AI verbs | delve, leverage, utilize, facilitate, foster, bolster, underscore, unveil, navigate, streamline, enhance, endeavour/endeavor, ascertain, elucidate, harness, embark, supercharge, elevate, spearhead, commence, optimise/optimize, encompass, garner, showcase, highlighting, emphasizing, enhancing | rules/prose.json#ZS-PROSE-001 |
+| AI adjectives | robust, comprehensive, pivotal, crucial, vital, transformative, `cutting-edge`, groundbreaking, innovative, seamless, intricate, nuanced, multifaceted, holistic, paramount, meticulous, vibrant, renowned, profound, epic, unprecedented, remarkable, stunning, game-changing | rules/prose.json#ZS-PROSE-002 |
+| Metaphor nouns | tapestry, realm, beacon, testament, symphony, ecosystem, landscape, interplay | rules/prose.json#ZS-PROSE-003. False gravitas on ordinary facts |
+| Intensifiers/filler adverbs | extremely, dramatically, truly, literally, very, really, simply, actually, honestly, fundamentally, clearly, obviously, essentially, basically, certainly, undoubtedly, quite, ultimately, just | rules/prose.json#ZS-PROSE-004, warning. Cut; keep only when the degree is the claim |
+| Academic filler | shed light on, pave/paving the way, a myriad/plethora of, pertaining to, prior/subsequent to, in light of, with respect to, in terms of, the fact that | rules/prose.json#ZS-PROSE-005 |
+| Marketing cliches | unlock the power of, elevate your, bridge the gap, move the needle, and kin | rules/prose.json#ZS-PROSE-013 |
+| Inflated symbolism | provide(s) a valuable insight, left an indelible mark, and kin | rules/prose.json#ZS-PROSE-017. Ordinary points dressed as legacies |
+| Importance puffery | stands as a testament, marks a pivotal moment, plays a vital role | rules/prose.json#ZS-PROSE-029. Announce significance instead of stating the fact |
+| Hedges and weasels | helps ensure, may be able to, can potentially, plus weakening very/really/extremely/simply/only | rules/prose.json#ZS-PROSE-041, ZS-PROSE-043, ZS-PROSE-044. Equal-weight seesaw that never commits is the tell; pick a side |
+| Wordy phrases | as a matter of fact, in order to, due to the fact that | rules/prose.json#ZS-PROSE-045 |
+| Cliches | tired idioms | rules/prose.json#ZS-PROSE-046 |
+| Repeated word | the the | rules/prose.json#ZS-PROSE-047, `caseSensitive: true` |
+| Redundancy, three separate scans | RAS syndrome (PIN number), pleonasms (end result, true fact), intensifier plus absolute (very unique) | rules/prose.json#ZS-PROSE-136, ZS-PROSE-137, ZS-PROSE-138, warning |
+| Register slips | commercialese letter-speak, chatspeak abbreviations and archaic diction | rules/prose.json#ZS-PROSE-134, ZS-PROSE-135, ZS-PROSE-144, warning. Reported as register, never as fabrication |
+| Non-English shells | Indonesian `Di era modern ini`, `dapat dilihat bahwa`, `dengan demikian, dapat disimpulkan`, `tidak hanya … tetapi juga` | rules/prose.json#ZS-PROSE-132, warning. The same tells as the English openers, keyed to language |
+
+Staged openers, transitions, closers — one sighting flags:
+
+| Family | Flagged tokens | Cite and note |
+|---|---|---|
+| Opening phrases | in today's fast-paced world, in today's digital age, in an era of, in the ever-evolving landscape of, it's important to note that, let's delve/dive in, imagine a world where, when it comes to | rules/prose.json#ZS-PROSE-006 |
+| Transitions | furthermore, moreover, that being said, with that in mind, it's worth noting/mentioning, to put it simply, in essence, this begs the question, additionally, firstly/secondly/thirdly | rules/prose.json#ZS-PROSE-007 |
+| Conclusions | in conclusion, to sum up, in the final analysis, all things considered, at the end of the day, ultimately, the bottom line is | rules/prose.json#ZS-PROSE-008 |
+| Throat-clearing | here's the thing, let me be clear, I'll be honest | rules/prose.json#ZS-PROSE-009 |
+| Faux-insight setups | what most people get wrong, the part everyone misses, here's what nobody tells you | rules/prose.json#ZS-PROSE-010 |
+| Rhetorical setups | what if I told you, think about it, plot twist, self-answered questions | rules/prose.json#ZS-PROSE-011 |
+| Response openers | Certainly, Great question!, As an AI, leading Moreover | rules/prose.json#ZS-PROSE-018 |
+| Role openers | As a developer, I... | rules/prose.json#ZS-PROSE-040 |
+| Email formulas | I hope this email finds you well, as per my last email | rules/prose.json#ZS-PROSE-014, warning |
+| Collaborative narrator | let's explore, we will examine, as we can see | rules/prose.json#ZS-PROSE-015 |
+| Whether/By openers | Whether you're a X, Y, or Z; By understanding/leveraging X | rules/prose.json#ZS-PROSE-016 |
+| Colon reveals | The answer is: [reveal], The key takeaway is: | rules/prose.json#ZS-PROSE-022, warning; ZS-PROSE-076 |
+| Fake kickers | closing mic-drop metaphor | rules/prose.json#ZS-PROSE-035, warning |
+| Future-narrative closers | may become the most important story | rules/prose.json#ZS-PROSE-079 |
+| Key-takeaways sections | recap blocks instead of an ending | rules/prose.json#ZS-PROSE-066 |
+| Challenges-and-prospects endings | — | rules/prose.json#ZS-PROSE-071 |
+| Real-is closers | the struggle/stakes are real | rules/prose.json#ZS-PROSE-075 |
+| So / There-is / passive voice / reference + research narration | So openers; There-is openers; passive voice; as discussed above, as we will see; could not be located, as of my last update | rules/prose.json#ZS-PROSE-048, ZS-PROSE-049, ZS-PROSE-042 (`caseSensitive: true`); ZS-PROSE-038; ZS-PROSE-037. Process and structure talk, not content |
+| Paragraph openers | a paragraph that starts with 'But' | rules/prose.json#ZS-PROSE-140, info, `caseSensitive: true`. A hard edit rule, not a sentence-level one |
+| Interpretive metadiscourse | lines telling readers what to notice | rules/prose.json#ZS-PROSE-030, warning |
+| Copula avoidance | constitutes, functions as, operates as, acts as for plain is | rules/prose.json#ZS-PROSE-078 |
+| Fake-strong copulas | serves/stands as, boasts, ventured into | rules/prose.json#ZS-PROSE-031, warning |
+| False agency | inanimate subject with a human verb | rules/prose.json#ZS-PROSE-073 |
+| Tool anthropomorphism | — | rules/prose.json#ZS-PROSE-074 |
+| Escape-hatch family | less about X than Y, the real X is | rules/prose.json#ZS-PROSE-077 |
+| Weasel attribution | experts agree, studies show, industry reports suggest | rules/prose.json#ZS-PROSE-012. Unverifiable backing |
+| Urgency without consequence | act now, don't miss out | rules/prose.json#ZS-PROSE-036, warning |
+| Generic filler | any sentence portable unchanged to another company or country | rules/prose.json#ZS-PROSE-072 |
+| Repeated talking points | same point twice is padding | rules/prose.json#ZS-PROSE-069 |
+
+- Exclusion zones (rules/prose.json#ZS-PROSE-067): never flag quoted sources, code, paths, data, or link targets.
+
+Contrast and parallelism formulas — one sighting flags:
+
+- Not-X-but-Y (rules/prose.json#ZS-PROSE-024, max 2 per 500 words; rules/chat.json#ZS-CHAT-001): It's not X, it's Y; the question isn't X; X rather than Y; split across sentences; clipped tails (, no guessing). The strongest tell of the family. State the positive claim directly.
+- Not-just-X-but-Y (rules/prose.json#ZS-PROSE-027): not just/merely/only X, but (also) Y. Negative listing (rules/prose.json#ZS-PROSE-025, `caseSensitive: true`): Not a X. Not a Y. A Z. Rule of three (rules/prose.json#ZS-PROSE-026, warning): triads as decoration; keep only when the three items carry distinct information. Dramatic fragmentation (rules/prose.json#ZS-PROSE-033): X. And Y. And Z. one-line closers.
+- Superficial -ing clauses (rules/prose.json#ZS-PROSE-028): trailing highlighting/underscoring/reflecting/showcasing that gestures at meaning without adding a claim.
+- Synonym cycling (rules/prose.json#ZS-PROSE-032, info): rotating labels for one referent. Fragmentation, closers, and triads at section scale (same closer after every section) count the same as at sentence scale.
+
+Punctuation and formatting budgets:
+
+- Em dash: max 1 per 500 words (rules/prose.json#ZS-PROSE-019). Exclamation: max 1 per 1000 words (rules/prose.json#ZS-PROSE-020). Ellipsis: max 1 per piece (rules/prose.json#ZS-PROSE-021). Scare quotes on ordinary words (rules/prose.json#ZS-PROSE-023, warning). Bold mid-sentence or repeated (rules/prose.json#ZS-PROSE-058). Emoji bullets, heading emoji, emoji stacks (rules/prose.json#ZS-PROSE-059). Hallucinated markup (rules/prose.json#ZS-PROSE-057): oaicite, contentReference, turn0search0. Markdown in plain-text contexts (rules/prose.json#ZS-PROSE-061): asterisks/headers in email, DM, SMS. Thread openers (rules/prose.json#ZS-PROSE-062), hashtag stacks capped at two (rules/prose.json#ZS-PROSE-063), clickbait headings (rules/prose.json#ZS-PROSE-064), title case beyond first word (rules/prose.json#ZS-PROSE-065), parenthetical heading suffixes (rules/prose.json#ZS-PROSE-068). Bullets: never more than 7 consecutive (rules/prose.json#ZS-PROSE-060, maxConsecutiveBullets 7); keep them parallel.
+
+Rhythm and statistical caps — judge over a window, never one sentence:
+
+- Parataxis (rules/prose.json#ZS-PROSE-039): max run 2 sentences under 8 words. Same-length run (rules/prose.json#ZS-PROSE-050): no 3 consecutive sentences of identical length, tolerance 0. Burstiness (rules/prose.json#ZS-PROSE-051): each 500-word window must contain short and long sentences (bounds 8/30 words). Robotic rhythm (rules/prose.json#ZS-PROSE-034, warning): repeated shapes and stacked fragments. Paragraph uniformity (rules/prose.json#ZS-PROSE-052): relative length deviation max 0.15. Layout runs (rules/prose.json#ZS-PROSE-070): no 3 consecutive paragraphs with identical layout. Transition density (rules/prose.json#ZS-PROSE-053): over 30% of paragraphs opening with a transition flags. Opening-word runs (rules/prose.json#ZS-PROSE-054): no 3 consecutive paragraphs starting with the same word. Segmental entropy (rules/prose.json#ZS-PROSE-055): pacing variance across sections max diff 0.1. Hedging density (rules/prose.json#ZS-PROSE-056): max 3 per paragraph, 8 per 1000 words.
+
+Chat and agent-output shape (rules/chat.json folded here; whole domain):
+
+- Negation framing banned (rules/chat.json#ZS-CHAT-001). Filler kill list (rules/chat.json#ZS-CHAT-002): I'd be happy to, Great question, and kin. Summary stamps (rules/chat.json#ZS-CHAT-003): closing lines announcing the summary. Never restate the question (rules/chat.json#ZS-CHAT-004). No plain-language restatement (rules/chat.json#ZS-CHAT-009). No conditional follow-ups (rules/chat.json#ZS-CHAT-008): let me know if you'd like... No code-preface chatter (rules/chat.json#ZS-CHAT-013): Certainly! Here is... No sycophancy (rules/chat.json#ZS-CHAT-016), cutoff disclaimers (rules/chat.json#ZS-CHAT-017), reasoning leaks (rules/chat.json#ZS-CHAT-018), acknowledgment loops (rules/chat.json#ZS-CHAT-019), deference/solicitation (rules/chat.json#ZS-CHAT-020, warning), compliance enthusiasm (rules/chat.json#ZS-CHAT-021, warning), tutorial announcements (rules/chat.json#ZS-CHAT-022, warning), here-is-an-overview stamps (rules/chat.json#ZS-CHAT-023, warning).
+- Shape: lead with the answer (rules/chat.json#ZS-CHAT-005, warning). Explanations 3-5 sentences (rules/chat.json#ZS-CHAT-006, warning). Yes/no: verdict first, one sentence of reasoning (rules/chat.json#ZS-CHAT-007, warning). Bullets only for parallel or sequential content (rules/chat.json#ZS-CHAT-010, warning). Comparisons end in a recommendation (rules/chat.json#ZS-CHAT-011, warning); pros/cons max 3-4 per side (rules/chat.json#ZS-CHAT-012, warning). Match depth to complexity (rules/chat.json#ZS-CHAT-014, info); end with a concrete next step when relevant (rules/chat.json#ZS-CHAT-015, info).
+- Engagement-bait closers (rules/chat.json#ZS-CHAT-034): `Would you like me to…`, `Is there anything else…`, `Let me know if…`, `As an AI language model…` — never include; the filler kill list and the conditional follow-up ban cover the rest of the family.
+
+## Gotchas
+
+- Lexicon is the weakest signal. A banned word inside a quoted source, a user-supplied voice sample, or a domain term of art (landscape in ecology, tapestry in textiles) is intentional — exclusion zones (rules/prose.json#ZS-PROSE-067) and the voice-sample override apply. Structure outranks vocabulary.
+- One contrast or triad is a candidate, not a verdict. The formula earns a flag when the negative half corrects nobody, the three items add no distinct information, or the closer repeats the paragraph. Rewrite the paragraph around its point; do not patch phrases one by one.
+- Statistical caps need a window. Never flag rhythm, burstiness, hedging density, or transition density from a single paragraph; run `zero-slop scan` over the whole piece and judge the reported window.
+- Chat brevity is not curtness. Cutting filler (rules/chat.json#ZS-CHAT-002) while dropping the recommendation (rules/chat.json#ZS-CHAT-011, ZS-CHAT-015) or the one sentence of reasoning (rules/chat.json#ZS-CHAT-007) trades one tell for a worse failure. Keep the verdict, the reason, and the next step; cut everything else.
+- Markdown rules flip with context. Bullets, bold, and headings are slop in chat and narrative prose but correct in READMEs and reference docs — check the medium (rules/prose.json#ZS-PROSE-061) before flagging.
